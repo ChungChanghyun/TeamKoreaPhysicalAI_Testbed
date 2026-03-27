@@ -552,13 +552,13 @@ class CombinedSimulator:
                 nid = a.raw_path[-1][0].split(',')[1]
                 done_positions[aid] = nid
 
-        # 점유/목표 노드 추적
+        # 점유/목표 노드 추적 (AGV와 동일 로직)
         occupied = set()
         for a in agents:
             if a.id not in done_ids and a.raw_path:
                 occupied.add(a.raw_path[-1][0].split(',')[1])
         targeted = {g for aid, g in fd['goals'].items() if aid not in done_ids}
-        used = occupied | targeted
+        used = occupied | targeted | set(done_positions.values())
 
         # 한 대씩 순차 replan
         all_constraints = list(base_constraints)
@@ -922,6 +922,30 @@ class CombinedSimulator:
             idx = a.path_idx
             if idx >= len(a.raw_path):
                 continue
+
+            # 현재 위치 물리적 점유: 에이전트가 지금 있는 위치를 sim_time부터
+            # 무조건 block (claimed/unclaimed 시간 갭 방지)
+            cur_sid, cur_t = a.raw_path[idx]
+            cur_state = self.agv_planner._get_state(cur_sid)
+            if cur_state is not None:
+                # 현재 상태가 M/R이면: 출발+도착 노드 모두 block
+                # 현재 상태가 S이면: 해당 노드 block
+                # t_end: 다음 상태 시작 or inf
+                if idx + 1 < len(a.raw_path):
+                    t_end_cur = max(a.raw_path[idx + 1][1], sim_time)
+                else:
+                    t_end_cur = float('inf')
+                all_constraints.append({
+                    'agent': a.id, 'loc': cur_sid,
+                    'timestep': (sim_time, t_end_cur),
+                })
+                for aff_id in cur_state.affect_state:
+                    aff = self.agv_planner._get_state(aff_id)
+                    aff_cost = aff.cost if aff else 0.0
+                    all_constraints.append({
+                        'agent': a.id, 'loc': aff_id,
+                        'timestep': (max(0.0, sim_time - aff_cost), t_end_cur),
+                    })
 
             # Claimed 구간 (path_idx ~ claim_idx):
             # 첫 action 시작 시간 ~ 각 action 종료 시간으로 block
