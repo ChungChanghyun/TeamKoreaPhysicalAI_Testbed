@@ -1,0 +1,2036 @@
+{
+  "schema": "xmsmap-v4.0",
+  "info": {
+    "name": "KaistTB_AMR_A",
+    "version": "12.1"
+  },
+  "nodes": [
+    {
+      "id": "na.1",
+      "x": 16651,
+      "y": 13447,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.2",
+      "x": 18152,
+      "y": 13447,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.4",
+      "x": 3140,
+      "y": 12724.1,
+      "area": "AMR_A",
+      "forbidAvoidAt": true
+    },
+    {
+      "id": "na.5",
+      "x": 9200,
+      "y": 11642.4,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.6",
+      "x": 9200,
+      "y": 10220,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.7",
+      "x": 1700,
+      "y": 11200,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.8",
+      "x": 1700,
+      "y": 9860,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.9",
+      "x": 10200,
+      "y": 11642.4,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.10",
+      "x": 10200,
+      "y": 10220,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.11",
+      "x": 6680,
+      "y": 2740,
+      "area": "AMR_A",
+      "forbidAvoidAt": true
+    },
+    {
+      "id": "na.12",
+      "x": 9285,
+      "y": 4000,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.13",
+      "x": 9285,
+      "y": 2360,
+      "area": "AMR_A",
+      "forbidAvoidAt": true
+    },
+    {
+      "id": "na.14",
+      "x": 10460,
+      "y": 4000,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.15",
+      "x": 10460,
+      "y": 2370,
+      "area": "AMR_A",
+      "forbidAvoidAt": true
+    },
+    {
+      "id": "na.17",
+      "x": 9000,
+      "y": 7261,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.18",
+      "x": 9000,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.19",
+      "x": 10200,
+      "y": 7261,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.20",
+      "x": 10200,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.22",
+      "x": 4170,
+      "y": 3800,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.24",
+      "x": 4170,
+      "y": 2791,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.25",
+      "x": 16300,
+      "y": 3800,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.27",
+      "x": 16300,
+      "y": 2800,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.29",
+      "x": 12380,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.30",
+      "x": 12380,
+      "y": 3210,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.32",
+      "x": 4170,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.33",
+      "x": 16300,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.34",
+      "x": 15230,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.35",
+      "x": 6680,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.36",
+      "x": 14130,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.37",
+      "x": 14130,
+      "y": 2000,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.38",
+      "x": 15230,
+      "y": 2000,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.39",
+      "x": 16300,
+      "y": 2000,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.40",
+      "x": 16329.6,
+      "y": 740,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.41",
+      "x": 15230,
+      "y": 740,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.42",
+      "x": 14130,
+      "y": 850,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.43",
+      "x": 12570,
+      "y": 10491,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.44",
+      "x": 18152,
+      "y": 14284,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.45",
+      "x": 18152,
+      "y": 10513,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.48",
+      "x": 15005.6,
+      "y": 10491.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.53",
+      "x": 9000,
+      "y": 9300,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.54",
+      "x": 10200,
+      "y": 9300,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.56",
+      "x": 15005.6,
+      "y": 12528.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.57",
+      "x": 16651,
+      "y": 14284,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.59",
+      "x": 530,
+      "y": 9860,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.60",
+      "x": 530,
+      "y": 11200,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.187",
+      "x": 2700,
+      "y": 3800,
+      "area": "AMR_A",
+      "forbidAvoidAt": true
+    },
+    {
+      "id": "na.188",
+      "x": 2700,
+      "y": 2791,
+      "area": "AMR_A",
+      "forbidAvoidAt": true
+    },
+    {
+      "id": "na.189",
+      "x": 17890,
+      "y": 3800,
+      "area": "AMR_A",
+      "forbidAvoidAt": true
+    },
+    {
+      "id": "na.190",
+      "x": 17919.2,
+      "y": 2800,
+      "area": "AMR_A",
+      "forbidAvoidAt": true
+    },
+    {
+      "id": "na.191",
+      "x": 3140,
+      "y": 10120,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.192",
+      "x": 15005.6,
+      "y": 11000,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.193",
+      "x": 16453,
+      "y": 10491.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.195",
+      "x": 7900,
+      "y": 4830,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.196",
+      "x": 4170,
+      "y": 1300
+    },
+    {
+      "id": "na.197",
+      "x": 12570,
+      "y": 9191
+    },
+    {
+      "id": "na.198",
+      "x": 16651,
+      "y": 12000,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.199",
+      "x": 6084,
+      "y": 10120,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.200",
+      "x": 4100,
+      "y": 10120,
+      "area": "AMR_A"
+    },
+    {
+      "id": "na.201",
+      "x": 18152,
+      "y": 12000
+    }
+  ],
+  "segments": [
+    {
+      "id": 192,
+      "startNodeId": "na.18",
+      "endNodeId": "na.20",
+      "speed": 1000
+    },
+    {
+      "id": -192,
+      "startNodeId": "na.20",
+      "endNodeId": "na.18",
+      "speed": 1000
+    },
+    {
+      "id": 205,
+      "startNodeId": "na.20",
+      "endNodeId": "na.29",
+      "speed": 1000
+    },
+    {
+      "id": -205,
+      "startNodeId": "na.29",
+      "endNodeId": "na.20",
+      "speed": 1000
+    },
+    {
+      "id": 207,
+      "startNodeId": "na.197",
+      "endNodeId": "na.43",
+      "speed": 1000,
+      "passcodes": [
+        "HR_B"
+      ]
+    },
+    {
+      "id": -207,
+      "startNodeId": "na.43",
+      "endNodeId": "na.197",
+      "speed": 1000,
+      "passcodes": [
+        "HR_B"
+      ]
+    },
+    {
+      "id": 208,
+      "startNodeId": "na.12",
+      "endNodeId": "na.13",
+      "speed": 300,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -208,
+      "startNodeId": "na.13",
+      "endNodeId": "na.12",
+      "speed": 300
+    },
+    {
+      "id": 210,
+      "startNodeId": "na.14",
+      "endNodeId": "na.15",
+      "speed": 300,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -210,
+      "startNodeId": "na.15",
+      "endNodeId": "na.14",
+      "speed": 300
+    },
+    {
+      "id": 213,
+      "startNodeId": "na.22",
+      "endNodeId": "na.187",
+      "speed": 100,
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.4711,
+              "y": -0.3869
+            },
+            {
+              "x": 0.5123,
+              "y": -0.263
+            },
+            {
+              "x": 0.475,
+              "y": -0.1383
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -213,
+      "startNodeId": "na.187",
+      "endNodeId": "na.22",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 217,
+      "startNodeId": "na.24",
+      "endNodeId": "na.188",
+      "speed": 100,
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.4711,
+              "y": -0.3869
+            },
+            {
+              "x": 0.5123,
+              "y": -0.263
+            },
+            {
+              "x": 0.475,
+              "y": -0.1383
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -217,
+      "startNodeId": "na.188",
+      "endNodeId": "na.24",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 318,
+      "startNodeId": "na.44",
+      "endNodeId": "na.57",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": -0.450701,
+              "y": 0.438164
+            },
+            {
+              "x": -0.450478,
+              "y": 0.395146
+            },
+            {
+              "x": -0.488873,
+              "y": 0.270934
+            },
+            {
+              "x": -0.449191,
+              "y": 0.147207
+            },
+            {
+              "x": -0.448967,
+              "y": 0.10419
+            }
+          ]
+        ],
+        "minLinearVel": 0.02,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -318,
+      "startNodeId": "na.57",
+      "endNodeId": "na.44",
+      "speed": 100,
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 320,
+      "startNodeId": "na.6",
+      "endNodeId": "na.5",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": -0.442463,
+              "y": 0.44374
+            },
+            {
+              "x": -0.492,
+              "y": 0.303144
+            },
+            {
+              "x": -0.451368,
+              "y": 0.159829
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -320,
+      "startNodeId": "na.5",
+      "endNodeId": "na.6",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 321,
+      "startNodeId": "na.191",
+      "endNodeId": "na.4",
+      "speed": 100,
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.4964,
+              "y": -0.3481
+            },
+            {
+              "x": 0.5388,
+              "y": -0.2052
+            },
+            {
+              "x": 0.4912,
+              "y": -0.0642
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -321,
+      "startNodeId": "na.4",
+      "endNodeId": "na.191",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 322,
+      "startNodeId": "na.10",
+      "endNodeId": "na.9",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": -0.4399,
+              "y": 0.459
+            },
+            {
+              "x": -0.4836,
+              "y": 0.3165
+            },
+            {
+              "x": -0.4381,
+              "y": 0.175
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -322,
+      "startNodeId": "na.9",
+      "endNodeId": "na.10",
+      "speed": 100,
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 323,
+      "startNodeId": "na.18",
+      "endNodeId": "na.12",
+      "speed": 500,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -323,
+      "startNodeId": "na.12",
+      "endNodeId": "na.18",
+      "speed": 500
+    },
+    {
+      "id": 324,
+      "startNodeId": "na.20",
+      "endNodeId": "na.14",
+      "speed": 500,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -324,
+      "startNodeId": "na.14",
+      "endNodeId": "na.20",
+      "speed": 500
+    },
+    {
+      "id": 325,
+      "startNodeId": "na.196",
+      "endNodeId": "na.24",
+      "speed": 1000
+    },
+    {
+      "id": -325,
+      "startNodeId": "na.24",
+      "endNodeId": "na.196",
+      "speed": 1000
+    },
+    {
+      "id": 326,
+      "startNodeId": "na.17",
+      "endNodeId": "na.18",
+      "speed": 1000
+    },
+    {
+      "id": -326,
+      "startNodeId": "na.18",
+      "endNodeId": "na.17",
+      "speed": 1000
+    },
+    {
+      "id": 327,
+      "startNodeId": "na.19",
+      "endNodeId": "na.20",
+      "speed": 1000
+    },
+    {
+      "id": -327,
+      "startNodeId": "na.20",
+      "endNodeId": "na.19",
+      "speed": 1000
+    },
+    {
+      "id": 330,
+      "startNodeId": "na.22",
+      "endNodeId": "na.24",
+      "speed": 1000
+    },
+    {
+      "id": -330,
+      "startNodeId": "na.24",
+      "endNodeId": "na.22",
+      "speed": 1000
+    },
+    {
+      "id": 332,
+      "startNodeId": "na.25",
+      "endNodeId": "na.189",
+      "speed": 100,
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.4744,
+              "y": -0.3821
+            },
+            {
+              "x": 0.5146,
+              "y": -0.2584
+            },
+            {
+              "x": 0.4767,
+              "y": -0.1342
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -332,
+      "startNodeId": "na.189",
+      "endNodeId": "na.25",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 333,
+      "startNodeId": "na.27",
+      "endNodeId": "na.25",
+      "speed": 1000
+    },
+    {
+      "id": -333,
+      "startNodeId": "na.25",
+      "endNodeId": "na.27",
+      "speed": 1000
+    },
+    {
+      "id": 334,
+      "startNodeId": "na.29",
+      "endNodeId": "na.30",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": -0.530101,
+              "y": 0.446003
+            },
+            {
+              "x": -0.529601,
+              "y": 0.403033
+            },
+            {
+              "x": -0.571693,
+              "y": 0.279093
+            },
+            {
+              "x": -0.533931,
+              "y": 0.153662
+            },
+            {
+              "x": -0.533834,
+              "y": 0.110275
+            }
+          ]
+        ],
+        "minLinearVel": 0.02,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -334,
+      "startNodeId": "na.30",
+      "endNodeId": "na.29",
+      "speed": 100,
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 335,
+      "startNodeId": "na.27",
+      "endNodeId": "na.190",
+      "speed": 100,
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.4744,
+              "y": -0.3821
+            },
+            {
+              "x": 0.5146,
+              "y": -0.2584
+            },
+            {
+              "x": 0.4767,
+              "y": -0.1342
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -335,
+      "startNodeId": "na.190",
+      "endNodeId": "na.27",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 336,
+      "startNodeId": "na.22",
+      "endNodeId": "na.32",
+      "speed": 1000
+    },
+    {
+      "id": -336,
+      "startNodeId": "na.32",
+      "endNodeId": "na.22",
+      "speed": 1000
+    },
+    {
+      "id": 337,
+      "startNodeId": "na.33",
+      "endNodeId": "na.25",
+      "speed": 1000
+    },
+    {
+      "id": -337,
+      "startNodeId": "na.25",
+      "endNodeId": "na.33",
+      "speed": 1000
+    },
+    {
+      "id": 338,
+      "startNodeId": "na.34",
+      "endNodeId": "na.33",
+      "speed": 1000
+    },
+    {
+      "id": -338,
+      "startNodeId": "na.33",
+      "endNodeId": "na.34",
+      "speed": 1000
+    },
+    {
+      "id": 339,
+      "startNodeId": "na.35",
+      "endNodeId": "na.11",
+      "speed": 500,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -339,
+      "startNodeId": "na.11",
+      "endNodeId": "na.35",
+      "speed": 500
+    },
+    {
+      "id": 340,
+      "startNodeId": "na.201",
+      "endNodeId": "na.198",
+      "speed": 1000
+    },
+    {
+      "id": -340,
+      "startNodeId": "na.198",
+      "endNodeId": "na.201",
+      "speed": 1000
+    },
+    {
+      "id": 341,
+      "startNodeId": "na.2",
+      "endNodeId": "na.201",
+      "speed": 1000
+    },
+    {
+      "id": -341,
+      "startNodeId": "na.201",
+      "endNodeId": "na.2",
+      "speed": 1000
+    },
+    {
+      "id": 342,
+      "startNodeId": "na.36",
+      "endNodeId": "na.37",
+      "speed": 1000
+    },
+    {
+      "id": -342,
+      "startNodeId": "na.37",
+      "endNodeId": "na.36",
+      "speed": 1000
+    },
+    {
+      "id": 343,
+      "startNodeId": "na.34",
+      "endNodeId": "na.38",
+      "speed": 1000
+    },
+    {
+      "id": -343,
+      "startNodeId": "na.38",
+      "endNodeId": "na.34",
+      "speed": 1000
+    },
+    {
+      "id": 344,
+      "startNodeId": "na.27",
+      "endNodeId": "na.39",
+      "speed": 1000
+    },
+    {
+      "id": -344,
+      "startNodeId": "na.39",
+      "endNodeId": "na.27",
+      "speed": 1000
+    },
+    {
+      "id": 345,
+      "startNodeId": "na.39",
+      "endNodeId": "na.40",
+      "speed": 100,
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.3907,
+              "y": 0.2199
+            },
+            {
+              "x": 0.395,
+              "y": 0.118
+            },
+            {
+              "x": 0.4702,
+              "y": -0.0019
+            },
+            {
+              "x": 0.4798,
+              "y": -0.2267
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 1
+      }
+    },
+    {
+      "id": -345,
+      "startNodeId": "na.40",
+      "endNodeId": "na.39",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 346,
+      "startNodeId": "na.38",
+      "endNodeId": "na.41",
+      "speed": 100,
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.3907,
+              "y": 0.2199
+            },
+            {
+              "x": 0.395,
+              "y": 0.118
+            },
+            {
+              "x": 0.4702,
+              "y": -0.0019
+            },
+            {
+              "x": 0.4798,
+              "y": -0.2267
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 1
+      }
+    },
+    {
+      "id": -346,
+      "startNodeId": "na.41",
+      "endNodeId": "na.38",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 347,
+      "startNodeId": "na.37",
+      "endNodeId": "na.42",
+      "speed": 1000
+    },
+    {
+      "id": -347,
+      "startNodeId": "na.42",
+      "endNodeId": "na.37",
+      "speed": 1000
+    },
+    {
+      "id": 348,
+      "startNodeId": "na.32",
+      "endNodeId": "na.35",
+      "speed": 1000
+    },
+    {
+      "id": -348,
+      "startNodeId": "na.35",
+      "endNodeId": "na.32",
+      "speed": 1000
+    },
+    {
+      "id": 349,
+      "startNodeId": "na.37",
+      "endNodeId": "na.38",
+      "speed": 1000
+    },
+    {
+      "id": -349,
+      "startNodeId": "na.38",
+      "endNodeId": "na.37",
+      "speed": 1000
+    },
+    {
+      "id": 350,
+      "startNodeId": "na.38",
+      "endNodeId": "na.39",
+      "speed": 1000
+    },
+    {
+      "id": -350,
+      "startNodeId": "na.39",
+      "endNodeId": "na.38",
+      "speed": 1000
+    },
+    {
+      "id": 351,
+      "startNodeId": "na.7",
+      "endNodeId": "na.191",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -351,
+      "startNodeId": "na.191",
+      "endNodeId": "na.7",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 0
+        }
+      ]
+    },
+    {
+      "id": 352,
+      "startNodeId": "na.6",
+      "endNodeId": "na.10",
+      "speed": 1000
+    },
+    {
+      "id": -352,
+      "startNodeId": "na.10",
+      "endNodeId": "na.6",
+      "speed": 1000
+    },
+    {
+      "id": 353,
+      "startNodeId": "na.10",
+      "endNodeId": "na.43",
+      "speed": 1000
+    },
+    {
+      "id": -353,
+      "startNodeId": "na.43",
+      "endNodeId": "na.10",
+      "speed": 1000
+    },
+    {
+      "id": 354,
+      "startNodeId": "na.2",
+      "endNodeId": "na.44",
+      "speed": 1000
+    },
+    {
+      "id": -354,
+      "startNodeId": "na.44",
+      "endNodeId": "na.2",
+      "speed": 1000
+    },
+    {
+      "id": 355,
+      "startNodeId": "na.201",
+      "endNodeId": "na.45",
+      "speed": 1000
+    },
+    {
+      "id": -355,
+      "startNodeId": "na.45",
+      "endNodeId": "na.201",
+      "speed": 1000
+    },
+    {
+      "id": 356,
+      "startNodeId": "na.191",
+      "endNodeId": "na.8",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 0
+        }
+      ]
+    },
+    {
+      "id": -356,
+      "startNodeId": "na.8",
+      "endNodeId": "na.191",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 357,
+      "startNodeId": "na.6",
+      "endNodeId": "na.199",
+      "speed": 1000
+    },
+    {
+      "id": -357,
+      "startNodeId": "na.199",
+      "endNodeId": "na.6",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 358,
+      "startNodeId": "na.48",
+      "endNodeId": "na.192",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -358,
+      "startNodeId": "na.192",
+      "endNodeId": "na.48",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 0
+        }
+      ]
+    },
+    {
+      "id": 361,
+      "startNodeId": "na.6",
+      "endNodeId": "na.53",
+      "speed": 1000
+    },
+    {
+      "id": -361,
+      "startNodeId": "na.53",
+      "endNodeId": "na.6",
+      "speed": 1000
+    },
+    {
+      "id": 362,
+      "startNodeId": "na.54",
+      "endNodeId": "na.10",
+      "speed": 1000
+    },
+    {
+      "id": -362,
+      "startNodeId": "na.10",
+      "endNodeId": "na.54",
+      "speed": 1000
+    },
+    {
+      "id": 363,
+      "startNodeId": "na.10",
+      "endNodeId": "na.53",
+      "speed": 1000
+    },
+    {
+      "id": -363,
+      "startNodeId": "na.53",
+      "endNodeId": "na.10",
+      "speed": 1000
+    },
+    {
+      "id": 364,
+      "startNodeId": "na.6",
+      "endNodeId": "na.54",
+      "speed": 1000
+    },
+    {
+      "id": -364,
+      "startNodeId": "na.54",
+      "endNodeId": "na.6",
+      "speed": 1000
+    },
+    {
+      "id": 365,
+      "startNodeId": "na.53",
+      "endNodeId": "na.17",
+      "speed": 1000
+    },
+    {
+      "id": -365,
+      "startNodeId": "na.17",
+      "endNodeId": "na.53",
+      "speed": 1000
+    },
+    {
+      "id": 366,
+      "startNodeId": "na.19",
+      "endNodeId": "na.54",
+      "speed": 1000
+    },
+    {
+      "id": -366,
+      "startNodeId": "na.54",
+      "endNodeId": "na.19",
+      "speed": 1000
+    },
+    {
+      "id": 367,
+      "startNodeId": "na.192",
+      "endNodeId": "na.56",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": -0.442779,
+              "y": 0.451456
+            },
+            {
+              "x": -0.443429,
+              "y": 0.408456
+            },
+            {
+              "x": -0.484096,
+              "y": 0.284913
+            },
+            {
+              "x": -0.446664,
+              "y": 0.160442
+            },
+            {
+              "x": -0.447315,
+              "y": 0.11744
+            }
+          ]
+        ],
+        "minLinearVel": 0.02,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -367,
+      "startNodeId": "na.56",
+      "endNodeId": "na.192",
+      "speed": 100,
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 368,
+      "startNodeId": "na.43",
+      "endNodeId": "na.48",
+      "speed": 1000
+    },
+    {
+      "id": -368,
+      "startNodeId": "na.48",
+      "endNodeId": "na.43",
+      "speed": 1000
+    },
+    {
+      "id": 369,
+      "startNodeId": "na.48",
+      "endNodeId": "na.193",
+      "speed": 1000
+    },
+    {
+      "id": -369,
+      "startNodeId": "na.193",
+      "endNodeId": "na.48",
+      "speed": 1000
+    },
+    {
+      "id": 371,
+      "startNodeId": "na.193",
+      "endNodeId": "na.45",
+      "speed": 1000
+    },
+    {
+      "id": -371,
+      "startNodeId": "na.45",
+      "endNodeId": "na.193",
+      "speed": 1000
+    },
+    {
+      "id": 372,
+      "startNodeId": "na.2",
+      "endNodeId": "na.1",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": -0.444294,
+              "y": 0.400541
+            },
+            {
+              "x": -0.484607,
+              "y": 0.276943
+            },
+            {
+              "x": -0.446855,
+              "y": 0.152635
+            }
+          ]
+        ],
+        "minLinearVel": 0.02,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": -372,
+      "startNodeId": "na.1",
+      "endNodeId": "na.2",
+      "speed": 100,
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 373,
+      "startNodeId": "na.35",
+      "endNodeId": "na.195",
+      "speed": 500
+    },
+    {
+      "id": -373,
+      "startNodeId": "na.195",
+      "endNodeId": "na.35",
+      "speed": 500
+    },
+    {
+      "id": 374,
+      "startNodeId": "na.34",
+      "endNodeId": "na.36",
+      "speed": 1000
+    },
+    {
+      "id": -374,
+      "startNodeId": "na.36",
+      "endNodeId": "na.34",
+      "speed": 1000
+    },
+    {
+      "id": 375,
+      "startNodeId": "na.36",
+      "endNodeId": "na.29",
+      "speed": 1000
+    },
+    {
+      "id": -375,
+      "startNodeId": "na.29",
+      "endNodeId": "na.36",
+      "speed": 1000
+    },
+    {
+      "id": 376,
+      "startNodeId": "na.7",
+      "endNodeId": "na.60",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 0
+        }
+      ],
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.3907,
+              "y": 0.2199
+            },
+            {
+              "x": 0.395,
+              "y": 0.118
+            },
+            {
+              "x": 0.4702,
+              "y": -0.0019
+            },
+            {
+              "x": 0.4798,
+              "y": -0.2267
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 1
+      }
+    },
+    {
+      "id": -376,
+      "startNodeId": "na.60",
+      "endNodeId": "na.7",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 377,
+      "startNodeId": "na.8",
+      "endNodeId": "na.59",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 0
+        }
+      ],
+      "custom": {
+        "dockingType": "detection",
+        "dockingMethod": "vmarker",
+        "markers": [
+          [
+            {
+              "x": 0.3907,
+              "y": 0.2199
+            },
+            {
+              "x": 0.395,
+              "y": 0.118
+            },
+            {
+              "x": 0.4702,
+              "y": -0.0019
+            },
+            {
+              "x": 0.4798,
+              "y": -0.2267
+            }
+          ]
+        ],
+        "minLinearVel": 0.01,
+        "speedReduceRate": 1
+      }
+    },
+    {
+      "id": -377,
+      "startNodeId": "na.59",
+      "endNodeId": "na.8",
+      "speed": 100,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ],
+      "custom": {
+        "dockingType": "distance",
+        "minLinearVel": 0.01,
+        "speedReduceRate": 2
+      }
+    },
+    {
+      "id": 378,
+      "startNodeId": "na.199",
+      "endNodeId": "na.200",
+      "speed": 1000
+    },
+    {
+      "id": -378,
+      "startNodeId": "na.200",
+      "endNodeId": "na.199",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 379,
+      "startNodeId": "na.200",
+      "endNodeId": "na.191",
+      "speed": 400
+    },
+    {
+      "id": -379,
+      "startNodeId": "na.191",
+      "endNodeId": "na.200",
+      "speed": 400,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 380,
+      "startNodeId": "na.195",
+      "endNodeId": "na.18",
+      "speed": 1000
+    },
+    {
+      "id": -380,
+      "startNodeId": "na.18",
+      "endNodeId": "na.195",
+      "speed": 1000
+    }
+  ],
+  "ports": [
+    {
+      "id": "S3001",
+      "kind": "Station",
+      "nodeId": "na.190",
+      "model": "OHT_AMRL_Station",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_L"
+        }
+      ]
+    },
+    {
+      "id": "S3002",
+      "kind": "Station",
+      "nodeId": "na.189",
+      "model": "OHT_AMRL_Station",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_L"
+        }
+      ]
+    },
+    {
+      "id": "S3007",
+      "kind": "Station",
+      "nodeId": "na.187",
+      "model": "OHT_AMRL_Station",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_L"
+        }
+      ]
+    },
+    {
+      "id": "S3008",
+      "kind": "Station",
+      "nodeId": "na.188",
+      "model": "OHT_AMRL_Station",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_L"
+        }
+      ]
+    },
+    {
+      "id": "S3101",
+      "kind": "Station",
+      "nodeId": "na.4",
+      "model": "3DS_AMRL",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_L"
+        }
+      ]
+    },
+    {
+      "id": "S3102",
+      "kind": "Station",
+      "nodeId": "na.5",
+      "model": "3DS_AMRCV",
+      "position": {
+        "x": 0,
+        "y": 1030,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_CV1"
+        },
+        {
+          "vehicleSlots": [
+            1
+          ],
+          "vehicleModel": "AMR_CV2"
+        }
+      ],
+      "useHandshake": true,
+      "custom": {
+        "useProductCheck": true,
+        "upperType": "conveyor",
+        "direction": "rear",
+        "pioId": "001109",
+        "pioChannel": "200"
+      },
+      "direction": "Out"
+    },
+    {
+      "id": "S3103",
+      "kind": "Station",
+      "nodeId": "na.9",
+      "model": "3DS_AMRCV",
+      "position": {
+        "x": 0,
+        "y": 1030,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_CV1"
+        },
+        {
+          "vehicleSlots": [
+            1
+          ],
+          "vehicleModel": "AMR_CV2"
+        }
+      ],
+      "useHandshake": true,
+      "custom": {
+        "useProductCheck": true,
+        "upperType": "conveyor",
+        "direction": "rear",
+        "pioId": "001110",
+        "pioChannel": "200"
+      },
+      "direction": "In"
+    },
+    {
+      "id": "S4101",
+      "kind": "Station",
+      "nodeId": "na.30",
+      "model": "AMR_CV1_Port",
+      "position": {
+        "x": 0,
+        "y": -770,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_CV1"
+        }
+      ],
+      "useHandshake": true,
+      "control": "Active",
+      "custom": {
+        "useProductCheck": true,
+        "upperType": "conveyor",
+        "direction": "rear",
+        "pioId": "004101",
+        "pioChannel": "200"
+      }
+    },
+    {
+      "id": "S4201",
+      "kind": "Station",
+      "nodeId": "na.11",
+      "model": "AMR_WS",
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_CV1"
+        }
+      ],
+      "control": "Active"
+    },
+    {
+      "id": "S4301",
+      "kind": "Station",
+      "nodeId": "na.13",
+      "model": "AMR_WS",
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_CV1"
+        }
+      ],
+      "control": "Active"
+    },
+    {
+      "id": "S4302",
+      "kind": "Station",
+      "nodeId": "na.15",
+      "model": "AMR_WS",
+      "slotMaps": [
+        {
+          "vehicleSlots": [
+            1
+          ],
+          "vehicleModel": "AMR_CV2"
+        }
+      ],
+      "control": "Active"
+    },
+    {
+      "id": "S4401",
+      "kind": "Station",
+      "nodeId": "na.56",
+      "model": "AMR_CV1_Port",
+      "position": {
+        "x": 0,
+        "y": 770,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_CV1"
+        }
+      ],
+      "useHandshake": true,
+      "control": "Active",
+      "custom": {
+        "useProductCheck": true,
+        "upperType": "conveyor",
+        "direction": "rear",
+        "pioId": "004401",
+        "pioChannel": "200"
+      }
+    },
+    {
+      "id": "S4402",
+      "kind": "Station",
+      "nodeId": "na.1",
+      "model": "AMR_CV1_Port",
+      "position": {
+        "x": -770,
+        "y": 0,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_CV1"
+        }
+      ],
+      "useHandshake": true,
+      "control": "Active",
+      "custom": {
+        "useProductCheck": true,
+        "upperType": "conveyor",
+        "direction": "rear",
+        "pioId": "004402",
+        "pioChannel": "200"
+      }
+    },
+    {
+      "id": "S4403",
+      "kind": "Station",
+      "nodeId": "na.57",
+      "model": "AMR_CV1_Port",
+      "position": {
+        "x": -770,
+        "y": 0,
+        "z": 650
+      },
+      "slotMaps": [
+        {
+          "vehicleModel": "AMR_CV1"
+        }
+      ],
+      "useHandshake": true,
+      "control": "Active",
+      "custom": {
+        "useProductCheck": true,
+        "upperType": "conveyor",
+        "direction": "rear",
+        "pioId": "004403",
+        "pioChannel": "200"
+      }
+    }
+  ],
+  "vehicleModels": [
+    {
+      "id": "AMR_CV1",
+      "dimension": {
+        "length": 780,
+        "width": 700,
+        "height": 650
+      },
+      "safetyMargin": {
+        "front": 70,
+        "rear": 80,
+        "left": 70,
+        "right": 70
+      }
+    }
+  ]
+}

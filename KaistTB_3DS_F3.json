@@ -1,0 +1,977 @@
+{
+  "schema": "xmsmap-v4.0",
+  "info": {
+    "name": "KaistTB_3DS_F3",
+    "version": "12.1"
+  },
+  "nodes": [
+    {
+      "id": "00000001",
+      "x": 1115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000002",
+      "x": 2115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000003",
+      "x": 3115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000004",
+      "x": 4115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000005",
+      "x": 5115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000006",
+      "x": 6115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000007",
+      "x": 7115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000008",
+      "x": 8115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000009",
+      "x": 9115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000010",
+      "x": 10115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000011",
+      "x": 1115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000012",
+      "x": 2115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000013",
+      "x": 3115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000014",
+      "x": 4115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000015",
+      "x": 5115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000016",
+      "x": 6115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000017",
+      "x": 7115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000018",
+      "x": 8115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000019",
+      "x": 9115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000020",
+      "x": 10115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000021",
+      "x": 11115,
+      "y": 13721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000022",
+      "x": 2115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000023",
+      "x": 3115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000024",
+      "x": 4115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000025",
+      "x": 5115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000026",
+      "x": 7115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000027",
+      "x": 8115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000028",
+      "x": 9115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000029",
+      "x": 10115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000030",
+      "x": 11115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "00000404",
+      "x": 11115,
+      "y": 14721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "nL1.3",
+      "x": 1115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    },
+    {
+      "id": "nL2.3",
+      "x": 6115,
+      "y": 12721,
+      "z": 1950,
+      "area": "3DS_F3"
+    }
+  ],
+  "segments": [
+    {
+      "id": 282,
+      "startNodeId": "00000012",
+      "endNodeId": "00000013",
+      "speed": 1000
+    },
+    {
+      "id": -282,
+      "startNodeId": "00000013",
+      "endNodeId": "00000012",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 283,
+      "startNodeId": "00000013",
+      "endNodeId": "00000014",
+      "speed": 1000
+    },
+    {
+      "id": -283,
+      "startNodeId": "00000014",
+      "endNodeId": "00000013",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 284,
+      "startNodeId": "00000014",
+      "endNodeId": "00000015",
+      "speed": 1000
+    },
+    {
+      "id": -284,
+      "startNodeId": "00000015",
+      "endNodeId": "00000014",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 285,
+      "startNodeId": "00000015",
+      "endNodeId": "00000016",
+      "speed": 1000
+    },
+    {
+      "id": -285,
+      "startNodeId": "00000016",
+      "endNodeId": "00000015",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 286,
+      "startNodeId": "00000016",
+      "endNodeId": "00000017",
+      "speed": 1000
+    },
+    {
+      "id": -286,
+      "startNodeId": "00000017",
+      "endNodeId": "00000016",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 287,
+      "startNodeId": "00000017",
+      "endNodeId": "00000018",
+      "speed": 1000
+    },
+    {
+      "id": -287,
+      "startNodeId": "00000018",
+      "endNodeId": "00000017",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 288,
+      "startNodeId": "00000018",
+      "endNodeId": "00000019",
+      "speed": 1000
+    },
+    {
+      "id": -288,
+      "startNodeId": "00000019",
+      "endNodeId": "00000018",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 289,
+      "startNodeId": "00000019",
+      "endNodeId": "00000020",
+      "speed": 1000
+    },
+    {
+      "id": -289,
+      "startNodeId": "00000020",
+      "endNodeId": "00000019",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 290,
+      "startNodeId": "00000020",
+      "endNodeId": "00000021",
+      "speed": 1000
+    },
+    {
+      "id": -290,
+      "startNodeId": "00000021",
+      "endNodeId": "00000020",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 291,
+      "startNodeId": "00000021",
+      "endNodeId": "00000030",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -291,
+      "startNodeId": "00000030",
+      "endNodeId": "00000021",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 292,
+      "startNodeId": "00000012",
+      "endNodeId": "00000011",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -292,
+      "startNodeId": "00000011",
+      "endNodeId": "00000012",
+      "speed": 1000
+    },
+    {
+      "id": 293,
+      "startNodeId": "00000011",
+      "endNodeId": "nL1.3",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -293,
+      "startNodeId": "nL1.3",
+      "endNodeId": "00000011",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 294,
+      "startNodeId": "00000001",
+      "endNodeId": "00000011",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -294,
+      "startNodeId": "00000011",
+      "endNodeId": "00000001",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 295,
+      "startNodeId": "00000404",
+      "endNodeId": "00000021",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -295,
+      "startNodeId": "00000021",
+      "endNodeId": "00000404",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 296,
+      "startNodeId": "00000010",
+      "endNodeId": "00000020",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -296,
+      "startNodeId": "00000020",
+      "endNodeId": "00000010",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 297,
+      "startNodeId": "00000020",
+      "endNodeId": "00000029",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -297,
+      "startNodeId": "00000029",
+      "endNodeId": "00000020",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 298,
+      "startNodeId": "00000009",
+      "endNodeId": "00000019",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -298,
+      "startNodeId": "00000019",
+      "endNodeId": "00000009",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 299,
+      "startNodeId": "00000019",
+      "endNodeId": "00000028",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -299,
+      "startNodeId": "00000028",
+      "endNodeId": "00000019",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 300,
+      "startNodeId": "00000008",
+      "endNodeId": "00000018",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -300,
+      "startNodeId": "00000018",
+      "endNodeId": "00000008",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 301,
+      "startNodeId": "00000018",
+      "endNodeId": "00000027",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -301,
+      "startNodeId": "00000027",
+      "endNodeId": "00000018",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 302,
+      "startNodeId": "00000007",
+      "endNodeId": "00000017",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -302,
+      "startNodeId": "00000017",
+      "endNodeId": "00000007",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 303,
+      "startNodeId": "00000017",
+      "endNodeId": "00000026",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -303,
+      "startNodeId": "00000026",
+      "endNodeId": "00000017",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 304,
+      "startNodeId": "00000006",
+      "endNodeId": "00000016",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -304,
+      "startNodeId": "00000016",
+      "endNodeId": "00000006",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 305,
+      "startNodeId": "00000016",
+      "endNodeId": "nL2.3",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -305,
+      "startNodeId": "nL2.3",
+      "endNodeId": "00000016",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 306,
+      "startNodeId": "00000005",
+      "endNodeId": "00000015",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -306,
+      "startNodeId": "00000015",
+      "endNodeId": "00000005",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 307,
+      "startNodeId": "00000015",
+      "endNodeId": "00000025",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -307,
+      "startNodeId": "00000025",
+      "endNodeId": "00000015",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 308,
+      "startNodeId": "00000004",
+      "endNodeId": "00000014",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -308,
+      "startNodeId": "00000014",
+      "endNodeId": "00000004",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 309,
+      "startNodeId": "00000014",
+      "endNodeId": "00000024",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -309,
+      "startNodeId": "00000024",
+      "endNodeId": "00000014",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 310,
+      "startNodeId": "00000003",
+      "endNodeId": "00000013",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -310,
+      "startNodeId": "00000013",
+      "endNodeId": "00000003",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 311,
+      "startNodeId": "00000013",
+      "endNodeId": "00000023",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -311,
+      "startNodeId": "00000023",
+      "endNodeId": "00000013",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 312,
+      "startNodeId": "00000002",
+      "endNodeId": "00000012",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -312,
+      "startNodeId": "00000012",
+      "endNodeId": "00000002",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 313,
+      "startNodeId": "00000012",
+      "endNodeId": "00000022",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -313,
+      "startNodeId": "00000022",
+      "endNodeId": "00000012",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    }
+  ],
+  "ports": [
+    {
+      "nodeId": "00000404"
+    },
+    {
+      "nodeId": "00000007"
+    },
+    {
+      "nodeId": "00000023"
+    },
+    {
+      "nodeId": "00000009"
+    },
+    {
+      "nodeId": "00000010"
+    },
+    {
+      "nodeId": "00000029"
+    },
+    {
+      "nodeId": "00000008"
+    },
+    {
+      "nodeId": "00000026"
+    },
+    {
+      "nodeId": "00000002"
+    },
+    {
+      "nodeId": "00000024"
+    },
+    {
+      "nodeId": "00000003"
+    },
+    {
+      "nodeId": "00000030"
+    },
+    {
+      "nodeId": "00000004"
+    },
+    {
+      "nodeId": "nL2.3"
+    },
+    {
+      "nodeId": "00000006"
+    },
+    {
+      "nodeId": "00000001"
+    },
+    {
+      "nodeId": "00000028"
+    },
+    {
+      "nodeId": "00000027"
+    },
+    {
+      "nodeId": "00000005"
+    },
+    {
+      "nodeId": "00000022"
+    },
+    {
+      "nodeId": "nL1.3"
+    },
+    {
+      "nodeId": "00000025"
+    }
+  ],
+  "vehicleModels": [
+    {
+      "id": "3DS",
+      "needRepNodeOnEntry": true,
+      "needRepNodeOnExit": true,
+      "initPositionConvertingMargin": 0,
+      "dimension": {
+        "length": 850,
+        "width": 850,
+        "height": 210
+      }
+    }
+  ]
+}

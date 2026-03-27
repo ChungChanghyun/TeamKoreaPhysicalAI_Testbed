@@ -1,0 +1,995 @@
+{
+  "schema": "xmsmap-v4.0",
+  "info": {
+    "name": "KaistTB_3DS_F1",
+    "version": "12.1"
+  },
+  "nodes": [
+    {
+      "id": "00000365",
+      "x": 1115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000366",
+      "x": 2115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000367",
+      "x": 3115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000368",
+      "x": 4115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000369",
+      "x": 5115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000370",
+      "x": 6115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000371",
+      "x": 7115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000372",
+      "x": 8115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000373",
+      "x": 9115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000374",
+      "x": 10115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000375",
+      "x": 11115,
+      "y": 13721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000376",
+      "x": 1115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000377",
+      "x": 2115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000378",
+      "x": 3115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000379",
+      "x": 4115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000380",
+      "x": 5115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000381",
+      "x": 6115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000382",
+      "x": 7115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000383",
+      "x": 8115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000384",
+      "x": 9115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000385",
+      "x": 10115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000386",
+      "x": 2115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000387",
+      "x": 4115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000388",
+      "x": 5115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000389",
+      "x": 7115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000391",
+      "x": 8115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000392",
+      "x": 11115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000402",
+      "x": 9115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1",
+      "homes": [
+        {
+          "priority": -1,
+          "groupId": 0
+        }
+      ]
+    },
+    {
+      "id": "00000403",
+      "x": 10115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1",
+      "homes": [
+        {
+          "priority": -1,
+          "groupId": 0
+        }
+      ]
+    },
+    {
+      "id": "00000406",
+      "x": 11115,
+      "y": 14721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "00000410",
+      "x": 3115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1",
+      "homes": [
+        {
+          "priority": -1,
+          "groupId": 0
+        }
+      ]
+    },
+    {
+      "id": "nL1.1",
+      "x": 1115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1"
+    },
+    {
+      "id": "nL2.1",
+      "x": 6115,
+      "y": 12721,
+      "z": 650,
+      "area": "3DS_F1"
+    }
+  ],
+  "segments": [
+    {
+      "id": 218,
+      "startNodeId": "00000366",
+      "endNodeId": "00000367",
+      "speed": 1000
+    },
+    {
+      "id": -218,
+      "startNodeId": "00000367",
+      "endNodeId": "00000366",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 219,
+      "startNodeId": "00000367",
+      "endNodeId": "00000368",
+      "speed": 1000
+    },
+    {
+      "id": -219,
+      "startNodeId": "00000368",
+      "endNodeId": "00000367",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 220,
+      "startNodeId": "00000368",
+      "endNodeId": "00000369",
+      "speed": 1000
+    },
+    {
+      "id": -220,
+      "startNodeId": "00000369",
+      "endNodeId": "00000368",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 221,
+      "startNodeId": "00000369",
+      "endNodeId": "00000370",
+      "speed": 1000
+    },
+    {
+      "id": -221,
+      "startNodeId": "00000370",
+      "endNodeId": "00000369",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 222,
+      "startNodeId": "00000370",
+      "endNodeId": "00000371",
+      "speed": 1000
+    },
+    {
+      "id": -222,
+      "startNodeId": "00000371",
+      "endNodeId": "00000370",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 223,
+      "startNodeId": "00000371",
+      "endNodeId": "00000372",
+      "speed": 1000
+    },
+    {
+      "id": -223,
+      "startNodeId": "00000372",
+      "endNodeId": "00000371",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 224,
+      "startNodeId": "00000372",
+      "endNodeId": "00000373",
+      "speed": 1000
+    },
+    {
+      "id": -224,
+      "startNodeId": "00000373",
+      "endNodeId": "00000372",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 225,
+      "startNodeId": "00000373",
+      "endNodeId": "00000374",
+      "speed": 1000
+    },
+    {
+      "id": -225,
+      "startNodeId": "00000374",
+      "endNodeId": "00000373",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 226,
+      "startNodeId": "00000374",
+      "endNodeId": "00000375",
+      "speed": 1000
+    },
+    {
+      "id": -226,
+      "startNodeId": "00000375",
+      "endNodeId": "00000374",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": 227,
+      "startNodeId": "00000375",
+      "endNodeId": "00000392",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -227,
+      "startNodeId": "00000392",
+      "endNodeId": "00000375",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 228,
+      "startNodeId": "00000366",
+      "endNodeId": "00000365",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 180
+        }
+      ]
+    },
+    {
+      "id": -228,
+      "startNodeId": "00000365",
+      "endNodeId": "00000366",
+      "speed": 1000
+    },
+    {
+      "id": 229,
+      "startNodeId": "00000365",
+      "endNodeId": "nL1.1",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -229,
+      "startNodeId": "nL1.1",
+      "endNodeId": "00000365",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 230,
+      "startNodeId": "00000376",
+      "endNodeId": "00000365",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -230,
+      "startNodeId": "00000365",
+      "endNodeId": "00000376",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 231,
+      "startNodeId": "00000406",
+      "endNodeId": "00000375",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -231,
+      "startNodeId": "00000375",
+      "endNodeId": "00000406",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 232,
+      "startNodeId": "00000385",
+      "endNodeId": "00000374",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -232,
+      "startNodeId": "00000374",
+      "endNodeId": "00000385",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 233,
+      "startNodeId": "00000374",
+      "endNodeId": "00000403",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -233,
+      "startNodeId": "00000403",
+      "endNodeId": "00000374",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 234,
+      "startNodeId": "00000384",
+      "endNodeId": "00000373",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -234,
+      "startNodeId": "00000373",
+      "endNodeId": "00000384",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 235,
+      "startNodeId": "00000373",
+      "endNodeId": "00000402",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -235,
+      "startNodeId": "00000402",
+      "endNodeId": "00000373",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 236,
+      "startNodeId": "00000383",
+      "endNodeId": "00000372",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -236,
+      "startNodeId": "00000372",
+      "endNodeId": "00000383",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 237,
+      "startNodeId": "00000372",
+      "endNodeId": "00000391",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -237,
+      "startNodeId": "00000391",
+      "endNodeId": "00000372",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 238,
+      "startNodeId": "00000382",
+      "endNodeId": "00000371",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -238,
+      "startNodeId": "00000371",
+      "endNodeId": "00000382",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 239,
+      "startNodeId": "00000371",
+      "endNodeId": "00000389",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -239,
+      "startNodeId": "00000389",
+      "endNodeId": "00000371",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 240,
+      "startNodeId": "00000381",
+      "endNodeId": "00000370",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -240,
+      "startNodeId": "00000370",
+      "endNodeId": "00000381",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 241,
+      "startNodeId": "00000370",
+      "endNodeId": "nL2.1",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -241,
+      "startNodeId": "nL2.1",
+      "endNodeId": "00000370",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 242,
+      "startNodeId": "00000380",
+      "endNodeId": "00000369",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -242,
+      "startNodeId": "00000369",
+      "endNodeId": "00000380",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 243,
+      "startNodeId": "00000369",
+      "endNodeId": "00000388",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -243,
+      "startNodeId": "00000388",
+      "endNodeId": "00000369",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 244,
+      "startNodeId": "00000379",
+      "endNodeId": "00000368",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -244,
+      "startNodeId": "00000368",
+      "endNodeId": "00000379",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 245,
+      "startNodeId": "00000368",
+      "endNodeId": "00000387",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -245,
+      "startNodeId": "00000387",
+      "endNodeId": "00000368",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 246,
+      "startNodeId": "00000378",
+      "endNodeId": "00000367",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -246,
+      "startNodeId": "00000367",
+      "endNodeId": "00000378",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 247,
+      "startNodeId": "00000367",
+      "endNodeId": "00000410",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -247,
+      "startNodeId": "00000410",
+      "endNodeId": "00000367",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 248,
+      "startNodeId": "00000377",
+      "endNodeId": "00000366",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -248,
+      "startNodeId": "00000366",
+      "endNodeId": "00000377",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    },
+    {
+      "id": 249,
+      "startNodeId": "00000366",
+      "endNodeId": "00000386",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": 90
+        }
+      ]
+    },
+    {
+      "id": -249,
+      "startNodeId": "00000386",
+      "endNodeId": "00000366",
+      "speed": 1000,
+      "heading": [
+        {
+          "degree": -90
+        }
+      ]
+    }
+  ],
+  "ports": [
+    {
+      "nodeId": "00000382"
+    },
+    {
+      "nodeId": "00000391"
+    },
+    {
+      "nodeId": "00000386"
+    },
+    {
+      "nodeId": "00000378"
+    },
+    {
+      "nodeId": "00000379"
+    },
+    {
+      "nodeId": "00000402"
+    },
+    {
+      "nodeId": "00000376"
+    },
+    {
+      "nodeId": "00000387"
+    },
+    {
+      "nodeId": "00000385"
+    },
+    {
+      "nodeId": "00000389"
+    },
+    {
+      "nodeId": "00000406"
+    },
+    {
+      "nodeId": "00000392"
+    },
+    {
+      "nodeId": "00000377"
+    },
+    {
+      "nodeId": "00000383"
+    },
+    {
+      "nodeId": "00000380"
+    },
+    {
+      "nodeId": "00000384"
+    },
+    {
+      "nodeId": "nL2.1"
+    },
+    {
+      "nodeId": "nL1.1"
+    },
+    {
+      "nodeId": "00000388"
+    },
+    {
+      "nodeId": "00000381"
+    },
+    {
+      "nodeId": "00000403"
+    },
+    {
+      "nodeId": "00000410"
+    }
+  ],
+  "vehicleModels": [
+    {
+      "id": "3DS",
+      "needRepNodeOnEntry": true,
+      "needRepNodeOnExit": true,
+      "initPositionConvertingMargin": 0,
+      "dimension": {
+        "length": 850,
+        "width": 850,
+        "height": 210
+      }
+    }
+  ]
+}

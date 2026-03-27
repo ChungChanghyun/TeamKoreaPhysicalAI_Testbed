@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+*.csv
+*.pdf
+*.png
+*.xlsx
+.idea/
+*.iml
+.vscode/
+venv/
+.venv/
+*.lock
+*.dat
+logs/
+collision_log.txt
+last_scenario.json
