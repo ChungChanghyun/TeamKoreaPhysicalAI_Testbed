@@ -833,6 +833,50 @@ class CombinedSimulator:
         print(f'{"="*80}\n')
         self._save_plan_snapshot('manual_dump')
 
+    def _dump_replan_history(self):
+        """D키에서 호출: 각 AGV의 마지막 replan 이력을 파일로 저장."""
+        if not hasattr(self, '_replan_history') or not self._replan_history:
+            print('[REPLAN HISTORY] No replan history recorded.')
+            return
+        log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+        os.makedirs(log_dir, exist_ok=True)
+        fpath = os.path.join(log_dir, 'replan_history.txt')
+        with open(fpath, 'w', encoding='utf-8') as f:
+            f.write(f'{"="*70}\n')
+            f.write(f'[REPLAN HISTORY] t={self.sim_time:.2f}s  {len(self._replan_history)} agents\n')
+            f.write(f'{"="*70}\n\n')
+            for aid in sorted(self._replan_history.keys()):
+                rec = self._replan_history[aid]
+                a = self.agv_env.agents.get(aid)
+                cur_info = ''
+                if a:
+                    cur_info = (f' (now: {a.state} path_idx={a.path_idx}/{len(a.raw_path)}'
+                                f' claim_idx={a.claim_idx})')
+                f.write(f'A{aid-100} planned at t={rec["time"]:.2f}s{cur_info}\n')
+                f.write(f'  done_ids={[d-100 for d in rec["done_ids"]]}\n')
+
+                # Active agents snapshot at plan time
+                f.write(f'  Active agents at plan time:\n')
+                for snap in rec['active_snapshot']:
+                    f.write(f'    A{snap["id"]-100} state={snap["state"]} '
+                            f'cur={snap["cur_sid"]} '
+                            f'path_idx={snap["path_idx"]}/{snap["total"]} '
+                            f'claim_idx={snap["claim_idx"]}\n')
+
+                # 전체 경로
+                f.write(f'  Full path ({len(rec["path"])} steps):\n')
+                for si in range(len(rec['path'])):
+                    sid, t = rec['path'][si]
+                    f.write(f'    [{si:3d}] {sid:<36s} t={t:.4f}\n')
+
+                # 전체 constraints (이 경로가 지나는 노드 관련)
+                f.write(f'  All relevant constraints ({len(rec["constraints"])}):\n')
+                for c in sorted(rec['constraints'], key=lambda x: x['timestep'][0]):
+                    f.write(f'    A{c["agent"]-100}: {c["loc"]}'
+                            f' [{c["timestep"][0]:.4f}, {c["timestep"][1]:.4f}]\n')
+                f.write(f'\n')
+        print(f'[REPLAN HISTORY] Saved to {fpath}')
+
     def _check_agv_collisions(self):
         """AGV 간 물리적 근접 감지 → collision_log.txt에 상세 정보 기록."""
         if not self.agv_agents:
@@ -904,6 +948,54 @@ class CombinedSimulator:
                     self._collision_log_f.write(msg + '\n')
                     self._collision_log_f.flush()
                     print(msg)
+
+                    # ── 첫 collision에서만 replan 이력 출력 + 자동 pause ──
+                    if self._collision_count == 1 and hasattr(self, '_replan_history'):
+                        for coll_aid in [ai.id, aj.id]:
+                            rec = self._replan_history.get(coll_aid)
+                            if rec is None:
+                                continue
+                            rpt = f'\n{"="*70}\n'
+                            rpt += f'[REPLAN TRACE] A{coll_aid-100} planned at t={rec["time"]:.2f}s\n'
+                            rpt += f'  done_ids={[d-100 for d in rec["done_ids"]]}\n'
+                            rpt += f'  Active agents at replan time:\n'
+                            for snap in rec['active_snapshot']:
+                                rpt += (f'    A{snap["id"]-100} state={snap["state"]} '
+                                        f'cur={snap["cur_sid"]} '
+                                        f'path_idx={snap["path_idx"]}/{snap["total"]} '
+                                        f'claim_idx={snap["claim_idx"]} '
+                                        f'pos=({snap["pos"][0]:.0f},{snap["pos"][1]:.0f})\n')
+                            # 충돌 노드 추출
+                            coll_nodes = set()
+                            for a_ in [ai, aj]:
+                                sid_ = a_.raw_path[a_.path_idx][0]
+                                p_ = sid_.split(',')
+                                if len(p_) >= 2: coll_nodes.add(p_[1])
+                                if len(p_) >= 3 and p_[0] == 'M': coll_nodes.add(p_[2])
+                            rpt += f'  New path (collision-node states only):\n'
+                            for si, (sid, t_) in enumerate(rec['path']):
+                                p_ = sid.split(',')
+                                sn = set()
+                                if len(p_) >= 2: sn.add(p_[1])
+                                if len(p_) >= 3 and p_[0] == 'M': sn.add(p_[2])
+                                if sn & coll_nodes:
+                                    rpt += f'    [{si:3d}] {sid:<36s} t={t_:.4f}\n'
+                            rpt += f'  Constraints on collision nodes ({len(rec["constraints"])}):\n'
+                            for c_ in sorted(rec['constraints'], key=lambda x: x['timestep'][0]):
+                                p_ = c_['loc'].split(',')
+                                cn = set()
+                                if len(p_) >= 2: cn.add(p_[1])
+                                if len(p_) >= 3 and p_[0] == 'M': cn.add(p_[2])
+                                if cn & coll_nodes:
+                                    rpt += (f'    A{c_["agent"]-100}: {c_["loc"]} '
+                                            f'[{c_["timestep"][0]:.2f}, {c_["timestep"][1]:.2f}]\n')
+                            rpt += '='*70
+                            print(rpt)
+                            self._collision_log_f.write(rpt + '\n')
+                            self._collision_log_f.flush()
+                        # 자동 pause
+                        self.running = False
+                        self._plan_status = 'PAUSED — collision detected'
 
     def _replan_done_agvs(self, sim_time: float):
         """Incrementally replan finished AGVs. Active agents' TAPG is untouched."""
@@ -1029,6 +1121,50 @@ class CombinedSimulator:
             self._plan_status = 'Replan FAILED'
             self._agv_pending_replan.clear()
             return
+
+        # ── DEBUG: replan 이력을 메모리에 저장 (collision 시 출력) ──
+        if not hasattr(self, '_replan_history'):
+            self._replan_history = {}  # agent_id → latest replan record
+        for aid, new_path in result.paths.items():
+            # 이 agent의 새 경로에서 지나는 노드 수집
+            path_nodes = set()
+            for sid, t in new_path:
+                parts = sid.split(',')
+                if len(parts) >= 2: path_nodes.add(parts[1])
+                if len(parts) >= 3 and parts[0] == 'M': path_nodes.add(parts[2])
+
+            # 활동 에이전트 스냅샷
+            active_snapshot = []
+            for a in self.agv_agents:
+                if a.id in done_ids or a.path_idx >= len(a.raw_path):
+                    continue
+                cur_sid = a.raw_path[a.path_idx][0]
+                active_snapshot.append({
+                    'id': a.id, 'state': a.state, 'cur_sid': cur_sid,
+                    'path_idx': a.path_idx, 'total': len(a.raw_path),
+                    'claim_idx': a.claim_idx,
+                    'pos': (a.x, a.y),
+                })
+
+            # constraint 중 이 경로가 지나는 노드에 해당하는 것만 필터
+            relevant_constraints = []
+            for c in all_constraints:
+                loc = c['loc']
+                parts = loc.split(',')
+                c_nodes = set()
+                if len(parts) >= 2: c_nodes.add(parts[1])
+                if len(parts) >= 3 and parts[0] == 'M': c_nodes.add(parts[2])
+                if c_nodes & path_nodes:
+                    relevant_constraints.append(c)
+
+            self._replan_history[aid] = {
+                'time': sim_time,
+                'done_ids': list(done_ids),
+                'path': new_path,
+                'path_nodes': path_nodes,
+                'active_snapshot': active_snapshot,
+                'constraints': relevant_constraints,
+            }
 
         # 5) Update goals & extend TAPG — batch all new paths at once
         for aid, goal in new_goals.items():
@@ -1176,6 +1312,7 @@ class CombinedSimulator:
                     self._shuffle()
                 elif k == pygame.K_d:
                     self._dump_agv_status()
+                    self._dump_replan_history()
                 elif k == pygame.K_o:
                     self._add_oht()
                 elif k == pygame.K_l:

@@ -213,9 +213,18 @@ class PklPrioritizedPlanner:
         start_t = cur_time + cost   # S: cost=0, M/R: traversal time
         end_t = interval[1]
 
+        # 현재 상태의 노드 추출 (같은 노드 내 전이 판별용)
+        cur_node = self._node_of_state(state_id)
+
         for neighbor in state.next_state:
             # goal node면 end_t를 inf로 (목적지에서 무한 대기 가능)
             local_end = float('inf') if self._is_stop_at_node(neighbor, goal_node) else end_t
+
+            # M→S, R→S 전이: 이미 해당 노드에 도착/존재하므로 arrive 지연 불가
+            # safe interval이 start_t를 포함하지 않으면 사용 불가
+            # S→M, S→R 전이: S에서 대기 후 출발 가능하므로 제약 없음
+            must_arrive_now = (state_id.startswith(('M,', 'R,'))
+                               and neighbor.startswith('S,'))
 
             # neighbor의 safe intervals: 부모 interval 범위 내에서 계산
             blocked = c_table.get(neighbor, [])
@@ -225,9 +234,22 @@ class PklPrioritizedPlanner:
                 if si[0] > local_end or si[1] <= start_t:
                     continue
                 arrive = max(start_t, si[0])
+
+                # M→S, R→S: 도착 시점을 늦출 수 없음
+                if must_arrive_now and arrive > start_t + 1e-6:
+                    continue
+
                 successors.append(SIPPNode(neighbor, arrive, arrive, si))
 
         return successors
+
+    @staticmethod
+    def _node_of_state(state_id: str) -> Optional[str]:
+        """state_id에서 노드 ID 추출. S,node,angle → node / R,node,a,b → node / M,from,to → None"""
+        parts = state_id.split(',')
+        if parts[0] in ('S', 'R') and len(parts) >= 2:
+            return parts[1]
+        return None  # M 상태는 두 노드 간 이동이므로 same-node 판별 대상 아님
 
     def _is_goal_constrained(self, state_id, t, c_table):
         for ts, te in c_table.get(state_id, []):
