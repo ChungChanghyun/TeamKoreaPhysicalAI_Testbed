@@ -1,5 +1,5 @@
 """
-vis_combined.py — OHT + AGV 통합 시뮬레이터 (KaistTB map)
+vis_combined.py -OHT + AGV 통합 시뮬레이터 (KaistTB map)
 
 OHT: OHT_A 서브네트워크, OHTEnvironmentDES (세그먼트 큐 + 전방감지)
 AGV: AMR_A PklMapGraph, PklPrioritizedPlanner + TAPGEnvironment (SIPP + TAPG DAG)
@@ -346,7 +346,7 @@ class CombinedSimulator:
 
         pygame.init()
         self.screen = pygame.display.set_mode((WIN_W, WIN_H), pygame.RESIZABLE)
-        pygame.display.set_caption('OHT + AGV Combined Simulator — KaistTB')
+        pygame.display.set_caption('OHT + AGV Combined Simulator -KaistTB')
         self.clock  = pygame.time.Clock()
         self.font_s = pygame.font.SysFont('Consolas', 12)
         self.font_m = pygame.font.SysFont('Consolas', 14)
@@ -401,7 +401,7 @@ class CombinedSimulator:
                 os.path.dirname(os.path.abspath(__file__)),
                 f'KaistTB_{fid}.pkl')
             if not os.path.exists(pkl_path):
-                print(f'[WARN] {pkl_path} not found — run gen_3ds_pkl.py first')
+                print(f'[WARN] {pkl_path} not found -run gen_3ds_pkl.py first')
                 continue
 
             # PklMapGraph (정밀 collision profile)
@@ -463,7 +463,7 @@ class CombinedSimulator:
         with open(JSON_FILE, 'r', encoding='utf-8') as f:
             jdata = _json.load(f)
 
-        # 독립 힙 (3DS TAPG 힙과 별도 — 엘리베이터는 시간 기반 DES)
+        # 독립 힙 (3DS TAPG 힙과 별도 -엘리베이터는 시간 기반 DES)
         self._lift_heap = []
         self.lift_ctrl = ElevatorController(self._lift_heap)
 
@@ -506,7 +506,7 @@ class CombinedSimulator:
                 lift = self.lift_ctrl.get_lift(lid)
 
     def _replan_3ds_floor(self, fid: str, sim_time: float):
-        """한 층의 DONE 셔틀을 순차 replan — 한 대씩 계획 후 constraint 추가."""
+        """한 층의 DONE 셔틀을 순차 replan -한 대씩 계획 후 constraint 추가."""
         fd = self.s3d_floor_data[fid]
         planner = fd['planner']
         tapg_env = fd['env']
@@ -995,7 +995,7 @@ class CombinedSimulator:
                             self._collision_log_f.flush()
                         # 자동 pause
                         self.running = False
-                        self._plan_status = 'PAUSED — collision detected'
+                        self._plan_status = 'PAUSED -collision detected'
 
     def _replan_done_agvs(self, sim_time: float):
         """Incrementally replan finished AGVs. Active agents' TAPG is untouched."""
@@ -1166,7 +1166,7 @@ class CombinedSimulator:
                 'constraints': relevant_constraints,
             }
 
-        # 5) Update goals & extend TAPG — batch all new paths at once
+        # 5) Update goals & extend TAPG -batch all new paths at once
         for aid, goal in new_goals.items():
             self._agv_goals[aid] = goal
 
@@ -1401,9 +1401,9 @@ class CombinedSimulator:
                         excluded |= self.oht_map.nearby_nodes(start, self.oht_map.h_min)
                         self.oht_env.reassign(a, path, self.sim_time)
                         break
-        # AGV — replan with new port destinations
+        # AGV -replan with new port destinations
         self._plan_agv_paths(self.sim_time)
-        # 3DS — reinit (re-plan all floors)
+        # 3DS -reinit (re-plan all floors)
         self.s3d_agents = []
         self._init_3ds()
 
@@ -1487,7 +1487,7 @@ class CombinedSimulator:
                 continue
             a1 = n1.get('area', '')
             a2 = n2.get('area', '')
-            # skip OHT_A and AMR_A — drawn separately with detail
+            # skip OHT_A and AMR_A -drawn separately with detail
             if a1 in ('OHT_A', 'AMR_A') or a2 in ('OHT_A', 'AMR_A'):
                 continue
             p1 = self.cam.to_screen(n1['x'], n1['y'])
@@ -1533,7 +1533,7 @@ class CombinedSimulator:
         """Draw elevator shafts connecting 3DS floor gate nodes."""
         import json as _json
         if not hasattr(self, '_lift_gate_cache'):
-            # 캐시: lift별 [(floor_id, gate_node_id)] — offset 적용된 좌표
+            # 캐시: lift별 [(floor_id, gate_node_id)] -offset 적용된 좌표
             with open(JSON_FILE, 'r', encoding='utf-8') as f:
                 jdata = _json.load(f)
             self._lift_gate_cache = []
@@ -1722,18 +1722,18 @@ class CombinedSimulator:
 
     def _draw_agents(self, ww, wh):
         """Draw all OHT + AGV + 3DS agents."""
-        # Goal lines (dashed) — 먼저 그려서 차량 아래에
+        # Goal lines (dashed) -먼저 그려서 차량 아래에
         self._draw_goal_lines(ww, wh)
 
-        # 3DS shuttles (draw first — background layer)
+        # 3DS shuttles (draw first -background layer)
         self._draw_3ds_agents(ww, wh)
 
-        # OHT vehicles (longer, narrower — overhead rail)
+        # OHT vehicles (longer, narrower -overhead rail)
         oht_len = max(self.oht_map.vehicle_length * self.cam.scale, 10.0)
         oht_wid = max(self.oht_map.vehicle_width  * self.cam.scale,  5.0)
         self._draw_oht_agents(oht_len, oht_wid, ww, wh)
 
-        # AGV vehicles (squarish — ground robot)
+        # AGV vehicles (squarish -ground robot)
         agv_len = max(self.amr_graph.vehicle_length * self.cam.scale, 8.0)
         agv_wid = max(self.amr_graph.vehicle_width  * self.cam.scale, 8.0)
         self._draw_agv_agents(agv_len, agv_wid, ww, wh)
@@ -1833,8 +1833,8 @@ class CombinedSimulator:
 
     def _draw_agv_agents(self, v_len, v_wid, ww, wh):
         """Draw AGV agents (TAPG states: idle/moving/rotating/waiting/done)."""
-        COL_AGV_WAITING  = (255, 165, 0)   # orange — TAPG dependency wait
-        COL_AGV_ROTATING = (255, 220, 60)  # yellow — in-place rotation
+        COL_AGV_WAITING  = (255, 165, 0)   # orange -TAPG dependency wait
+        COL_AGV_ROTATING = (255, 220, 60)  # yellow -in-place rotation
         for a in self.agv_agents:
             sx, sy = self.cam.to_screen(a.x, a.y)
             if sx < -50 or sx > ww+50 or sy < -50 or sy > wh+50:
