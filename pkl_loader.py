@@ -33,6 +33,18 @@ def _load_pkl(filepath: str) -> dict:
         __main__.Point     = Point
         __main__.PointType = PointType
         __main__.Direction = Direction
+
+        # pkl이 Generalized_251012_Affect_state 모듈로 직렬화된 경우 대응
+        import types
+        for mod_name in ('Generalized_251012_Affect_state',
+                         'Generalized_251012_Affect_state_no_rot'):
+            if mod_name not in sys.modules:
+                fake = types.ModuleType(mod_name)
+                fake.State     = State
+                fake.Point     = Point
+                fake.PointType = PointType
+                fake.Direction = Direction
+                sys.modules[mod_name] = fake
     except ImportError as e:
         raise ImportError(f"Cannot import solver State class: {e}")
 
