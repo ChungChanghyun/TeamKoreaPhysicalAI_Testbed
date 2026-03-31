@@ -11,6 +11,7 @@ venv/
 .venv/
 *.lock
 *.dat
+*.log
 logs/
 collision_log.txt
 last_scenario.json
