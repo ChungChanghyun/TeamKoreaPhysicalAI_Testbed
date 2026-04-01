@@ -45,6 +45,68 @@ EV_BOUNDARY   = 'BOUNDARY'    # reached braking point before plan boundary
 
 # ── Kinematics helper ────────────────────────────────────────────────────────
 
+def _time_to_boundary_during_accel(v0: float, a_acc: float, d_max: float,
+                                   dist: float, v_max: float) -> float:
+    """Time at which braking must begin to stop at `dist`, while accelerating.
+
+    Vehicle is accelerating at a_acc from v0. We need to find the time t₁
+    at which to switch to deceleration (-d_max) so that the vehicle stops
+    exactly at distance `dist`.
+
+    Triangular profile: accel(a_acc) for t₁, then decel(-d_max) to v=0.
+      v_peak = v0 + a_acc * t₁  (capped at v_max)
+      accel_dist = v0*t₁ + 0.5*a_acc*t₁²
+      brake_dist = v_peak² / (2*d_max)
+      accel_dist + brake_dist = dist
+
+    Substituting v_peak = v0 + a_acc*t₁:
+      v0*t₁ + 0.5*a_acc*t₁² + (v0 + a_acc*t₁)² / (2*d_max) = dist
+
+    This is a quadratic in t₁:
+      (0.5*a_acc + a_acc²/(2*d_max)) * t₁²
+      + (v0 + a_acc*v0/d_max) * t₁
+      + (v0²/(2*d_max) - dist) = 0
+
+    Returns time t₁ (from now) or inf if impossible.
+    """
+    if dist <= 0:
+        return 0.0
+    # Check if already need to brake (current brake_dist >= dist)
+    if v0 * v0 / (2 * d_max) >= dist:
+        return 0.0
+
+    # Quadratic coefficients: A*t² + B*t + C = 0
+    A = 0.5 * a_acc + a_acc * a_acc / (2 * d_max)
+    B = v0 + a_acc * v0 / d_max
+    C = v0 * v0 / (2 * d_max) - dist
+
+    disc = B * B - 4 * A * C
+    if disc < 0:
+        return float('inf')
+
+    t1 = (-B + math.sqrt(disc)) / (2 * A)
+    if t1 < 0:
+        return 0.0
+
+    # Check v_max cap: if v_peak would exceed v_max, use trapezoidal profile
+    v_peak = v0 + a_acc * t1
+    if v_peak > v_max:
+        # Time to reach v_max
+        t_accel = (v_max - v0) / a_acc
+        d_accel = v0 * t_accel + 0.5 * a_acc * t_accel ** 2
+        d_brake = v_max * v_max / (2 * d_max)
+        d_cruise_needed = dist - d_accel - d_brake
+        if d_cruise_needed < 0:
+            # Can't reach v_max and still stop — original t1 was correct
+            # but capped scenario means we brake earlier
+            return t1
+        # Cruise phase at v_max, then brake
+        t_cruise = d_cruise_needed / v_max
+        return t_accel + t_cruise
+
+    return t1
+
+
 def _time_to_travel(v0: float, acc: float, dist: float, v_max: float) -> float:
     if dist <= 0:
         return 0.0
@@ -406,32 +468,6 @@ class GraphDESv6:
             if self._zone_lock.get(lock_id) is v:
                 self._zone_release(t, lock_id)
 
-        # ZCU entrance check: if we just arrived at a boundary node,
-        # we must acquire the lock before proceeding (SEG_END can
-        # reach the boundary before BOUNDARY event fires).
-        if arrived_node in self._boundary_nodes and \
-           arrived_node not in v.passed_zcu:
-            zones = self._relevant_zones(v, arrived_node)
-            if zones:
-                all_granted = True
-                denied_lock_id = None
-                for zone, lock_id in zones:
-                    if not self._zone_request(v, lock_id):
-                        all_granted = False
-                        denied_lock_id = lock_id
-                        break
-                if all_granted:
-                    v.passed_zcu.add(arrived_node)
-                    # Continue to replan normally
-                else:
-                    # Must stop here and wait
-                    v.vel = 0.0
-                    v.acc = 0.0
-                    v.state = STOP
-                    self._pin_marker_at_dist(v, 0)
-                    self._zone_wait(v, denied_lock_id)
-                    return
-
         if v.needs_path_extension():
             ext = random_safe_path(self.gmap, v.path[-1], length=100)
             v.extend_path(ext)
@@ -685,29 +721,35 @@ class GraphDESv6:
                 best_t = t + t_phase
                 best_kind = EV_PHASE_DONE
 
-        # 3. Plan boundary approach (cruise only)
-        if not accel_phase:
-            if plan_boundary < 100000:
+        # 3. Plan boundary approach — works during BOTH accel and cruise
+        if plan_boundary < 100000:
+            if accel_phase:
+                # Triangular/trapezoidal profile: exact time to start braking
+                t_boundary = _time_to_boundary_during_accel(
+                    v.vel, v.acc, v.d_max, plan_boundary, v.v_max)
+            else:
+                # Cruise: linear approach
                 brake_d = v.braking_distance()
                 approach_dist = max(0, plan_boundary - brake_d)
-                if approach_dist > 0 and v.vel > 0:
-                    t_approach = approach_dist / v.vel
-                else:
-                    t_approach = 0.01
-                if t + t_approach < best_t:
-                    best_t = t + t_approach
-                    best_kind = EV_BOUNDARY
+                t_boundary = (approach_dist / v.vel) if v.vel > 0 else 0.01
 
-            if dist_to_slow < 100000:
-                brake_d = v.braking_distance()
-                approach_dist = max(0, dist_to_slow - brake_d - 500)
-                if approach_dist > 0 and v.vel > 0:
-                    t_slow = approach_dist / v.vel
-                else:
-                    t_slow = 0.01
-                if t + t_slow < best_t:
-                    best_t = t + t_slow
-                    best_kind = EV_REPLAN
+            if t_boundary < 0.001:
+                t_boundary = 0.01
+            if t + t_boundary < best_t:
+                best_t = t + t_boundary
+                best_kind = EV_BOUNDARY
+
+        # 4. Slow segment approach (curve braking) — cruise only
+        if not accel_phase and dist_to_slow < 100000:
+            brake_d = v.braking_distance()
+            approach_dist = max(0, dist_to_slow - brake_d - 500)
+            if approach_dist > 0 and v.vel > 0:
+                t_slow = approach_dist / v.vel
+            else:
+                t_slow = 0.01
+            if t + t_slow < best_t:
+                best_t = t + t_slow
+                best_kind = EV_REPLAN
 
         if best_t <= t + 0.005:
             best_t = t + 0.01
