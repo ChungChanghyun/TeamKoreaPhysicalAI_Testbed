@@ -395,15 +395,42 @@ class GraphDESv6:
         new_key = (v.seg_from, v.seg_to)
         self._update_occupancy(v, old_key, new_key, t)
 
+        arrived_node = v.seg_from
+
         # Clear passed_zcu for crossed boundary nodes
         if v.passed_zcu:
-            v.passed_zcu.discard(v.seg_from)
+            v.passed_zcu.discard(arrived_node)
 
         # ZCU exit: release locks where this node is an exit point
-        arrived_node = v.seg_from
         for zone, lock_id in self._exit_to_zones.get(arrived_node, []):
             if self._zone_lock.get(lock_id) is v:
                 self._zone_release(t, lock_id)
+
+        # ZCU entrance check: if we just arrived at a boundary node,
+        # we must acquire the lock before proceeding (SEG_END can
+        # reach the boundary before BOUNDARY event fires).
+        if arrived_node in self._boundary_nodes and \
+           arrived_node not in v.passed_zcu:
+            zones = self._relevant_zones(v, arrived_node)
+            if zones:
+                all_granted = True
+                denied_lock_id = None
+                for zone, lock_id in zones:
+                    if not self._zone_request(v, lock_id):
+                        all_granted = False
+                        denied_lock_id = lock_id
+                        break
+                if all_granted:
+                    v.passed_zcu.add(arrived_node)
+                    # Continue to replan normally
+                else:
+                    # Must stop here and wait
+                    v.vel = 0.0
+                    v.acc = 0.0
+                    v.state = STOP
+                    self._pin_marker_at_dist(v, 0)
+                    self._zone_wait(v, denied_lock_id)
+                    return
 
         if v.needs_path_extension():
             ext = random_safe_path(self.gmap, v.path[-1], length=100)
