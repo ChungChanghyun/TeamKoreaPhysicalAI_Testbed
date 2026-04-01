@@ -1,0 +1,2122 @@
+{
+  "nodes": [
+    {
+      "id": "T0_g0_0",
+      "location": [
+        1661.6666768650662,
+        1086.7529942611754
+      ]
+    },
+    {
+      "id": "T0_g0_1",
+      "location": [
+        1661.6666768650662,
+        1106.7529942611754
+      ]
+    },
+    {
+      "id": "T0_g1_0",
+      "location": [
+        1681.6666768650662,
+        1086.7529942611754
+      ]
+    },
+    {
+      "id": "T0_g1_1",
+      "location": [
+        1681.6666768650662,
+        1106.7529942611754
+      ]
+    },
+    {
+      "id": "T2_g0_0",
+      "location": [
+        2263.884886406919,
+        1079.6013613762943
+      ]
+    },
+    {
+      "id": "T2_g0_1",
+      "location": [
+        2263.884886406919,
+        1099.6013613762943
+      ]
+    },
+    {
+      "id": "T2_g1_0",
+      "location": [
+        2283.884886406919,
+        1079.6013613762943
+      ]
+    },
+    {
+      "id": "T2_g1_1",
+      "location": [
+        2283.884886406919,
+        1099.6013613762943
+      ]
+    },
+    {
+      "id": "T6_g0_0",
+      "location": [
+        921.6666683449959,
+        687.3079653703941
+      ]
+    },
+    {
+      "id": "T6_g0_1",
+      "location": [
+        921.6666683449959,
+        707.3079653703941
+      ]
+    },
+    {
+      "id": "T6_g1_0",
+      "location": [
+        941.6666683449959,
+        687.3079653703941
+      ]
+    },
+    {
+      "id": "T6_g1_1",
+      "location": [
+        941.6666683449959,
+        707.3079653703941
+      ]
+    },
+    {
+      "id": "T6_g2_0",
+      "location": [
+        961.6666683449959,
+        687.3079653703941
+      ]
+    },
+    {
+      "id": "T6_g2_1",
+      "location": [
+        961.6666683449959,
+        707.3079653703941
+      ]
+    },
+    {
+      "id": "T7_g0_0",
+      "location": [
+        1621.3333144229969,
+        691.2088882925037
+      ]
+    },
+    {
+      "id": "T7_g0_1",
+      "location": [
+        1621.3333144229969,
+        711.2088882925037
+      ]
+    },
+    {
+      "id": "T7_g1_0",
+      "location": [
+        1641.3333144229969,
+        691.2088882925037
+      ]
+    },
+    {
+      "id": "T7_g1_1",
+      "location": [
+        1641.3333144229969,
+        711.2088882925037
+      ]
+    },
+    {
+      "id": "T9_g0_0",
+      "location": [
+        2050.12158808933,
+        1080.5042702720136
+      ]
+    },
+    {
+      "id": "T9_g0_1",
+      "location": [
+        2050.12158808933,
+        1100.5042702720136
+      ]
+    },
+    {
+      "id": "T10_g0_0",
+      "location": [
+        267.1342491868619,
+        1092.7935380904378
+      ]
+    },
+    {
+      "id": "T10_g0_1",
+      "location": [
+        267.1342491868619,
+        1112.7935380904378
+      ]
+    },
+    {
+      "id": "T10_g1_0",
+      "location": [
+        287.1342491868619,
+        1092.7935380904378
+      ]
+    },
+    {
+      "id": "T10_g1_1",
+      "location": [
+        287.1342491868619,
+        1112.7935380904378
+      ]
+    },
+    {
+      "id": "T11_g0_0",
+      "location": [
+        1116.888888888889,
+        689.4773171728375
+      ]
+    },
+    {
+      "id": "T11_g0_1",
+      "location": [
+        1116.888888888889,
+        709.4773171728375
+      ]
+    },
+    {
+      "id": "T13_g0_0",
+      "location": [
+        1661.6666765147518,
+        838.0285954852668
+      ]
+    },
+    {
+      "id": "T13_g0_1",
+      "location": [
+        1661.6666765147518,
+        858.0285954852668
+      ]
+    },
+    {
+      "id": "T13_g1_0",
+      "location": [
+        1681.6666765147518,
+        838.0285954852668
+      ]
+    },
+    {
+      "id": "T13_g1_1",
+      "location": [
+        1681.6666765147518,
+        858.0285954852668
+      ]
+    },
+    {
+      "id": "T14_g0_0",
+      "location": [
+        921.6666686098014,
+        1088.9114572628441
+      ]
+    },
+    {
+      "id": "T14_g0_1",
+      "location": [
+        921.6666686098014,
+        1108.9114572628441
+      ]
+    },
+    {
+      "id": "T14_g1_0",
+      "location": [
+        941.6666686098014,
+        1088.9114572628441
+      ]
+    },
+    {
+      "id": "T14_g1_1",
+      "location": [
+        941.6666686098014,
+        1108.9114572628441
+      ]
+    },
+    {
+      "id": "T14_g2_0",
+      "location": [
+        961.6666686098014,
+        1088.9114572628441
+      ]
+    },
+    {
+      "id": "T14_g2_1",
+      "location": [
+        961.6666686098014,
+        1108.9114572628441
+      ]
+    },
+    {
+      "id": "T15_g0_0",
+      "location": [
+        1886.5130156883224,
+        1084.3669665413133
+      ]
+    },
+    {
+      "id": "T15_g0_1",
+      "location": [
+        1886.5130156883224,
+        1104.3669665413133
+      ]
+    },
+    {
+      "id": "T16_g0_0",
+      "location": [
+        1945.77003806607,
+        1082.1757996010451
+      ]
+    },
+    {
+      "id": "T16_g0_1",
+      "location": [
+        1945.77003806607,
+        1102.1757996010451
+      ]
+    },
+    {
+      "id": "T17_g0_0",
+      "location": [
+        267.1342491868621,
+        681.4367278079685
+      ]
+    },
+    {
+      "id": "T17_g0_1",
+      "location": [
+        267.1342491868621,
+        701.4367278079685
+      ]
+    },
+    {
+      "id": "T17_g1_0",
+      "location": [
+        287.1342491868621,
+        681.4367278079685
+      ]
+    },
+    {
+      "id": "T17_g1_1",
+      "location": [
+        287.1342491868621,
+        701.4367278079685
+      ]
+    },
+    {
+      "id": "T18_g0_0",
+      "location": [
+        357.4072439273053,
+        682.0888762333258
+      ]
+    },
+    {
+      "id": "T18_g0_1",
+      "location": [
+        357.4072439273053,
+        702.0888762333258
+      ]
+    },
+    {
+      "id": "Port1_g0_0",
+      "location": [
+        563.0943396226415,
+        683.363705060097
+      ]
+    },
+    {
+      "id": "Port1_g0_1",
+      "location": [
+        563.0943396226415,
+        703.363705060097
+      ]
+    },
+    {
+      "id": "Port2_g0_0",
+      "location": [
+        870.056394117632,
+        685.1690322812135
+      ]
+    },
+    {
+      "id": "Port2_g0_1",
+      "location": [
+        870.056394117632,
+        705.1690322812135
+      ]
+    },
+    {
+      "id": "Port3_g0_0",
+      "location": [
+        921.6666684273792,
+        850.1356546425626
+      ]
+    },
+    {
+      "id": "Port3_g1_0",
+      "location": [
+        941.6666684273792,
+        850.1356546425626
+      ]
+    },
+    {
+      "id": "Port3_g2_0",
+      "location": [
+        961.6666684273792,
+        850.1356546425626
+      ]
+    },
+    {
+      "id": "Port4_g0_0",
+      "location": [
+        921.6666685353662,
+        980.6510272797741
+      ]
+    },
+    {
+      "id": "Port4_g1_0",
+      "location": [
+        941.6666685353662,
+        980.6510272797741
+      ]
+    },
+    {
+      "id": "Port4_g2_0",
+      "location": [
+        961.6666685353662,
+        980.6510272797741
+      ]
+    },
+    {
+      "id": "Port5_g0_0",
+      "location": [
+        666.7053834169984,
+        1091.8969224396556
+      ]
+    },
+    {
+      "id": "Port5_g0_1",
+      "location": [
+        666.7053834169984,
+        1111.8969224396556
+      ]
+    },
+    {
+      "id": "Port6_g0_0",
+      "location": [
+        1621.3333144230014,
+        557.0074692499758
+      ]
+    },
+    {
+      "id": "Port6_g1_0",
+      "location": [
+        1641.3333144230014,
+        557.0074692499758
+      ]
+    },
+    {
+      "id": "Port8_g0_0",
+      "location": [
+        1613.6666666666667,
+        838.0285954852665
+      ]
+    },
+    {
+      "id": "Port8_g0_1",
+      "location": [
+        1613.6666666666667,
+        858.0285954852665
+      ]
+    },
+    {
+      "id": "Port9_g0_0",
+      "location": [
+        1661.6666766754117,
+        975.5673435029702
+      ]
+    },
+    {
+      "id": "Port9_g1_0",
+      "location": [
+        1681.6666766754117,
+        975.5673435029702
+      ]
+    },
+    {
+      "id": "Port1",
+      "location": [
+        563.5251279117932,
+        655.3894301296176
+      ]
+    },
+    {
+      "id": "Port2",
+      "location": [
+        869.9215372479657,
+        654.404232671945
+      ]
+    },
+    {
+      "id": "Port3",
+      "location": [
+        903.4680236814035,
+        850.0535255976131
+      ]
+    },
+    {
+      "id": "Port4",
+      "location": [
+        905.4658399259872,
+        980.9104896178462
+      ]
+    },
+    {
+      "id": "Port5",
+      "location": [
+        668.0,
+        1148.0
+      ]
+    },
+    {
+      "id": "Port6",
+      "location": [
+        1663.0796721412587,
+        556.9543520622159
+      ]
+    },
+    {
+      "id": "Port7",
+      "location": [
+        1665.224785222043,
+        690.289806775553
+      ]
+    },
+    {
+      "id": "Port8",
+      "location": [
+        1587.9970030080592,
+        838.5064430552046
+      ]
+    },
+    {
+      "id": "Port9",
+      "location": [
+        1607.0,
+        976.0
+      ]
+    },
+    {
+      "id": "Port10",
+      "location": [
+        2283.473213833137,
+        1054.4143579639338
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "T0_g0_0_to_T0_g1_0",
+      "start": "T0_g0_0",
+      "end": "T0_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T0_g1_0_to_T0_g0_0",
+      "start": "T0_g1_0",
+      "end": "T0_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T0_g0_0_to_T0_g0_1",
+      "start": "T0_g0_0",
+      "end": "T0_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T0_g0_1_to_T0_g0_0",
+      "start": "T0_g0_1",
+      "end": "T0_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T0_g0_1_to_T0_g1_1",
+      "start": "T0_g0_1",
+      "end": "T0_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T0_g1_1_to_T0_g0_1",
+      "start": "T0_g1_1",
+      "end": "T0_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T0_g1_0_to_T0_g1_1",
+      "start": "T0_g1_0",
+      "end": "T0_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T0_g1_1_to_T0_g1_0",
+      "start": "T0_g1_1",
+      "end": "T0_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g0_0_to_T2_g1_0",
+      "start": "T2_g0_0",
+      "end": "T2_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g1_0_to_T2_g0_0",
+      "start": "T2_g1_0",
+      "end": "T2_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g0_0_to_T2_g0_1",
+      "start": "T2_g0_0",
+      "end": "T2_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g0_1_to_T2_g0_0",
+      "start": "T2_g0_1",
+      "end": "T2_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g0_1_to_T2_g1_1",
+      "start": "T2_g0_1",
+      "end": "T2_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g1_1_to_T2_g0_1",
+      "start": "T2_g1_1",
+      "end": "T2_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g1_0_to_T2_g1_1",
+      "start": "T2_g1_0",
+      "end": "T2_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g1_1_to_T2_g1_0",
+      "start": "T2_g1_1",
+      "end": "T2_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g0_0_to_T6_g1_0",
+      "start": "T6_g0_0",
+      "end": "T6_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g1_0_to_T6_g0_0",
+      "start": "T6_g1_0",
+      "end": "T6_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g0_0_to_T6_g0_1",
+      "start": "T6_g0_0",
+      "end": "T6_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g0_1_to_T6_g0_0",
+      "start": "T6_g0_1",
+      "end": "T6_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g0_1_to_T6_g1_1",
+      "start": "T6_g0_1",
+      "end": "T6_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g1_1_to_T6_g0_1",
+      "start": "T6_g1_1",
+      "end": "T6_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g1_0_to_T6_g2_0",
+      "start": "T6_g1_0",
+      "end": "T6_g2_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g2_0_to_T6_g1_0",
+      "start": "T6_g2_0",
+      "end": "T6_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g1_0_to_T6_g1_1",
+      "start": "T6_g1_0",
+      "end": "T6_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g1_1_to_T6_g1_0",
+      "start": "T6_g1_1",
+      "end": "T6_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g1_1_to_T6_g2_1",
+      "start": "T6_g1_1",
+      "end": "T6_g2_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g2_1_to_T6_g1_1",
+      "start": "T6_g2_1",
+      "end": "T6_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g2_0_to_T6_g2_1",
+      "start": "T6_g2_0",
+      "end": "T6_g2_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T6_g2_1_to_T6_g2_0",
+      "start": "T6_g2_1",
+      "end": "T6_g2_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g0_0_to_T7_g1_0",
+      "start": "T7_g0_0",
+      "end": "T7_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g1_0_to_T7_g0_0",
+      "start": "T7_g1_0",
+      "end": "T7_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g0_0_to_T7_g0_1",
+      "start": "T7_g0_0",
+      "end": "T7_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g0_1_to_T7_g0_0",
+      "start": "T7_g0_1",
+      "end": "T7_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g0_1_to_T7_g1_1",
+      "start": "T7_g0_1",
+      "end": "T7_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g1_1_to_T7_g0_1",
+      "start": "T7_g1_1",
+      "end": "T7_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g1_0_to_T7_g1_1",
+      "start": "T7_g1_0",
+      "end": "T7_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g1_1_to_T7_g1_0",
+      "start": "T7_g1_1",
+      "end": "T7_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T9_g0_0_to_T9_g0_1",
+      "start": "T9_g0_0",
+      "end": "T9_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T9_g0_1_to_T9_g0_0",
+      "start": "T9_g0_1",
+      "end": "T9_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T10_g0_0_to_T10_g1_0",
+      "start": "T10_g0_0",
+      "end": "T10_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T10_g1_0_to_T10_g0_0",
+      "start": "T10_g1_0",
+      "end": "T10_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T10_g0_0_to_T10_g0_1",
+      "start": "T10_g0_0",
+      "end": "T10_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T10_g0_1_to_T10_g0_0",
+      "start": "T10_g0_1",
+      "end": "T10_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T10_g0_1_to_T10_g1_1",
+      "start": "T10_g0_1",
+      "end": "T10_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T10_g1_1_to_T10_g0_1",
+      "start": "T10_g1_1",
+      "end": "T10_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T10_g1_0_to_T10_g1_1",
+      "start": "T10_g1_0",
+      "end": "T10_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T10_g1_1_to_T10_g1_0",
+      "start": "T10_g1_1",
+      "end": "T10_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T11_g0_0_to_T11_g0_1",
+      "start": "T11_g0_0",
+      "end": "T11_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T11_g0_1_to_T11_g0_0",
+      "start": "T11_g0_1",
+      "end": "T11_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T13_g0_0_to_T13_g1_0",
+      "start": "T13_g0_0",
+      "end": "T13_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T13_g1_0_to_T13_g0_0",
+      "start": "T13_g1_0",
+      "end": "T13_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T13_g0_0_to_T13_g0_1",
+      "start": "T13_g0_0",
+      "end": "T13_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T13_g0_1_to_T13_g0_0",
+      "start": "T13_g0_1",
+      "end": "T13_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T13_g0_1_to_T13_g1_1",
+      "start": "T13_g0_1",
+      "end": "T13_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T13_g1_1_to_T13_g0_1",
+      "start": "T13_g1_1",
+      "end": "T13_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T13_g1_0_to_T13_g1_1",
+      "start": "T13_g1_0",
+      "end": "T13_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T13_g1_1_to_T13_g1_0",
+      "start": "T13_g1_1",
+      "end": "T13_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g0_0_to_T14_g1_0",
+      "start": "T14_g0_0",
+      "end": "T14_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g1_0_to_T14_g0_0",
+      "start": "T14_g1_0",
+      "end": "T14_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g0_0_to_T14_g0_1",
+      "start": "T14_g0_0",
+      "end": "T14_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g0_1_to_T14_g0_0",
+      "start": "T14_g0_1",
+      "end": "T14_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g0_1_to_T14_g1_1",
+      "start": "T14_g0_1",
+      "end": "T14_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g1_1_to_T14_g0_1",
+      "start": "T14_g1_1",
+      "end": "T14_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g1_0_to_T14_g2_0",
+      "start": "T14_g1_0",
+      "end": "T14_g2_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g2_0_to_T14_g1_0",
+      "start": "T14_g2_0",
+      "end": "T14_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g1_0_to_T14_g1_1",
+      "start": "T14_g1_0",
+      "end": "T14_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g1_1_to_T14_g1_0",
+      "start": "T14_g1_1",
+      "end": "T14_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g1_1_to_T14_g2_1",
+      "start": "T14_g1_1",
+      "end": "T14_g2_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g2_1_to_T14_g1_1",
+      "start": "T14_g2_1",
+      "end": "T14_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g2_0_to_T14_g2_1",
+      "start": "T14_g2_0",
+      "end": "T14_g2_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T14_g2_1_to_T14_g2_0",
+      "start": "T14_g2_1",
+      "end": "T14_g2_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T15_g0_0_to_T15_g0_1",
+      "start": "T15_g0_0",
+      "end": "T15_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T15_g0_1_to_T15_g0_0",
+      "start": "T15_g0_1",
+      "end": "T15_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T16_g0_0_to_T16_g0_1",
+      "start": "T16_g0_0",
+      "end": "T16_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T16_g0_1_to_T16_g0_0",
+      "start": "T16_g0_1",
+      "end": "T16_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T17_g0_0_to_T17_g1_0",
+      "start": "T17_g0_0",
+      "end": "T17_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T17_g1_0_to_T17_g0_0",
+      "start": "T17_g1_0",
+      "end": "T17_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T17_g0_0_to_T17_g0_1",
+      "start": "T17_g0_0",
+      "end": "T17_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T17_g0_1_to_T17_g0_0",
+      "start": "T17_g0_1",
+      "end": "T17_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T17_g0_1_to_T17_g1_1",
+      "start": "T17_g0_1",
+      "end": "T17_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T17_g1_1_to_T17_g0_1",
+      "start": "T17_g1_1",
+      "end": "T17_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T17_g1_0_to_T17_g1_1",
+      "start": "T17_g1_0",
+      "end": "T17_g1_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T17_g1_1_to_T17_g1_0",
+      "start": "T17_g1_1",
+      "end": "T17_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T18_g0_0_to_T18_g0_1",
+      "start": "T18_g0_0",
+      "end": "T18_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "T18_g0_1_to_T18_g0_0",
+      "start": "T18_g0_1",
+      "end": "T18_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port1_g0_0_to_Port1_g0_1",
+      "start": "Port1_g0_0",
+      "end": "Port1_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port1_g0_1_to_Port1_g0_0",
+      "start": "Port1_g0_1",
+      "end": "Port1_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port2_g0_0_to_Port2_g0_1",
+      "start": "Port2_g0_0",
+      "end": "Port2_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port2_g0_1_to_Port2_g0_0",
+      "start": "Port2_g0_1",
+      "end": "Port2_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port3_g0_0_to_Port3_g1_0",
+      "start": "Port3_g0_0",
+      "end": "Port3_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port3_g1_0_to_Port3_g0_0",
+      "start": "Port3_g1_0",
+      "end": "Port3_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port3_g1_0_to_Port3_g2_0",
+      "start": "Port3_g1_0",
+      "end": "Port3_g2_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port3_g2_0_to_Port3_g1_0",
+      "start": "Port3_g2_0",
+      "end": "Port3_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port4_g0_0_to_Port4_g1_0",
+      "start": "Port4_g0_0",
+      "end": "Port4_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port4_g1_0_to_Port4_g0_0",
+      "start": "Port4_g1_0",
+      "end": "Port4_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port4_g1_0_to_Port4_g2_0",
+      "start": "Port4_g1_0",
+      "end": "Port4_g2_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port4_g2_0_to_Port4_g1_0",
+      "start": "Port4_g2_0",
+      "end": "Port4_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port5_g0_0_to_Port5_g0_1",
+      "start": "Port5_g0_0",
+      "end": "Port5_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port5_g0_1_to_Port5_g0_0",
+      "start": "Port5_g0_1",
+      "end": "Port5_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port6_g0_0_to_Port6_g1_0",
+      "start": "Port6_g0_0",
+      "end": "Port6_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port6_g1_0_to_Port6_g0_0",
+      "start": "Port6_g1_0",
+      "end": "Port6_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port8_g0_0_to_Port8_g0_1",
+      "start": "Port8_g0_0",
+      "end": "Port8_g0_1",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port8_g0_1_to_Port8_g0_0",
+      "start": "Port8_g0_1",
+      "end": "Port8_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port9_g0_0_to_Port9_g1_0",
+      "start": "Port9_g0_0",
+      "end": "Port9_g1_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "Port9_g1_0_to_Port9_g0_0",
+      "start": "Port9_g1_0",
+      "end": "Port9_g0_0",
+      "length": 20,
+      "type": "internal",
+      "bidirectional": true
+    },
+    {
+      "id": "E1_T0_Port9_L1",
+      "start": "T0_g1_0",
+      "end": "Port9_g1_0",
+      "length": 81.72688618775533,
+      "type": "corridor",
+      "original_edge": "E1_T0_Port9_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E3_T0_Port9_L3",
+      "start": "Port9_g0_0",
+      "end": "T0_g0_0",
+      "length": 81.72688618775533,
+      "type": "corridor",
+      "original_edge": "E3_T0_Port9_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E10_T0_T15_L2",
+      "start": "T15_g0_0",
+      "end": "T0_g1_0",
+      "length": 179.68286154642183,
+      "type": "corridor",
+      "original_edge": "E10_T0_T15_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E11_T0_T15_L3",
+      "start": "T0_g1_1",
+      "end": "T15_g0_1",
+      "length": 179.68286154642183,
+      "type": "corridor",
+      "original_edge": "E11_T0_T15_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E13_T0_T14_L0",
+      "start": "T14_g2_1",
+      "end": "T0_g0_1",
+      "length": 759.3119835468201,
+      "type": "corridor",
+      "original_edge": "E13_T0_T14_L0",
+      "bidirectional": false
+    },
+    {
+      "id": "E14_T0_T14_L1",
+      "start": "T0_g0_0",
+      "end": "T14_g2_0",
+      "length": 759.3119835468201,
+      "type": "corridor",
+      "original_edge": "E14_T0_T14_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E21_T2_T9_L1",
+      "start": "T9_g0_1",
+      "end": "T2_g0_1",
+      "length": 208.40166612758782,
+      "type": "corridor",
+      "original_edge": "E21_T2_T9_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E22_T2_T9_L2",
+      "start": "T2_g0_0",
+      "end": "T9_g0_0",
+      "length": 208.40166612758782,
+      "type": "corridor",
+      "original_edge": "E22_T2_T9_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E34_T6_T11_L1",
+      "start": "T6_g2_1",
+      "end": "T11_g0_1",
+      "length": 174.5324981835433,
+      "type": "corridor",
+      "original_edge": "E34_T6_T11_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E35_T6_T11_L2",
+      "start": "T11_g0_0",
+      "end": "T6_g2_0",
+      "length": 174.5324981835433,
+      "type": "corridor",
+      "original_edge": "E35_T6_T11_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E37_T6_Port2_L0",
+      "start": "Port2_g0_1",
+      "end": "T6_g0_1",
+      "length": 75.30994751800718,
+      "type": "corridor",
+      "original_edge": "E37_T6_Port2_L0",
+      "bidirectional": false
+    },
+    {
+      "id": "E40_T6_Port2_L3",
+      "start": "T6_g0_0",
+      "end": "Port2_g0_0",
+      "length": 75.30994751800718,
+      "type": "corridor",
+      "original_edge": "E40_T6_Port2_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E44_T6_Port3_L0",
+      "start": "T6_g1_1",
+      "end": "Port3_g1_0",
+      "length": 143.56988538703973,
+      "type": "corridor",
+      "original_edge": "E44_T6_Port3_L0",
+      "bidirectional": false
+    },
+    {
+      "id": "E45_T6_Port3_L1",
+      "start": "Port3_g2_0",
+      "end": "T6_g2_1",
+      "length": 143.56988538703973,
+      "type": "corridor",
+      "original_edge": "E45_T6_Port3_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E46_T6_Port3_L2",
+      "start": "T6_g0_1",
+      "end": "Port3_g0_0",
+      "length": 143.56988538703973,
+      "type": "corridor",
+      "original_edge": "E46_T6_Port3_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E52_T7_T11_L3",
+      "start": "T7_g0_0",
+      "end": "T11_g0_0",
+      "length": 473.6282245053929,
+      "type": "corridor",
+      "original_edge": "E52_T7_T11_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E53_T7_T11_L4",
+      "start": "T11_g0_1",
+      "end": "T7_g0_1",
+      "length": 473.6282245053929,
+      "type": "corridor",
+      "original_edge": "E53_T7_T11_L4",
+      "bidirectional": false
+    },
+    {
+      "id": "E56_T7_Port6_L2",
+      "start": "Port6_g0_0",
+      "end": "T7_g0_0",
+      "length": 160.17671341527566,
+      "type": "corridor",
+      "original_edge": "E56_T7_Port6_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E57_T7_Port6_L3",
+      "start": "T7_g1_0",
+      "end": "Port6_g1_0",
+      "length": 160.17671341527566,
+      "type": "corridor",
+      "original_edge": "E57_T7_Port6_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E63_T9_T16_L2",
+      "start": "T16_g0_1",
+      "end": "T9_g0_1",
+      "length": 107.98195322011163,
+      "type": "corridor",
+      "original_edge": "E63_T9_T16_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E64_T9_T16_L3",
+      "start": "T9_g0_0",
+      "end": "T16_g0_0",
+      "length": 107.98195322011163,
+      "type": "corridor",
+      "original_edge": "E64_T9_T16_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E69_T10_T17_L3",
+      "start": "T17_g0_1",
+      "end": "T10_g0_0",
+      "length": 326.93204678712107,
+      "type": "corridor",
+      "original_edge": "E69_T10_T17_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E71_T10_T17_L5",
+      "start": "T10_g1_0",
+      "end": "T17_g1_1",
+      "length": 326.93204678712107,
+      "type": "corridor",
+      "original_edge": "E71_T10_T17_L5",
+      "bidirectional": false
+    },
+    {
+      "id": "E72_T10_Port5_L0",
+      "start": "Port5_g0_0",
+      "end": "T10_g1_0",
+      "length": 393.61723010593494,
+      "type": "corridor",
+      "original_edge": "E72_T10_Port5_L0",
+      "bidirectional": false
+    },
+    {
+      "id": "E73_T10_Port5_L1",
+      "start": "T10_g1_1",
+      "end": "Port5_g0_1",
+      "length": 393.61723010593494,
+      "type": "corridor",
+      "original_edge": "E73_T10_Port5_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E79_T13_Port9_L4",
+      "start": "T13_g0_1",
+      "end": "Port9_g0_0",
+      "length": 91.64505015395741,
+      "type": "corridor",
+      "original_edge": "E79_T13_Port9_L4",
+      "bidirectional": false
+    },
+    {
+      "id": "E81_T13_Port9_L6",
+      "start": "Port9_g1_0",
+      "end": "T13_g1_1",
+      "length": 91.64505015395741,
+      "type": "corridor",
+      "original_edge": "E81_T13_Port9_L6",
+      "bidirectional": false
+    },
+    {
+      "id": "E83_T13_Port8_L0",
+      "start": "T13_g0_0",
+      "end": "Port8_g0_0",
+      "length": 106.76296276173501,
+      "type": "corridor",
+      "original_edge": "E83_T13_Port8_L0",
+      "bidirectional": false
+    },
+    {
+      "id": "E84_T13_Port8_L1",
+      "start": "Port8_g0_1",
+      "end": "T13_g0_1",
+      "length": 106.76296276173501,
+      "type": "corridor",
+      "original_edge": "E84_T13_Port8_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E85_T14_Port5_L0",
+      "start": "T14_g0_0",
+      "end": "Port5_g0_0",
+      "length": 285.8181587732874,
+      "type": "corridor",
+      "original_edge": "E85_T14_Port5_L0",
+      "bidirectional": false
+    },
+    {
+      "id": "E86_T14_Port4_L0",
+      "start": "T14_g2_0",
+      "end": "Port4_g2_0",
+      "length": 114.31410232103593,
+      "type": "corridor",
+      "original_edge": "E86_T14_Port4_L0",
+      "bidirectional": false
+    },
+    {
+      "id": "E87_T14_Port4_L1",
+      "start": "Port4_g0_0",
+      "end": "T14_g0_0",
+      "length": 114.31410232103593,
+      "type": "corridor",
+      "original_edge": "E87_T14_Port4_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E88_T14_Port4_L2",
+      "start": "Port4_g1_0",
+      "end": "T14_g1_0",
+      "length": 114.31410232103593,
+      "type": "corridor",
+      "original_edge": "E88_T14_Port4_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E92_T15_T16_L2",
+      "start": "T16_g0_0",
+      "end": "T15_g0_0",
+      "length": 59.25795990572049,
+      "type": "corridor",
+      "original_edge": "E92_T15_T16_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E93_T15_T16_L3",
+      "start": "T15_g0_1",
+      "end": "T16_g0_1",
+      "length": 59.25795990572049,
+      "type": "corridor",
+      "original_edge": "E93_T15_T16_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E95_T17_T18_L0",
+      "start": "T17_g1_1",
+      "end": "T18_g0_1",
+      "length": 89.73564663618214,
+      "type": "corridor",
+      "original_edge": "E95_T17_T18_L0",
+      "bidirectional": false
+    },
+    {
+      "id": "E98_T17_T18_L3",
+      "start": "T18_g0_0",
+      "end": "T17_g1_0",
+      "length": 89.73564663618214,
+      "type": "corridor",
+      "original_edge": "E98_T17_T18_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E102_T18_Port1_L2",
+      "start": "Port1_g0_0",
+      "end": "T18_g0_0",
+      "length": 205.72396031451206,
+      "type": "corridor",
+      "original_edge": "E102_T18_Port1_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E103_T18_Port1_L3",
+      "start": "T18_g0_1",
+      "end": "Port1_g0_1",
+      "length": 205.72396031451206,
+      "type": "corridor",
+      "original_edge": "E103_T18_Port1_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E105_Port1_Port2_L1",
+      "start": "Port2_g0_0",
+      "end": "Port1_g0_0",
+      "length": 306.9627784345032,
+      "type": "corridor",
+      "original_edge": "E105_Port1_Port2_L1",
+      "bidirectional": false
+    },
+    {
+      "id": "E106_Port1_Port2_L2",
+      "start": "Port1_g0_1",
+      "end": "Port2_g0_1",
+      "length": 306.9627784345032,
+      "type": "corridor",
+      "original_edge": "E106_Port1_Port2_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E111_Port3_Port4_L2",
+      "start": "Port4_g2_0",
+      "end": "Port3_g2_0",
+      "length": 130.5153726372115,
+      "type": "corridor",
+      "original_edge": "E111_Port3_Port4_L2",
+      "bidirectional": false
+    },
+    {
+      "id": "E112_Port3_Port4_L3",
+      "start": "Port3_g1_0",
+      "end": "Port4_g1_0",
+      "length": 130.5153726372115,
+      "type": "corridor",
+      "original_edge": "E112_Port3_Port4_L3",
+      "bidirectional": false
+    },
+    {
+      "id": "E113_Port3_Port4_L4",
+      "start": "Port3_g0_0",
+      "end": "Port4_g0_0",
+      "length": 130.5153726372115,
+      "type": "corridor",
+      "original_edge": "E113_Port3_Port4_L4",
+      "bidirectional": false
+    },
+    {
+      "id": "Port1_to_Port1_g0_0",
+      "start": "Port1",
+      "end": "Port1_g0_0",
+      "length": 27.977591683990926,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port1_g0_0_to_Port1",
+      "start": "Port1_g0_0",
+      "end": "Port1",
+      "length": 27.977591683990926,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port2_to_Port2_g0_0",
+      "start": "Port2",
+      "end": "Port2_g0_0",
+      "length": 30.76509517901323,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port2_g0_0_to_Port2",
+      "start": "Port2_g0_0",
+      "end": "Port2",
+      "length": 30.76509517901323,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port3_to_Port3_g0_0",
+      "start": "Port3",
+      "end": "Port3_g0_0",
+      "length": 18.19883006597558,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port3_g0_0_to_Port3",
+      "start": "Port3_g0_0",
+      "end": "Port3",
+      "length": 18.19883006597558,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port4_to_Port4_g0_0",
+      "start": "Port4",
+      "end": "Port4_g0_0",
+      "length": 16.202906169429905,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port4_g0_0_to_Port4",
+      "start": "Port4_g0_0",
+      "end": "Port4",
+      "length": 16.202906169429905,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port5_to_Port5_g0_1",
+      "start": "Port5",
+      "end": "Port5_g0_1",
+      "length": 36.12628186549551,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port5_g0_1_to_Port5",
+      "start": "Port5_g0_1",
+      "end": "Port5",
+      "length": 36.12628186549551,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port6_to_Port6_g1_0",
+      "start": "Port6",
+      "end": "Port6_g1_0",
+      "length": 21.746422589613303,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port6_g1_0_to_Port6",
+      "start": "Port6_g1_0",
+      "end": "Port6",
+      "length": 21.746422589613303,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port9_to_Port9_g0_0",
+      "start": "Port9",
+      "end": "Port9_g0_0",
+      "length": 54.66838876698697,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port9_g0_0_to_Port9",
+      "start": "Port9_g0_0",
+      "end": "Port9",
+      "length": 54.66838876698697,
+      "type": "port",
+      "bidirectional": true
+    },
+    {
+      "id": "Port7_to_T7_g1_0",
+      "start": "Port7",
+      "end": "T7_g1_0",
+      "length": 23.909142347154052,
+      "type": "corridor",
+      "bidirectional": true
+    },
+    {
+      "id": "T7_g1_0_to_Port7",
+      "start": "T7_g1_0",
+      "end": "Port7",
+      "length": 23.909142347154052,
+      "type": "corridor",
+      "bidirectional": true
+    },
+    {
+      "id": "Port10_to_T2_g1_0",
+      "start": "Port10",
+      "end": "T2_g1_0",
+      "length": 25.190367508281177,
+      "type": "corridor",
+      "bidirectional": true
+    },
+    {
+      "id": "T2_g1_0_to_Port10",
+      "start": "T2_g1_0",
+      "end": "Port10",
+      "length": 25.190367508281177,
+      "type": "corridor",
+      "bidirectional": true
+    },
+    {
+      "id": "Port8_to_Port8_g0_0",
+      "start": "Port8",
+      "end": "Port8_g0_0",
+      "length": 25.674110902738814,
+      "type": "corridor",
+      "bidirectional": true
+    },
+    {
+      "id": "Port8_g0_0_to_Port8",
+      "start": "Port8_g0_0",
+      "end": "Port8",
+      "length": 25.674110902738814,
+      "type": "corridor",
+      "bidirectional": true
+    }
+  ],
+  "port_nodes": [
+    "Port10",
+    "Port5",
+    "Port4",
+    "Port7",
+    "Port9",
+    "Port6",
+    "Port2",
+    "Port1",
+    "Port8",
+    "Port3"
+  ],
+  "ports": [
+    {
+      "id": "Port1",
+      "location": [
+        564,
+        655
+      ],
+      "bbox": [
+        549,
+        651,
+        585,
+        681
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port2",
+      "location": [
+        870,
+        654
+      ],
+      "bbox": [
+        851,
+        653,
+        887,
+        683
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port3",
+      "location": [
+        903,
+        850
+      ],
+      "bbox": [
+        897,
+        837,
+        933,
+        867
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port4",
+      "location": [
+        905,
+        981
+      ],
+      "bbox": [
+        897,
+        964,
+        933,
+        994
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port5",
+      "location": [
+        668,
+        1148
+      ],
+      "bbox": [
+        650,
+        1133,
+        686,
+        1163
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port6",
+      "location": [
+        1663,
+        557
+      ],
+      "bbox": [
+        1635,
+        540,
+        1671,
+        570
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port7",
+      "location": [
+        1665,
+        690
+      ],
+      "bbox": [
+        1635,
+        681,
+        1671,
+        711
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port8",
+      "location": [
+        1588,
+        839
+      ],
+      "bbox": [
+        1589,
+        835,
+        1625,
+        865
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port9",
+      "location": [
+        1607,
+        976
+      ],
+      "bbox": [
+        1589,
+        961,
+        1625,
+        991
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    },
+    {
+      "id": "Port10",
+      "location": [
+        2283,
+        1054
+      ],
+      "bbox": [
+        2259,
+        1055,
+        2295,
+        1085
+      ],
+      "width": 30,
+      "length": 36,
+      "rotation": 0,
+      "type": "Station"
+    }
+  ],
+  "workspace": {
+    "width": 3000,
+    "height": 1494
+  },
+  "parameters": {
+    "amr_length": 20,
+    "safety_gap": 5.0,
+    "speed": 3,
+    "throughput_per_edge": 431.99999999999994
+  }
+}

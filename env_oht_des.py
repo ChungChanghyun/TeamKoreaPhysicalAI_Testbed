@@ -189,12 +189,13 @@ def _accel_brake_dt(vf: float, vl: float, af: float, vf_max: float,
     Time until follower should start braking to maintain h_min from leader.
 
     Follower: speed vf, acceleration af (>=0), speed cap vf_max
-    Leader  : speed vl, acceleration al (>=0), speed cap vl_max
+    Leader  : speed vl, acceleration al (can be negative), speed cap vl_max
     gap     : current gap
     Returns dt >= 0, or inf if no braking needed.
 
-    Decomposes into phases based on when each reaches speed cap,
-    then solves trigger condition analytically in each phase.
+    Decomposes into phases based on when follower/leader reach speed cap
+    or when a decelerating leader stops, then solves trigger condition
+    analytically in each phase.
     """
     D = decel
 
@@ -204,21 +205,25 @@ def _accel_brake_dt(vf: float, vl: float, af: float, vf_max: float,
     if gap <= h_min + brake_d:
         return 0.0
 
-    # Phase boundaries: when follower or leader reaches speed cap
+    # Phase boundaries: when follower reaches speed cap
     if af > 1e-9 and vf < vf_max:
         tf_cap = (vf_max - vf) / af
     else:
         tf_cap = float('inf')
         af = 0.0
 
+    # Phase boundary: when leader reaches speed cap (accelerating)
+    #                 or when leader stops (decelerating)
+    tl_boundary = float('inf')
     if al > 1e-9 and vl_max > 0 and vl < vl_max:
-        tl_cap = (vl_max - vl) / al
-    else:
-        tl_cap = float('inf')
-        al = 0.0
+        # leader accelerating toward cap
+        tl_boundary = (vl_max - vl) / al
+    elif al < -1e-9 and vl > 0:
+        # leader decelerating — will stop at t = -vl/al
+        tl_boundary = -vl / al
 
-    # Up to 3 phases
-    boundaries = sorted(set([t for t in [tf_cap, tl_cap] if t < float('inf')]))
+    # Collect phase boundaries
+    boundaries = sorted(set(t for t in [tf_cap, tl_boundary] if t < float('inf')))
     boundaries.append(float('inf'))
 
     t_offset = 0.0
@@ -237,8 +242,12 @@ def _accel_brake_dt(vf: float, vl: float, af: float, vf_max: float,
             return t_offset + dt
 
         # Advance state to end of this phase
-        vf_end = min(cur_vf + cur_af * phase_dur, vf_max)
-        vl_end = min(cur_vl + cur_al * phase_dur, vl_max) if vl_max > 0 else cur_vl + cur_al * phase_dur
+        vf_end = cur_vf + cur_af * phase_dur
+        vf_end = min(vf_end, vf_max)
+        vl_end = cur_vl + cur_al * phase_dur
+        vl_end = max(vl_end, 0.0)  # clamp: speed doesn't go negative
+        if vl_max > 0:
+            vl_end = min(vl_end, vl_max)
 
         f_disp = cur_vf * phase_dur + 0.5 * cur_af * phase_dur * phase_dur
         l_disp = cur_vl * phase_dur + 0.5 * cur_al * phase_dur * phase_dur
@@ -246,12 +255,17 @@ def _accel_brake_dt(vf: float, vl: float, af: float, vf_max: float,
 
         cur_vf = vf_end
         cur_vl = vl_end
-        cur_af = 0.0 if vf_end >= vf_max else af
-        cur_al = 0.0 if (vl_max > 0 and vl_end >= vl_max) else al
+        # follower: stop accelerating once at cap
+        cur_af = 0.0 if cur_vf >= vf_max else af
+        # leader: stop accelerating/decelerating once at cap or stopped
+        if cur_al > 0 and vl_max > 0 and cur_vl >= vl_max:
+            cur_al = 0.0
+        elif cur_al < 0 and cur_vl <= 0:
+            cur_al = 0.0  # leader stopped
         t_offset = t_end_abs
 
         # Both at constant speed and not closing
-        if cur_af == 0 and cur_al == 0:
+        if abs(cur_af) < 1e-9 and abs(cur_al) < 1e-9:
             u2 = cur_vf - cur_vl
             if u2 <= 0:
                 return float('inf')
@@ -501,6 +515,14 @@ class OHTAgent:
         self.y         = 0.0
         self.theta     = 0.0         # heading (map-space rad, y-up)
 
+        # bypass zone tracking
+        self._on_bypass_curve: bool = False   # True if currently on a curve entry
+
+        # blocking reason (for debugging / UI)
+        self.block_reason: str = ''           # 'node_blocker', 'gap', 'zcu', 'cross_seg'
+        self.blocked_by: Optional['OHTAgent'] = None  # agent causing block
+        self.block_zcu_id: str = ''           # ZCU zone id if blocked by ZCU
+
     # ── Kinematics ────────────────────────────────────────────────────────────
 
     @property
@@ -515,10 +537,12 @@ class OHTAgent:
         if abs(self.a) < 1e-9:
             return self.seg_entry_pos + self.v * dt
         dt_cap = (self.v_cap - self.v) / self.a
+        if dt_cap < 0:
+            dt_cap = 0.0
         if dt <= dt_cap:
             return self.seg_entry_pos + self.v * dt + 0.5 * self.a * dt ** 2
         p_at_cap = self.seg_entry_pos + self.v * dt_cap + 0.5 * self.a * dt_cap ** 2
-        return p_at_cap + self.v_cap * (dt - dt_cap)
+        return p_at_cap + self.v_cap * max(0.0, dt - dt_cap)
 
     def vel(self, t: float) -> float:
         """Instantaneous speed at time t."""
@@ -528,9 +552,9 @@ class OHTAgent:
             return self.v
         dt = t - self.seg_entry_t
         dt_cap = (self.v_cap - self.v) / self.a
-        if dt >= dt_cap:
+        if dt_cap < 0 or dt >= dt_cap:
             return self.v_cap
-        return self.v + self.a * dt
+        return max(0.0, self.v + self.a * dt)
 
     def xy(self, t: float, nodes: Dict[str, OHTNode]) -> Tuple[float, float, float]:
         """(x, y, theta) in map coordinates at time t."""
@@ -552,7 +576,7 @@ class OHTAgent:
                 math.atan2(dy, dx))
 
     def _speed_up(self, t: float, accel: float):
-        """Start accelerating toward max_speed (increments token)."""
+        """Start accelerating toward segment max_speed (increments token)."""
         if self.seg is None:
             return
         p   = min(self.pos(t), self.seg.length)
@@ -561,8 +585,9 @@ class OHTAgent:
         self.seg_entry_t   = t
         self.token        += 1
         self.v     = v_c
-        self.v_cap = self.max_speed
-        self.a     = accel if v_c < self.max_speed else 0.0
+        seg_max = min(self.max_speed, self.seg.max_speed)
+        self.v_cap = seg_max
+        self.a     = accel if v_c < seg_max else 0.0
 
     def _slow_to(self, t: float, speed: float, decel: float):
         """Start decelerating toward speed (increments token)."""
@@ -620,11 +645,28 @@ class OHTEnvironmentDES:
         self.cross_segment = cross_segment   # N-hop cross-segment detection
         self.event_count   = 0               # total events processed
 
+        # ── Reverse segment index: to_id → list of segments ending there ──
+        self._segs_to: Dict[str, List[OHTSegment]] = {}
+        for seg in oht_map.segments.values():
+            self._segs_to.setdefault(seg.to_id, []).append(seg)
+
+        # ── Node-blocker index: node_id → set of agents sitting there ─────
+        self._node_agents: Dict[str, set] = {}  # node_id → {agent}
+
         # ZCU runtime state (reset with env, not persistent in OHTMap)
         self._zcu_holders:   Dict[str, Optional[OHTAgent]] = {
             z.id: None for z in oht_map.zcu_zones}
+        self._zcu_holder_seg: Dict[str, Optional[Tuple[str,str]]] = {
+            z.id: None for z in oht_map.zcu_zones}  # which entry seg the holder used
         self._zcu_waitlists: Dict[str, List[OHTAgent]] = {
             z.id: [] for z in oht_map.zcu_zones}
+        self._agent_zcu: Dict[int, 'ZCUZone'] = {}  # agent_id → zone held
+        # merge_node_id → ZCUZone (for fast lookup when departing merge)
+        self._merge_zcu: Dict[str, 'ZCUZone'] = {}
+        for z in oht_map.zcu_zones:
+            for (_, tn) in z.entry_segs:
+                self._merge_zcu[tn] = z
+                break
 
     # ── Agent management ──────────────────────────────────────────────────────
 
@@ -639,6 +681,8 @@ class OHTEnvironmentDES:
         agent.token     = 0
         agent.leader    = None
         agent.followers = []
+        # Register in node-blocker index
+        self._node_agents.setdefault(agent.cur_node, set()).add(agent)
         self._post_advance(t_start, agent)
 
     # ── Leader-follower registration ─────────────────────────────────────
@@ -716,6 +760,10 @@ class OHTEnvironmentDES:
         agent = self._agents.pop(agent_id, None)
         if agent is None:
             return
+        # clean up node-blocker index
+        na = self._node_agents.get(agent.cur_node)
+        if na:
+            na.discard(agent)
         # clean up leader-follower
         self._unfollow(agent)
         for f in list(agent.followers):
@@ -734,6 +782,7 @@ class OHTEnvironmentDES:
             if self._zcu_holders[z.id] is agent:
                 # release zone and wake next waiter (at t=0 — processed next step)
                 self._zcu_holders[z.id] = None
+                self._zcu_holder_seg[z.id] = None
                 if wl:
                     nxt = wl.pop(0)
                     if nxt.id in self._agents:
@@ -825,6 +874,9 @@ class OHTEnvironmentDES:
             if gap < safe_d - 1.0:
                 agent.state = BLOCKED
                 agent.v     = 0.0       # physically stopped at node
+                agent.block_reason = 'node_blocker' if nb is not None else 'gap'
+                agent.blocked_by   = nb if nb is not None else (seg.queue[-1] if seg.queue else None)
+                agent.block_zcu_id = ''
                 if eff_tail_v > 0:
                     wait = (self.map.h_min - gap) / eff_tail_v
                 else:
@@ -842,9 +894,12 @@ class OHTEnvironmentDES:
             h_min    = self.map.h_min
             looked_past_long = False
 
-            def _block_cross(wait_t):
+            def _block_cross(wait_t, reason, blocker):
                 agent.state = BLOCKED
                 agent.v     = 0.0
+                agent.block_reason = reason
+                agent.blocked_by   = blocker
+                agent.block_zcu_id = ''
                 self._post_advance(t + wait_t, agent)
                 self._notify_node_occupied(t, from_id)
 
@@ -853,7 +908,7 @@ class OHTEnvironmentDES:
                     nb2 = self._node_blocker(cs_node, agent)
                     if nb2 is not None:
                         if cs_total < h_min - 1.0:
-                            _block_cross(0.5)
+                            _block_cross(0.5, 'cross_node', nb2)
                             return
                         break
                 if cs_pi + 1 >= len(path):
@@ -871,7 +926,7 @@ class OHTEnvironmentDES:
                         wait = _time_to_pos(0.0, max(cs_v, 0.0),
                                             self.map.accel, cs_front.max_speed, shortfall)
                         wait = min(max(wait + 0.1, 0.3), 5.0)
-                        _block_cross(wait)
+                        _block_cross(wait, 'cross_seg', cs_front)
                         return
                     break
                 cs_total += cs_seg.length
@@ -883,36 +938,180 @@ class OHTEnvironmentDES:
                         break
                     looked_past_long = True
 
-        # ── ZCU check ────────────────────────────────────────────────────────
-        zcu = self.map._entry_zcu.get((from_id, to_id))
-        if zcu is not None:
-            holder = self._zcu_holders[zcu.id]
-            if holder is not None and holder is not agent:
+        # ── U-turn protection ─────────────────────────────────────────────
+        # U-turn first half (diverge→mid): one vehicle at a time.
+        #   Check own queue + sibling (second half) queue.
+        # U-turn second half (mid→merge): NO check — already committed.
+        curve_gid = getattr(seg, '_curve_group', None)
+        if curve_gid is not None:
+            is_first_half = not from_id.startswith('_curve_mid_')
+            if is_first_half:
+                # Block if THIS segment already has a vehicle (one at a time)
+                if seg.queue:
+                    agent.state = BLOCKED
+                    agent.v     = 0.0
+                    agent.block_reason = 'curve_group'
+                    agent.blocked_by   = seg.queue[-1]
+                    agent.block_zcu_id = ''
+                    self._post_advance(t + 0.5, agent)
+                    self._notify_node_occupied(t, from_id)
+                    return
+                # Also block if sibling (second half) has a vehicle
+                check_segs = getattr(self.map, 'curve_groups', {}).get(curve_gid, [])
+                for ck in check_segs:
+                    if ck == (from_id, to_id):
+                        continue
+                    ck_seg = self.map.segments.get(ck)
+                    if ck_seg and ck_seg.queue:
+                        agent.state = BLOCKED
+                        agent.v     = 0.0
+                        agent.block_reason = 'curve_group'
+                        agent.blocked_by   = ck_seg.queue[-1]
+                        agent.block_zcu_id = ''
+                        self._post_advance(t + 0.5, agent)
+                        self._notify_node_occupied(t, from_id)
+                        return
+
+        # ── Diverge protection (occupancy-based, no lock) ──────────────────
+        # At diverge nodes: if a curve exit has a vehicle, block other exits.
+        # If a straight exit has vehicles, block curve exits.
+        # Same-direction straight exits: free queue.
+        div_curve_exits = getattr(self.map, 'diverge_curve_exits', set())
+        div_straight_exits = getattr(self.map, 'diverge_straight_exits', set())
+        is_div_curve = (from_id, to_id) in div_curve_exits
+        is_div_straight = (from_id, to_id) in div_straight_exits
+        if is_div_curve or is_div_straight:
+            # Find all sibling exits from same diverge node
+            all_exits = [(from_id, s) for s in self.map.adj.get(from_id, [])]
+            blocker = None
+            for ek in all_exits:
+                if ek == (from_id, to_id):
+                    continue  # skip self
+                ek_seg = self.map.segments.get(ek)
+                if not ek_seg or not ek_seg.queue:
+                    continue
+                ek_is_curve = ek in div_curve_exits
+                if is_div_straight and ek_is_curve:
+                    # I'm straight, other is curve with vehicle → block me
+                    blocker = ek_seg.queue[-1]
+                    break
+                elif is_div_curve and not ek_is_curve:
+                    # I'm curve, other is straight with vehicle → block me
+                    blocker = ek_seg.queue[-1]
+                    break
+                elif is_div_curve and ek_is_curve:
+                    # Both curve → block (one at a time)
+                    blocker = ek_seg.queue[-1]
+                    break
+                # Both straight → no block (free queue)
+            if blocker is not None:
                 agent.state = BLOCKED
                 agent.v     = 0.0
-                wl = self._zcu_waitlists[zcu.id]
-                if agent not in wl:
-                    wl.append(agent)
-                # agent stays at from_id — notify incoming traffic
+                agent.block_reason = 'diverge'
+                agent.blocked_by   = blocker
+                agent.block_zcu_id = ''
+                self._post_advance(t + 0.5, agent)
                 self._notify_node_occupied(t, from_id)
                 return
 
+        # ── Bypass zone check (merge ZCU) ─────────────────────────────────
+        # Curve entries: lock required (one at a time)
+        # Straight entries: free queue, but blocked if a curve is occupied
+        zcu = self.map._entry_zcu.get((from_id, to_id))
+        if zcu is not None:
+            is_curve = (from_id, to_id) in getattr(self.map, 'bypass_curve_segs', set())
+            is_straight = (from_id, to_id) in getattr(self.map, 'bypass_straight_segs', set())
+            # U-turn second half: treat as straight (already committed to U-turn)
+            # Only block if a CURVE vehicle holds the lock (another conflicting direction)
+            if is_curve and from_id.startswith('_curve_mid_'):
+                is_curve = False
+                is_straight = True
+            holder = self._zcu_holders[zcu.id]
+
+            if is_curve:
+                # Curve entry: must acquire lock. Block if anyone holds it.
+                if holder is not None and holder is not agent:
+                    agent.state = BLOCKED
+                    agent.v     = 0.0
+                    agent.block_reason = 'zcu_curve'
+                    agent.blocked_by   = holder
+                    agent.block_zcu_id = zcu.id
+                    wl = self._zcu_waitlists[zcu.id]
+                    if agent not in wl:
+                        wl.append(agent)
+                    self._notify_node_occupied(t, from_id)
+                    return
+            elif is_straight:
+                # Straight entry: only blocked if a CURVE holds the lock.
+                # If another straight holds it, free to enter (queue behind).
+                if holder is not None:
+                    holder_on_curve = getattr(holder, '_on_bypass_curve', False)
+                    if holder_on_curve:
+                        agent.state = BLOCKED
+                        agent.v     = 0.0
+                        agent.block_reason = 'zcu_straight_wait'
+                        agent.blocked_by   = holder
+                        agent.block_zcu_id = zcu.id
+                        wl = self._zcu_waitlists[zcu.id]
+                        if agent not in wl:
+                            wl.append(agent)
+                        self._notify_node_occupied(t, from_id)
+                        return
+            else:
+                # Fallback: standard lock check
+                if holder is not None and holder is not agent:
+                    agent.state = BLOCKED
+                    agent.v     = 0.0
+                    agent.block_reason = 'zcu'
+                    agent.blocked_by   = holder
+                    agent.block_zcu_id = zcu.id
+                    wl = self._zcu_waitlists[zcu.id]
+                    if agent not in wl:
+                        wl.append(agent)
+                    self._notify_node_occupied(t, from_id)
+                    return
+
         # enter segment — carry speed from previous segment (0 if fresh start)
+        # Remove from node-blocker index (agent is leaving from_id)
+        na = self._node_agents.get(from_id)
+        if na:
+            na.discard(agent)
         v_entry = agent.v
+        seg_max = min(agent.max_speed, seg.max_speed)
         agent.path_idx      = nxt_idx
         agent.seg           = seg
         agent.seg_entry_t   = t
         agent.seg_entry_pos = 0.0
         agent.v             = v_entry
-        agent.v_cap         = agent.max_speed
-        agent.a             = self.map.accel if v_entry < agent.max_speed else 0.0
+        agent.v_cap         = seg_max
+        # If over segment speed limit, decelerate; otherwise accelerate
+        if v_entry > seg_max:
+            agent.a = -self.map.decel
+        elif v_entry < seg_max:
+            agent.a = self.map.accel
+        else:
+            agent.a = 0.0
         agent.token        += 1
         agent.state         = MOVING
+        agent.block_reason  = ''
+        agent.blocked_by    = None
+        agent.block_zcu_id  = ''
         seg.queue.append(agent)
 
-        # acquire ZCU if this is an entry segment
+        # Acquire ZCU lock (curve entries always; straight entries only if no curve holds it)
         if zcu is not None:
-            self._zcu_holders[zcu.id] = agent
+            is_curve = (from_id, to_id) in getattr(self.map, 'bypass_curve_segs', set())
+            # U-turn second half: treat as straight for lock purposes too
+            if is_curve and from_id.startswith('_curve_mid_'):
+                is_curve = False
+            agent._on_bypass_curve = is_curve
+            if is_curve:
+                # Curve: always acquire lock
+                self._zcu_holders[zcu.id] = agent
+            elif self._zcu_holders[zcu.id] is None:
+                # Straight: acquire only if no one holds it (first straight)
+                self._zcu_holders[zcu.id] = agent
+            # else: straight following another straight — don't overwrite holder
             wl = self._zcu_waitlists[zcu.id]
             if agent in wl:
                 wl.remove(agent)
@@ -924,6 +1123,8 @@ class OHTEnvironmentDES:
         # Agent left from_id — notify registered followers + wake BLOCKED
         self._notify_followers(t, agent)
         self._signal_node_unblocked(t, from_id)
+
+        # (ZCU release handled in _on_segment_done via _release_zcu)
 
         # check if following queue leader
         q_idx = seg.queue.index(agent)
@@ -947,17 +1148,32 @@ class OHTEnvironmentDES:
         # notify all registered followers that this leader departed
         self._notify_followers(t, agent)
 
-        # save speed at exit for next segment entry, then reset accel state
-        agent.v     = agent.vel(t)
+        # save speed at exit, capped by next segment's max speed
+        exit_v = agent.vel(t)
+        nxt_idx = agent.path_idx + 1
+        if nxt_idx < len(agent.node_path):
+            nxt_seg = self.map.segments.get(
+                (agent.node_path[agent.path_idx], agent.node_path[nxt_idx]))
+            if nxt_seg:
+                exit_v = min(exit_v, nxt_seg.max_speed)
+        agent.v     = exit_v
         agent.a     = 0.0
         agent.v_cap = agent.max_speed
         agent.seg   = None
         agent.state = IDLE
+        # Register in node-blocker index (agent now sitting at seg.to_id)
+        self._node_agents.setdefault(seg.to_id, set()).add(agent)
 
         # ZCU exit — release zone if this was an exit segment
         zcu = self.map._exit_zcu.get((seg.from_id, seg.to_id))
         if zcu is not None and self._zcu_holders[zcu.id] is agent:
-            self._release_zcu(t, zcu)
+            # For straight entries: only release if no more vehicles on this segment
+            is_straight = (seg.from_id, seg.to_id) in getattr(self.map, 'bypass_straight_segs', set())
+            if is_straight and seg.queue:
+                # Transfer lock to next vehicle in same-direction queue
+                self._zcu_holders[zcu.id] = seg.queue[0]
+            else:
+                self._release_zcu(t, zcu)
 
         # wake any agent blocked waiting to enter this segment
         self._wake_blocked_for(t, seg)
@@ -968,6 +1184,14 @@ class OHTEnvironmentDES:
 
         # advance to next node
         self._post_advance(t, agent)
+
+    def _wake_blocked_at_node(self, t: float, node_id: str):
+        """Wake all BLOCKED agents sitting at a specific node."""
+        agents_at = self._node_agents.get(node_id)
+        if agents_at:
+            for a in list(agents_at):
+                if a.state == BLOCKED and a.seg is None:
+                    self._post_advance(t, a)
 
     def _release_zcu(self, t: float, zcu: ZCUZone):
         """Release a ZCU zone and wake the next waiting agent."""
@@ -993,12 +1217,13 @@ class OHTEnvironmentDES:
     def _node_blocker(self, node_id: str,
                       exclude: OHTAgent = None) -> Optional[OHTAgent]:
         """Return any agent physically at node_id (not on a segment)."""
-        return next(
-            (a for a in self._agents.values()
-             if a is not exclude and a.seg is None
-             and a.cur_node == node_id),
-            None
-        )
+        agents_at = self._node_agents.get(node_id)
+        if not agents_at:
+            return None
+        for a in agents_at:
+            if a is not exclude:
+                return a
+        return None
 
     def _look_ahead_leader(self, t: float, agent: OHTAgent,
                            seg: OHTSegment) -> Optional[Tuple[float, float, OHTAgent]]:
@@ -1110,8 +1335,8 @@ class OHTEnvironmentDES:
         queue   = [(node_id, False)]
         while queue:
             nid, prev_long = queue.pop(0)
-            for seg in self.map.segments.values():
-                if seg.to_id != nid or not seg.queue:
+            for seg in self._segs_to.get(nid, ()):
+                if not seg.queue:
                     continue
                 front = seg.queue[0]
                 if front.state in (MOVING, FOLLOWING):
@@ -1130,9 +1355,7 @@ class OHTEnvironmentDES:
         queue = [(node_id, False)]   # (node, prev_was_long)
         while queue:
             nid, prev_long = queue.pop(0)
-            for seg in self.map.segments.values():
-                if seg.to_id != nid:
-                    continue
+            for seg in self._segs_to.get(nid, ()):
                 for qa in seg.queue:
                     if qa.state == FOLLOWING:
                         self._post(t, GAP_CLEAR, qa)
@@ -1147,14 +1370,16 @@ class OHTEnvironmentDES:
     def _notify_node_occupied(self, t: float, node_id: str):
         """Called when an agent just became a node blocker at node_id.
         Schedules slow-downs for the front agent on each incoming segment."""
-        for seg in self.map.segments.values():
-            if seg.to_id != node_id or not seg.queue:
+        for seg in self._segs_to.get(node_id, ()):
+            if not seg.queue:
                 continue
             front = seg.queue[0]
             if front.state in (MOVING, FOLLOWING):
                 self._schedule_front_catchup(t, front, seg)
 
     # ── CATCH_UP ──────────────────────────────────────────────────────────────
+
+    _cascade_depth = 0
 
     def _slow_and_cascade(self, t: float, agent: OHTAgent, speed: float):
         """Decelerate agent toward speed, then cascade catch-up to its follower.
@@ -1177,8 +1402,11 @@ class OHTEnvironmentDES:
             if 0 <= qi < len(q) - 1:
                 self._schedule_catch_up(t, q[qi + 1], agent)
             # Notify cross-segment followers that this agent slowed
-            if self.cross_segment:
+            # Guard against infinite recursion
+            if self.cross_segment and self._cascade_depth < 10:
+                self._cascade_depth += 1
                 self._check_incoming_followers(t, agent.seg.from_id)
+                self._cascade_depth -= 1
 
     def _on_catch_up(self, t: float, agent: OHTAgent):
         """Follower reached braking trigger point — decelerate to match leader."""
@@ -1283,8 +1511,9 @@ class OHTEnvironmentDES:
         self._follow(follower, leader)
         vf = follower.vel(t)
         vl = leader.vel(t)
-        if vf <= vl and follower.a <= leader.a:
+        if vf <= vl and follower.a <= leader.a and leader.a >= 0:
             return  # not closing — no action needed
+        # leader 감속 중이면 gap이 줄어들 수 있으므로 항상 계산
 
         gap = leader.pos(t) - follower.pos(t)
         dt  = _accel_brake_dt(vf, vl, follower.a, follower.v_cap,
@@ -1302,12 +1531,18 @@ class OHTEnvironmentDES:
     def reassign(self, agent: OHTAgent, new_path: List[str], t: float):
         """Assign a new path and restart agent from current node."""
         old_node = agent.cur_node
+        # Update node-blocker index
+        na = self._node_agents.get(old_node)
+        if na:
+            na.discard(agent)
         if agent.seg and agent in agent.seg.queue:
             agent.seg.queue.remove(agent)
         agent.seg        = None
         agent.node_path  = new_path
         agent.path_idx   = 0
         agent.state      = IDLE
+        # Re-register at new start node
+        self._node_agents.setdefault(new_path[0], set()).add(agent)
         agent.token     += 1
         # agent was a node_blocker — notify registered followers directly
         self._notify_followers(t, agent)

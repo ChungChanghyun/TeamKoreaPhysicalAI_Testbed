@@ -39,6 +39,7 @@ import math
 import heapq
 import collections
 from dataclasses import dataclass, field
+from env_tapg import _compute_travel, _pos_along_profile
 from typing import Dict, List, Optional, Tuple, Callable
 
 
@@ -49,6 +50,7 @@ DONE   = 'DONE'
 
 # ── Event types ──────────────────────────────────────────────────────────────
 S3D_TRY_ADVANCE = 'S3D_TRY_ADVANCE'
+S3D_ARRIVE      = 'S3D_ARRIVE'
 
 
 # ── Event (env_oht_des 호환) ─────────────────────────────────────────────────
@@ -214,14 +216,23 @@ class Shuttle:
         self.theta: float = 0.0
         self.v:     float = 0.0
 
-        # 현재 엣지 이동 추적
+        # DES 운동학 프로파일
         self.from_x:        float = 0.0
         self.from_y:        float = 0.0
         self.to_x:          float = 0.0
         self.to_y:          float = 0.0
-        self.dist_traveled: float = 0.0
         self.edge_length:   float = 0.0
         self.edge_speed:    float = 0.0
+        self.entry_t:       float = 0.0   # 엣지 진입 시각
+        self.v0:            float = 0.0   # 진입 시 속도
+        self.do_decel:      bool  = True
+        self._t_accel:      float = 0.0
+        self._d_accel:      float = 0.0
+        self._t_cruise:     float = 0.0
+        self._d_cruise:     float = 0.0
+        self._t_decel:      float = 0.0
+        self._t_total:      float = 0.0
+        self._v_exit:       float = 0.0
 
     @property
     def cur_node(self) -> str:
@@ -320,23 +331,29 @@ class Env3DS:
                 return True   # stale
             self._on_try_advance(ev.t, s)
             return True
+        if ev.kind == S3D_ARRIVE:
+            s = self._shuttles.get(ev.agent_id)
+            if s is None or ev.token != s.token:
+                return True   # stale
+            self._on_arrive(ev.t, s)
+            return True
         return False
 
-    def step(self, t_now: float, dt: float):
+    def step(self, t_now: float, dt: float = 0.0):
         """
-        독립 실행 모드: 이벤트 처리 + 물리.
+        독립 실행 모드: 이벤트 처리 + 시각화 보간.
 
         Parameters
         ----------
         t_now : 현재 시뮬레이션 시각
-        dt    : 이번 프레임 경과 시간 (sim seconds)
+        dt    : (무시됨, 하위호환용)
         """
-        # 물리 먼저 (도착 판정 → TRY_ADVANCE 생성)
-        self.step_velocity(dt, t_now)
-        # 이벤트 처리 (TRY_ADVANCE → 다음 엣지 진입)
+        # 이벤트 처리 (TRY_ADVANCE, S3D_ARRIVE)
         while self._heap and self._heap[0].t <= t_now:
             ev = heapq.heappop(self._heap)
             self.handle_event(ev)
+        # 시각화용 위치 보간
+        self._interpolate_visuals(t_now)
 
     # ── Internal — 이벤트 핸들러 ─────────────────────────────────────────────
 
@@ -377,73 +394,70 @@ class Env3DS:
         s.to_y          = to_node.y
         s.edge_length   = edge.length
         s.edge_speed    = min(s.max_speed, edge.max_speed)
-        s.dist_traveled = 0.0
         s.theta         = edge.angle
+        s.entry_t       = t
 
-        # 가속 시작 (이전 속도 유지 → 연속 주행)
+        is_last_edge = (s.path_idx + 1 >= len(s.node_path))
+        do_decel = is_last_edge
+        s.do_decel = do_decel
+
+        # 초기 속도 결정
         if not math.isfinite(self.accel):
-            s.v = s.edge_speed
-        # else: s.v는 이전 값 유지 (0 또는 carry_v), step_velocity에서 가속
+            s.v0 = s.edge_speed
+        else:
+            s.v0 = s.v  # 이전 속도 유지 (0 또는 carry_v)
 
-    # ── Internal — 물리 업데이트 (도착 판정 포함) ─────────────────────────────
+        # 사다리꼴 프로파일 계산
+        (s._t_accel, s._d_accel,
+         s._t_cruise, s._d_cruise,
+         s._t_decel, s._t_total,
+         s._v_exit) = _compute_travel(
+            s.v0, s.edge_speed, self.accel, self.decel,
+            edge.length, do_decel)
 
-    def step_velocity(self, dt: float, t_now: float):
-        """
-        속도 + 위치 업데이트 + 도착 판정.
-        메인 루프에서 매 프레임 호출.
-        """
-        arrivals = []
+        s.v = s.v0
 
+        # ARRIVE 이벤트 예약
+        s.token += 1
+        self._post(t + s._t_total, S3D_ARRIVE, s)
+
+    def _on_arrive(self, t: float, s: Shuttle):
+        """엣지 끝 도달 처리."""
+        s.x = s.to_x
+        s.y = s.to_y
+        carry_v = s._v_exit
+        s.state = IDLE
+
+        nxt_idx = s.path_idx + 1
+        if nxt_idx < len(s.node_path) and carry_v > 0:
+            # 연속 주행: 속도 유지
+            s.v = carry_v
+            self._post_advance(t, s)
+        else:
+            s.v = 0.0
+            self._post_advance(t, s)
+
+    # ── 시각화용 위치 보간 ────────────────────────────────────────────────────
+
+    def _interpolate_visuals(self, t_now: float):
+        """셔틀 위치를 운동학 프로파일에서 분석적으로 계산."""
         for s in self._shuttles.values():
             if s.state != MOVING:
                 continue
-
-            d_rem = s.edge_length - s.dist_traveled
-
-            # ── 속도 결정 ──
-            d_brake = (s.v ** 2 / (2.0 * self.decel)
-                       if math.isfinite(self.decel) else 0.0)
-
-            is_last_edge = (s.path_idx + 1 >= len(s.node_path))
-
-            if math.isfinite(self.decel) and d_rem <= d_brake + 1e-6:
-                if is_last_edge:
-                    # 마지막 엣지: 감속
-                    s.v = max(0.0, s.v - self.decel * dt)
-                else:
-                    # 연속 주행: 감속 생략, 가속 유지
-                    if math.isfinite(self.accel) and s.v < s.edge_speed:
-                        s.v = min(s.edge_speed, s.v + self.accel * dt)
-            elif math.isfinite(self.accel) and s.v < s.edge_speed:
-                # 가속 구간
-                s.v = min(s.edge_speed, s.v + self.accel * dt)
-
-            # ── 위치 전진 ──
-            s.dist_traveled += s.v * dt
-
-            # ── 도착 판정 ──
-            if s.dist_traveled >= s.edge_length - 1e-6:
-                s.x = s.to_x
-                s.y = s.to_y
-                s.dist_traveled = s.edge_length
-                arrivals.append(s)
-            elif s.edge_length > 0:
-                frac = s.dist_traveled / s.edge_length
+            dt = t_now - s.entry_t
+            if dt < 0:
+                dt = 0.0
+            pos, v = _pos_along_profile(
+                dt, s.v0, self.accel, s.edge_speed,
+                self.decel,
+                s._t_accel, s._d_accel,
+                s._t_cruise, s._d_cruise,
+                s._t_decel, s.do_decel)
+            s.v = v
+            if s.edge_length > 0:
+                frac = min(pos / s.edge_length, 1.0)
                 s.x = s.from_x + (s.to_x - s.from_x) * frac
                 s.y = s.from_y + (s.to_y - s.from_y) * frac
-
-        # ── 도착 처리 ──
-        for s in arrivals:
-            carry_v = s.v
-            s.state = IDLE
-
-            nxt_idx = s.path_idx + 1
-            if nxt_idx < len(s.node_path) and carry_v > 0:
-                # 연속 주행: 속도 유지, 다음 엣지 진입
-                self._post_advance(t_now, s)
-            else:
-                s.v = 0.0
-                self._post_advance(t_now, s)
 
     # ── Internal — 이벤트 게시 ───────────────────────────────────────────────
 

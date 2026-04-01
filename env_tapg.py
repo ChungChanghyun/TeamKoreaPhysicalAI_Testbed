@@ -72,19 +72,30 @@ class TAPGAgent:
         self.theta: float = 0.0
         self.v:     float = 0.0
 
-        # MOVING — 위치 기반 도달 감지
+        # MOVING — 운동학 기반 DES (분석적 위치 계산)
         self.from_x:        float = 0.0
         self.from_y:        float = 0.0
         self.to_x:          float = 0.0
         self.to_y:          float = 0.0
-        self.dist_traveled: float = 0.0   # 현재 엣지에서 이동한 거리 (mm)
         self.edge_length:   float = 0.0   # 현재 엣지 전체 길이 (mm)
         self.max_speed:     float = 0.0   # 현재 엣지 최고 속도 (mm/s)
 
-        # ROTATING — 각도 기반 완료 감지
+        # DES 운동학 프로파일 (분석적 위치 계산용)
+        self.entry_t:       float = 0.0   # 엣지 진입 시각
+        self.v0:            float = 0.0   # 진입 시 속도
+        self.do_decel:      bool  = True  # 끝에서 감속 여부
+        # 사전 계산된 프로파일 구간
+        self._t_accel:      float = 0.0   # 가속 구간 시간
+        self._d_accel:      float = 0.0   # 가속 구간 거리
+        self._t_cruise:     float = 0.0   # 정속 구간 시간
+        self._d_cruise:     float = 0.0   # 정속 구간 거리
+        self._t_decel:      float = 0.0   # 감속 구간 시간
+        self._t_total:      float = 0.0   # 총 이동 시간
+        self._v_exit:       float = 0.0   # 도착 시 속도
+
+        # ROTATING — 각도 기반 DES
         self.from_theta:      float = 0.0
         self.to_theta:        float = 0.0
-        self.angle_traversed: float = 0.0   # 이번 회전에서 회전한 각도 (rad)
         self.angle_total:     float = 0.0   # 목표 회전 각도 (rad)
 
         # 현재 실행 중인 TAPG 노드 (도달 시 complete 처리에 사용)
@@ -93,6 +104,9 @@ class TAPGAgent:
         # Claim: 실제 주행이 확정된 구간의 끝 인덱스 (exclusive)
         # path_idx ~ claim_idx 구간은 멈출 수 없음
         self.claim_idx: int = 0
+
+        # 이벤트 무효화 토큰
+        self._move_token: int = 0
 
     @property
     def cur_state_id(self) -> str:
@@ -110,6 +124,123 @@ class TAPGAgent:
                 if not nodes or nodes[-1] != nid:
                     nodes.append(nid)
         return nodes
+
+
+# ── 사다리꼴 속도 프로파일 계산 ────────────────────────────────────────────────
+
+def _compute_travel(v0: float, v_max: float, accel: float,
+                    decel: float, dist: float, do_decel: bool):
+    """
+    사다리꼴(또는 삼각형) 속도 프로파일의 구간별 시간/거리를 계산.
+
+    Returns
+    -------
+    (t_accel, d_accel, t_cruise, d_cruise, t_decel, t_total, v_exit)
+    """
+    if dist <= 0:
+        return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, v0)
+
+    # 즉시 최고속도 모드 (accel=inf)
+    if not math.isfinite(accel):
+        if do_decel and math.isfinite(decel):
+            d_decel = v_max ** 2 / (2.0 * decel)
+            if d_decel >= dist:
+                disc = v_max ** 2 - 2.0 * decel * dist
+                if disc < 0:
+                    disc = 0.0
+                t_d = (v_max - math.sqrt(disc)) / decel
+                v_exit = v_max - decel * t_d
+                return (0.0, 0.0, 0.0, 0.0, t_d, t_d, max(0.0, v_exit))
+            d_cruise = dist - d_decel
+            t_cruise = d_cruise / v_max
+            t_d = v_max / decel
+            return (0.0, 0.0, t_cruise, d_cruise, t_d, t_cruise + t_d, 0.0)
+        else:
+            t = dist / v_max
+            return (0.0, 0.0, t, dist, 0.0, t, v_max)
+
+    # 유한 가속도 모드
+    if do_decel and math.isfinite(decel):
+        # 가속 + (정속) + 감속 → 정지
+        d_accel_full = (v_max ** 2 - v0 ** 2) / (2.0 * accel) if v0 < v_max else 0.0
+        d_decel_full = v_max ** 2 / (2.0 * decel)
+
+        if d_accel_full + d_decel_full <= dist:
+            # 사다리꼴
+            t_a = (v_max - v0) / accel if v0 < v_max else 0.0
+            t_d = v_max / decel
+            d_cruise = dist - d_accel_full - d_decel_full
+            t_c = d_cruise / v_max
+            return (t_a, d_accel_full, t_c, d_cruise, t_d,
+                    t_a + t_c + t_d, 0.0)
+        else:
+            # 삼각형: v_max에 도달 못 함
+            denom = 1.0 / (2.0 * accel) + 1.0 / (2.0 * decel)
+            v_peak_sq = (dist + v0 ** 2 / (2.0 * accel)) / denom
+            if v_peak_sq < 0:
+                v_peak_sq = 0.0
+            v_peak = math.sqrt(v_peak_sq)
+            v_peak = min(v_peak, v_max)
+            t_a = (v_peak - v0) / accel if v_peak > v0 else 0.0
+            t_d = v_peak / decel if v_peak > 0 else 0.0
+            d_a = v0 * t_a + 0.5 * accel * t_a ** 2
+            return (t_a, d_a, 0.0, 0.0, t_d, t_a + t_d, 0.0)
+    else:
+        # 가속 + 정속 (감속 없음 — 연속 주행)
+        if v0 >= v_max:
+            t = dist / v0
+            return (0.0, 0.0, t, dist, 0.0, t, v0)
+
+        t_a = (v_max - v0) / accel
+        d_a = v0 * t_a + 0.5 * accel * t_a ** 2
+
+        if d_a >= dist:
+            disc = v0 ** 2 + 2.0 * accel * dist
+            t_total = (-v0 + math.sqrt(disc)) / accel
+            v_exit = v0 + accel * t_total
+            return (t_total, dist, 0.0, 0.0, 0.0, t_total, v_exit)
+
+        d_cruise = dist - d_a
+        t_c = d_cruise / v_max
+        return (t_a, d_a, t_c, d_cruise, 0.0, t_a + t_c, v_max)
+
+
+def _pos_along_profile(dt: float, v0: float, accel: float,
+                       v_max: float, decel: float,
+                       t_a: float, d_a: float,
+                       t_c: float, d_c: float,
+                       t_d: float, do_decel: bool):
+    """
+    프로파일 상에서 dt 경과 후의 (위치, 현재속도) 반환.
+    """
+    if dt <= 0:
+        return (0.0, v0)
+
+    # Phase 1: 가속
+    if dt <= t_a and t_a > 0:
+        p = v0 * dt + 0.5 * accel * dt ** 2
+        v = v0 + accel * dt
+        return (p, v)
+    p = d_a
+    v = v0 + accel * t_a if t_a > 0 else v_max
+
+    # Phase 2: 정속
+    dt2 = dt - t_a
+    if dt2 <= t_c and t_c > 0:
+        p += v * dt2
+        return (p, v)
+    p += d_c
+    v_cruise = v
+
+    # Phase 3: 감속
+    if do_decel and t_d > 0:
+        dt3 = dt - t_a - t_c
+        dt3 = min(dt3, t_d)
+        p += v_cruise * dt3 - 0.5 * decel * dt3 ** 2
+        v = v_cruise - decel * dt3
+        return (p, max(0.0, v))
+
+    return (p, v_cruise)
 
 
 # ── TAPG 환경 ─────────────────────────────────────────────────────────────────
@@ -223,16 +354,15 @@ class TAPGEnvironment:
     # ── 메인 루프 ──────────────────────────────────────────────────────────────
 
     def step(self, sim_time: float):
-        dt            = max(0.0, sim_time - self.sim_time)
         self.sim_time = sim_time
 
-        # TRY_ADVANCE 등 예약 이벤트 처리
+        # 이벤트 처리 (TRY_ADVANCE, ARRIVE)
         while self._eq and self._eq[0].time <= sim_time:
             ev = heapq.heappop(self._eq)
             self._process(ev)
 
-        # 위치 기반 이동/도달 처리 (센서 시뮬레이션)
-        self._update_positions(dt, sim_time)
+        # 시각화용 위치 보간 (분석적 계산)
+        self._interpolate_visuals(sim_time)
 
         # 주기적으로 WAITING 에이전트 재확인 (event miss 방어)
         if sim_time - self._last_check >= self.PERIODIC_INTERVAL:
@@ -242,6 +372,15 @@ class TAPGEnvironment:
     # ── 이벤트 처리 ────────────────────────────────────────────────────────────
 
     def _process(self, ev: Event):
+        if ev.kind == 'ARRIVE':
+            # 토큰 검증 — stale 이벤트 폐기
+            agent = self.agents.get(ev.agent_id)
+            if agent is None:
+                return
+            if ev.data.get('token') != agent._move_token:
+                return
+            self._on_arrive(ev)
+            return
         handler = {
             'TRY_ADVANCE': self._on_try_advance,
         }.get(ev.kind)
@@ -368,18 +507,37 @@ class TAPGEnvironment:
         agent.to_y          = tn.y
         agent.theta         = edge.angle
         agent.max_speed     = edge.max_speed
-        if v_init is not None:
-            # 연속 주행: 이전 속도 유지 (max_speed 초과 방지)
-            agent.v = min(v_init, edge.max_speed)
-        elif math.isfinite(self.accel):
-            agent.v = 0.0           # 유한 가속도: 정지 상태에서 출발
-        else:
-            agent.v = edge.max_speed  # 즉시 최고속도
-        agent.dist_traveled = 0.0
         agent.edge_length   = edge.length
         agent._tapg_node    = self._nk(sid, agent.id, cbs_t)
-        agent.state         = MOVING
-        # ACTION_DONE 이벤트 없음 — _update_positions에서 위치 기반으로 도달 감지
+        agent.entry_t       = cur_time
+
+        if v_init is not None:
+            agent.v0 = min(v_init, edge.max_speed)
+        elif math.isfinite(self.accel):
+            agent.v0 = 0.0
+        else:
+            agent.v0 = edge.max_speed
+
+        # 마지막 엣지이거나 다음 Move를 claim할 수 없으면 감속
+        do_decel = not self._next_move_claimable(agent)
+        agent.do_decel = do_decel
+
+        # 사다리꼴 프로파일 계산
+        (agent._t_accel, agent._d_accel,
+         agent._t_cruise, agent._d_cruise,
+         agent._t_decel, agent._t_total,
+         agent._v_exit) = _compute_travel(
+            agent.v0, edge.max_speed, self.accel, self.decel,
+            edge.length, do_decel)
+
+        agent.v     = agent.v0
+        agent.state = MOVING
+
+        # ARRIVE 이벤트 예약 (토큰으로 stale 이벤트 무효화)
+        agent._move_token += 1
+        arrive_t = cur_time + agent._t_total
+        self._schedule(arrive_t, 'ARRIVE', agent.id,
+                       token=agent._move_token)
 
     def _start_rotate(self, agent: TAPGAgent, sid: str,
                       cbs_t: float, cur_time: float):
@@ -387,25 +545,31 @@ class TAPGEnvironment:
         from_deg = float(parts[2])
         to_deg   = float(parts[3])
 
-        # 최단 경로 방향의 부호 있는 각도 계산
-        # CCW(+) vs CW(-) 중 짧은 쪽을 선택
-        diff_ccw = (to_deg - from_deg) % 360   # 반시계 방향으로 얼마나 돌아야 하는지
+        diff_ccw = (to_deg - from_deg) % 360
         if diff_ccw <= 180:
-            signed_diff = math.radians(diff_ccw)   # CCW (+)
+            signed_diff = math.radians(diff_ccw)
         else:
-            signed_diff = math.radians(diff_ccw - 360)  # CW (-)
+            signed_diff = math.radians(diff_ccw - 360)
 
         from_rad = math.radians(from_deg)
 
         agent.from_theta      = from_rad
-        agent.to_theta        = from_rad + signed_diff  # 최단 경로 기준 도달 각도
+        agent.to_theta        = from_rad + signed_diff
         agent.theta           = from_rad
         agent.v               = 0.0
-        agent.angle_traversed = 0.0
         agent.angle_total     = abs(signed_diff)
         agent._tapg_node      = self._nk(sid, agent.id, cbs_t)
+        agent.entry_t         = cur_time
         agent.state           = ROTATING
-        # ACTION_DONE 이벤트 없음 — _update_positions에서 각도 기반으로 완료 감지
+
+        # 회전 완료 이벤트 예약
+        agent._move_token += 1
+        if agent.angle_total > 0:
+            t_rotate = agent.angle_total / ANGULAR_SPEED
+        else:
+            t_rotate = 0.0
+        self._schedule(cur_time + t_rotate, 'ARRIVE', agent.id,
+                       token=agent._move_token)
 
     # ── 주기적 재확인 ──────────────────────────────────────────────────────────
 
@@ -478,82 +642,38 @@ class TAPGEnvironment:
 
         return False
 
-    # ── 위치 기반 이동 / 도달 감지 (센서 시뮬레이션) ──────────────────────────
+    # ── DES 도착 이벤트 처리 ────────────────────────────────────────────────────
 
-    def _update_positions(self, dt: float, sim_time: float):
-        """
-        dt 동안 각 에이전트를 물리적으로 전진시키고,
-        목적지 도달 여부를 거리/각도로 판단합니다.
-        CBS 플래닝 타임과 무관하게 실제 이동량 기준으로 완료를 결정합니다.
-        """
-        if dt <= 0.0:
+    def _on_arrive(self, ev: Event):
+        """ARRIVE 이벤트: 에이전트가 엣지 끝 또는 회전 목표에 도달."""
+        agent = self.agents.get(ev.agent_id)
+        if agent is None:
             return
 
-        arrivals = []
+        sim_time = ev.time
 
-        for agent in self.agents.values():
-            if agent.state == MOVING:
-                # 사다리꼴 속도 프로파일 (accel/decel이 유한할 때만 적용)
-                d_rem   = agent.edge_length - agent.dist_traveled
-                d_brake = (agent.v ** 2 / (2.0 * self.decel)
-                           if math.isfinite(self.decel) else 0.0)
-                if math.isfinite(self.decel) and d_rem <= d_brake + 1e-6:
-                    # 제동 구간 — 하지만 다음 Move가 이미 claimable이면 감속 생략
-                    if (math.isfinite(self.accel)
-                            and self._next_move_claimable(agent)):
-                        # 연속 주행: 감속 없이 통과
-                        if agent.v < agent.max_speed:
-                            agent.v = min(agent.max_speed,
-                                          agent.v + self.accel * dt)
-                    else:
-                        agent.v = max(0.0, agent.v - self.decel * dt)
-                elif math.isfinite(self.accel) and agent.v < agent.max_speed:
-                    # 가속 구간
-                    agent.v = min(agent.max_speed, agent.v + self.accel * dt)
-                # else: 최고속도 유지 (cruise)
+        # 위치 스냅
+        if agent.state == MOVING:
+            agent.x = agent.to_x
+            agent.y = agent.to_y
+            carry_v = agent._v_exit
+        elif agent.state == ROTATING:
+            agent.theta = agent.to_theta
+            carry_v = 0.0
+        else:
+            return
 
-                agent.dist_traveled += agent.v * dt
-                if agent.dist_traveled >= agent.edge_length - 1e-6:
-                    # 도달 — 목적지로 스냅 (센서 트리거)
-                    agent.x = agent.to_x
-                    agent.y = agent.to_y
-                    arrivals.append(agent)
-                else:
-                    frac    = agent.dist_traveled / agent.edge_length
-                    agent.x = agent.from_x + (agent.to_x - agent.from_x) * frac
-                    agent.y = agent.from_y + (agent.to_y - agent.from_y) * frac
-
-            elif agent.state == ROTATING:
-                agent.angle_traversed += ANGULAR_SPEED * dt
-                if agent.angle_total <= 0 or agent.angle_traversed >= agent.angle_total:
-                    # 회전 완료 — 목표 각도로 스냅
-                    agent.theta = agent.to_theta
-                    arrivals.append(agent)
-                else:
-                    frac        = agent.angle_traversed / agent.angle_total
-                    agent.theta = (agent.from_theta
-                                   + (agent.to_theta - agent.from_theta) * frac)
-
-        for agent in arrivals:
-            self._handle_arrival(agent, sim_time)
-
-    def _handle_arrival(self, agent: TAPGAgent, sim_time: float):
-        """에이전트가 목적지(또는 회전 목표)에 도달했을 때 호출됩니다.
-        완료된 M/R action + 그 이전의 S state들을 DAG에서 한꺼번에 제거."""
         nk               = agent._tapg_node
-        carry_v          = agent.v
         agent._tapg_node = None
         agent.path_idx  += 1
         agent.state      = IDLE
 
-        # 현재 완료된 action(M/R) + 그 이전의 모든 S state를 DAG에서 제거
+        # 완료된 action(M/R) + 이전의 S state들을 DAG에서 제거
         if nk:
-            # path에서 현재 path_idx 이전의 모든 state 제거
             for i in range(agent.path_idx):
                 sid_i, t_i = agent.raw_path[i]
                 nk_i = self._nk(sid_i, agent.id, t_i)
                 if self.G.has_node(nk_i):
-                    # wait_queues에서 대기자 깨우기
                     for wid in self.wait_queues.pop(nk_i, []):
                         wa = self.agents.get(wid)
                         if wa and wa.state == WAITING:
@@ -561,13 +681,43 @@ class TAPGEnvironment:
                             self._schedule(sim_time + 1e-9, 'TRY_ADVANCE', wid)
                     self.G.remove_node(nk_i)
 
-        # 유한 가속도 모드 + Move 완료 시 연속 주행 시도
+        # 연속 주행 시도
         if math.isfinite(self.accel) and carry_v > 0 and nk and nk[0].startswith('M,'):
             if self._try_chain_move(agent, carry_v, sim_time):
                 return
 
         agent.v = 0.0
         self._schedule(sim_time, 'TRY_ADVANCE', agent.id)
+
+    # ── 시각화용 위치 보간 (분석적 계산) ──────────────────────────────────────
+
+    def _interpolate_visuals(self, sim_time: float):
+        """에이전트의 현재 위치를 운동학 프로파일에서 분석적으로 계산."""
+        for agent in self.agents.values():
+            if agent.state == MOVING:
+                dt = sim_time - agent.entry_t
+                if dt < 0:
+                    dt = 0.0
+                pos, v = _pos_along_profile(
+                    dt, agent.v0, self.accel, agent.max_speed,
+                    self.decel,
+                    agent._t_accel, agent._d_accel,
+                    agent._t_cruise, agent._d_cruise,
+                    agent._t_decel, agent.do_decel)
+                agent.v = v
+                if agent.edge_length > 0:
+                    frac = min(pos / agent.edge_length, 1.0)
+                    agent.x = agent.from_x + (agent.to_x - agent.from_x) * frac
+                    agent.y = agent.from_y + (agent.to_y - agent.from_y) * frac
+
+            elif agent.state == ROTATING:
+                dt = sim_time - agent.entry_t
+                if agent.angle_total > 0 and dt >= 0:
+                    frac = min(dt * ANGULAR_SPEED / agent.angle_total, 1.0)
+                    agent.theta = (agent.from_theta
+                                   + (agent.to_theta - agent.from_theta) * frac)
+                else:
+                    agent.theta = agent.to_theta
 
     # ── 연속 주행 헬퍼 ────────────────────────────────────────────────────────
 

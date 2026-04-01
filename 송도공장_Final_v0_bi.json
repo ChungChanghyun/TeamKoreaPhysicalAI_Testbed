@@ -1,0 +1,1781 @@
+{
+  "schema": "xmsmap-v4.0",
+  "info": {
+    "name": "송도공장_Final_v0_bi",
+    "version": "1.0"
+  },
+  "nodes": [
+    {
+      "id": "00000001",
+      "x": 218509.2,
+      "y": 142908.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000002",
+      "x": 218509.2,
+      "y": 145538.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000003",
+      "x": 221139.2,
+      "y": 142908.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000004",
+      "x": 221139.2,
+      "y": 145538.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000005",
+      "x": 297700.9,
+      "y": 141967.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000006",
+      "x": 297700.9,
+      "y": 144597.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000007",
+      "x": 300330.9,
+      "y": 141967.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000008",
+      "x": 300330.9,
+      "y": 144597.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000009",
+      "x": 121199.2,
+      "y": 90381.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000010",
+      "x": 121199.2,
+      "y": 93011.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000011",
+      "x": 123829.2,
+      "y": 90381.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000012",
+      "x": 123829.2,
+      "y": 93011.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000013",
+      "x": 126459.2,
+      "y": 90381.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000014",
+      "x": 126459.2,
+      "y": 93011.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000015",
+      "x": 213205.3,
+      "y": 90894.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000016",
+      "x": 213205.3,
+      "y": 93524.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000017",
+      "x": 215835.3,
+      "y": 90894.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000018",
+      "x": 215835.3,
+      "y": 93524.0,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000019",
+      "x": 269591.0,
+      "y": 142086.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000020",
+      "x": 269591.0,
+      "y": 144716.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000021",
+      "x": 35128.2,
+      "y": 143702.4,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000022",
+      "x": 35128.2,
+      "y": 146332.4,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000023",
+      "x": 37758.2,
+      "y": 143702.4,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000024",
+      "x": 37758.2,
+      "y": 146332.4,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000025",
+      "x": 146870.9,
+      "y": 90666.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000026",
+      "x": 146870.9,
+      "y": 93296.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000027",
+      "x": 218509.2,
+      "y": 110200.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000028",
+      "x": 218509.2,
+      "y": 112830.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000029",
+      "x": 221139.2,
+      "y": 110200.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000030",
+      "x": 221139.2,
+      "y": 112830.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000031",
+      "x": 121199.2,
+      "y": 143191.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000032",
+      "x": 121199.2,
+      "y": 145821.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000033",
+      "x": 123829.2,
+      "y": 143191.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000034",
+      "x": 123829.2,
+      "y": 145821.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000035",
+      "x": 126459.2,
+      "y": 143191.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000036",
+      "x": 126459.2,
+      "y": 145821.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000037",
+      "x": 248076.5,
+      "y": 142594.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000038",
+      "x": 248076.5,
+      "y": 145224.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000039",
+      "x": 255868.8,
+      "y": 142306.1,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000040",
+      "x": 255868.8,
+      "y": 144936.1,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000041",
+      "x": 35128.2,
+      "y": 89608.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000042",
+      "x": 35128.2,
+      "y": 92238.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000043",
+      "x": 37758.2,
+      "y": 89608.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000044",
+      "x": 37758.2,
+      "y": 92238.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000045",
+      "x": 46999.1,
+      "y": 89694.7,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000046",
+      "x": 46999.1,
+      "y": 92324.7,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000047",
+      "x": 74046.9,
+      "y": 89862.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000048",
+      "x": 74046.9,
+      "y": 92492.3,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000049",
+      "x": 114412.4,
+      "y": 90099.7,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000050",
+      "x": 114412.4,
+      "y": 92729.7,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000051",
+      "x": 121199.2,
+      "y": 111792.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000052",
+      "x": 123829.2,
+      "y": 111792.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000053",
+      "x": 126459.2,
+      "y": 111792.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000054",
+      "x": 121199.2,
+      "y": 128955.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000055",
+      "x": 123829.2,
+      "y": 128955.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000056",
+      "x": 126459.2,
+      "y": 128955.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000057",
+      "x": 87671.8,
+      "y": 143584.4,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000058",
+      "x": 87671.8,
+      "y": 146214.4,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000059",
+      "x": 213205.3,
+      "y": 73246.5,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000060",
+      "x": 215835.3,
+      "y": 73246.5,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000061",
+      "x": 212197.2,
+      "y": 110200.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000062",
+      "x": 212197.2,
+      "y": 112830.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000063",
+      "x": 218509.2,
+      "y": 128287.1,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000064",
+      "x": 221139.2,
+      "y": 128287.1,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000065",
+      "x": 74137.6,
+      "y": 84598.7,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000066",
+      "x": 114319.5,
+      "y": 84447.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000067",
+      "x": 116207.8,
+      "y": 111940.5,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000068",
+      "x": 116585.4,
+      "y": 129236.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000069",
+      "x": 87279.8,
+      "y": 151895.8,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000070",
+      "x": 221496.5,
+      "y": 73344.7,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000071",
+      "x": 221572.0,
+      "y": 90867.6,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000072",
+      "x": 206768.2,
+      "y": 110429.9,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000073",
+      "x": 207070.3,
+      "y": 128557.1,
+      "area": "AMR_A"
+    },
+    {
+      "id": "00000074",
+      "x": 300198.7,
+      "y": 136638.8,
+      "area": "AMR_A"
+    }
+  ],
+  "segments": [
+    {
+      "id": 1,
+      "startNodeId": "00000001",
+      "endNodeId": "00000003",
+      "speed": 1000
+    },
+    {
+      "id": -1,
+      "startNodeId": "00000003",
+      "endNodeId": "00000001",
+      "speed": 1000
+    },
+    {
+      "id": 2,
+      "startNodeId": "00000001",
+      "endNodeId": "00000002",
+      "speed": 1000
+    },
+    {
+      "id": -2,
+      "startNodeId": "00000002",
+      "endNodeId": "00000001",
+      "speed": 1000
+    },
+    {
+      "id": 3,
+      "startNodeId": "00000002",
+      "endNodeId": "00000004",
+      "speed": 1000
+    },
+    {
+      "id": -3,
+      "startNodeId": "00000004",
+      "endNodeId": "00000002",
+      "speed": 1000
+    },
+    {
+      "id": 4,
+      "startNodeId": "00000003",
+      "endNodeId": "00000004",
+      "speed": 1000
+    },
+    {
+      "id": -4,
+      "startNodeId": "00000004",
+      "endNodeId": "00000003",
+      "speed": 1000
+    },
+    {
+      "id": 5,
+      "startNodeId": "00000005",
+      "endNodeId": "00000007",
+      "speed": 1000
+    },
+    {
+      "id": -5,
+      "startNodeId": "00000007",
+      "endNodeId": "00000005",
+      "speed": 1000
+    },
+    {
+      "id": 6,
+      "startNodeId": "00000005",
+      "endNodeId": "00000006",
+      "speed": 1000
+    },
+    {
+      "id": -6,
+      "startNodeId": "00000006",
+      "endNodeId": "00000005",
+      "speed": 1000
+    },
+    {
+      "id": 7,
+      "startNodeId": "00000006",
+      "endNodeId": "00000008",
+      "speed": 1000
+    },
+    {
+      "id": -7,
+      "startNodeId": "00000008",
+      "endNodeId": "00000006",
+      "speed": 1000
+    },
+    {
+      "id": 8,
+      "startNodeId": "00000007",
+      "endNodeId": "00000008",
+      "speed": 1000
+    },
+    {
+      "id": -8,
+      "startNodeId": "00000008",
+      "endNodeId": "00000007",
+      "speed": 1000
+    },
+    {
+      "id": 9,
+      "startNodeId": "00000009",
+      "endNodeId": "00000011",
+      "speed": 1000
+    },
+    {
+      "id": -9,
+      "startNodeId": "00000011",
+      "endNodeId": "00000009",
+      "speed": 1000
+    },
+    {
+      "id": 10,
+      "startNodeId": "00000009",
+      "endNodeId": "00000010",
+      "speed": 1000
+    },
+    {
+      "id": -10,
+      "startNodeId": "00000010",
+      "endNodeId": "00000009",
+      "speed": 1000
+    },
+    {
+      "id": 11,
+      "startNodeId": "00000010",
+      "endNodeId": "00000012",
+      "speed": 1000
+    },
+    {
+      "id": -11,
+      "startNodeId": "00000012",
+      "endNodeId": "00000010",
+      "speed": 1000
+    },
+    {
+      "id": 12,
+      "startNodeId": "00000011",
+      "endNodeId": "00000013",
+      "speed": 1000
+    },
+    {
+      "id": -12,
+      "startNodeId": "00000013",
+      "endNodeId": "00000011",
+      "speed": 1000
+    },
+    {
+      "id": 13,
+      "startNodeId": "00000011",
+      "endNodeId": "00000012",
+      "speed": 1000
+    },
+    {
+      "id": -13,
+      "startNodeId": "00000012",
+      "endNodeId": "00000011",
+      "speed": 1000
+    },
+    {
+      "id": 14,
+      "startNodeId": "00000012",
+      "endNodeId": "00000014",
+      "speed": 1000
+    },
+    {
+      "id": -14,
+      "startNodeId": "00000014",
+      "endNodeId": "00000012",
+      "speed": 1000
+    },
+    {
+      "id": 15,
+      "startNodeId": "00000013",
+      "endNodeId": "00000014",
+      "speed": 1000
+    },
+    {
+      "id": -15,
+      "startNodeId": "00000014",
+      "endNodeId": "00000013",
+      "speed": 1000
+    },
+    {
+      "id": 16,
+      "startNodeId": "00000015",
+      "endNodeId": "00000017",
+      "speed": 1000
+    },
+    {
+      "id": -16,
+      "startNodeId": "00000017",
+      "endNodeId": "00000015",
+      "speed": 1000
+    },
+    {
+      "id": 17,
+      "startNodeId": "00000015",
+      "endNodeId": "00000016",
+      "speed": 1000
+    },
+    {
+      "id": -17,
+      "startNodeId": "00000016",
+      "endNodeId": "00000015",
+      "speed": 1000
+    },
+    {
+      "id": 18,
+      "startNodeId": "00000016",
+      "endNodeId": "00000018",
+      "speed": 1000
+    },
+    {
+      "id": -18,
+      "startNodeId": "00000018",
+      "endNodeId": "00000016",
+      "speed": 1000
+    },
+    {
+      "id": 19,
+      "startNodeId": "00000017",
+      "endNodeId": "00000018",
+      "speed": 1000
+    },
+    {
+      "id": -19,
+      "startNodeId": "00000018",
+      "endNodeId": "00000017",
+      "speed": 1000
+    },
+    {
+      "id": 20,
+      "startNodeId": "00000019",
+      "endNodeId": "00000020",
+      "speed": 1000
+    },
+    {
+      "id": -20,
+      "startNodeId": "00000020",
+      "endNodeId": "00000019",
+      "speed": 1000
+    },
+    {
+      "id": 21,
+      "startNodeId": "00000021",
+      "endNodeId": "00000023",
+      "speed": 1000
+    },
+    {
+      "id": -21,
+      "startNodeId": "00000023",
+      "endNodeId": "00000021",
+      "speed": 1000
+    },
+    {
+      "id": 22,
+      "startNodeId": "00000021",
+      "endNodeId": "00000022",
+      "speed": 1000
+    },
+    {
+      "id": -22,
+      "startNodeId": "00000022",
+      "endNodeId": "00000021",
+      "speed": 1000
+    },
+    {
+      "id": 23,
+      "startNodeId": "00000022",
+      "endNodeId": "00000024",
+      "speed": 1000
+    },
+    {
+      "id": -23,
+      "startNodeId": "00000024",
+      "endNodeId": "00000022",
+      "speed": 1000
+    },
+    {
+      "id": 24,
+      "startNodeId": "00000023",
+      "endNodeId": "00000024",
+      "speed": 1000
+    },
+    {
+      "id": -24,
+      "startNodeId": "00000024",
+      "endNodeId": "00000023",
+      "speed": 1000
+    },
+    {
+      "id": 25,
+      "startNodeId": "00000025",
+      "endNodeId": "00000026",
+      "speed": 1000
+    },
+    {
+      "id": -25,
+      "startNodeId": "00000026",
+      "endNodeId": "00000025",
+      "speed": 1000
+    },
+    {
+      "id": 26,
+      "startNodeId": "00000027",
+      "endNodeId": "00000029",
+      "speed": 1000
+    },
+    {
+      "id": -26,
+      "startNodeId": "00000029",
+      "endNodeId": "00000027",
+      "speed": 1000
+    },
+    {
+      "id": 27,
+      "startNodeId": "00000027",
+      "endNodeId": "00000028",
+      "speed": 1000
+    },
+    {
+      "id": -27,
+      "startNodeId": "00000028",
+      "endNodeId": "00000027",
+      "speed": 1000
+    },
+    {
+      "id": 28,
+      "startNodeId": "00000028",
+      "endNodeId": "00000030",
+      "speed": 1000
+    },
+    {
+      "id": -28,
+      "startNodeId": "00000030",
+      "endNodeId": "00000028",
+      "speed": 1000
+    },
+    {
+      "id": 29,
+      "startNodeId": "00000029",
+      "endNodeId": "00000030",
+      "speed": 1000
+    },
+    {
+      "id": -29,
+      "startNodeId": "00000030",
+      "endNodeId": "00000029",
+      "speed": 1000
+    },
+    {
+      "id": 30,
+      "startNodeId": "00000031",
+      "endNodeId": "00000033",
+      "speed": 1000
+    },
+    {
+      "id": -30,
+      "startNodeId": "00000033",
+      "endNodeId": "00000031",
+      "speed": 1000
+    },
+    {
+      "id": 31,
+      "startNodeId": "00000031",
+      "endNodeId": "00000032",
+      "speed": 1000
+    },
+    {
+      "id": -31,
+      "startNodeId": "00000032",
+      "endNodeId": "00000031",
+      "speed": 1000
+    },
+    {
+      "id": 32,
+      "startNodeId": "00000032",
+      "endNodeId": "00000034",
+      "speed": 1000
+    },
+    {
+      "id": -32,
+      "startNodeId": "00000034",
+      "endNodeId": "00000032",
+      "speed": 1000
+    },
+    {
+      "id": 33,
+      "startNodeId": "00000033",
+      "endNodeId": "00000035",
+      "speed": 1000
+    },
+    {
+      "id": -33,
+      "startNodeId": "00000035",
+      "endNodeId": "00000033",
+      "speed": 1000
+    },
+    {
+      "id": 34,
+      "startNodeId": "00000033",
+      "endNodeId": "00000034",
+      "speed": 1000
+    },
+    {
+      "id": -34,
+      "startNodeId": "00000034",
+      "endNodeId": "00000033",
+      "speed": 1000
+    },
+    {
+      "id": 35,
+      "startNodeId": "00000034",
+      "endNodeId": "00000036",
+      "speed": 1000
+    },
+    {
+      "id": -35,
+      "startNodeId": "00000036",
+      "endNodeId": "00000034",
+      "speed": 1000
+    },
+    {
+      "id": 36,
+      "startNodeId": "00000035",
+      "endNodeId": "00000036",
+      "speed": 1000
+    },
+    {
+      "id": -36,
+      "startNodeId": "00000036",
+      "endNodeId": "00000035",
+      "speed": 1000
+    },
+    {
+      "id": 37,
+      "startNodeId": "00000037",
+      "endNodeId": "00000038",
+      "speed": 1000
+    },
+    {
+      "id": -37,
+      "startNodeId": "00000038",
+      "endNodeId": "00000037",
+      "speed": 1000
+    },
+    {
+      "id": 38,
+      "startNodeId": "00000039",
+      "endNodeId": "00000040",
+      "speed": 1000
+    },
+    {
+      "id": -38,
+      "startNodeId": "00000040",
+      "endNodeId": "00000039",
+      "speed": 1000
+    },
+    {
+      "id": 39,
+      "startNodeId": "00000041",
+      "endNodeId": "00000043",
+      "speed": 1000
+    },
+    {
+      "id": -39,
+      "startNodeId": "00000043",
+      "endNodeId": "00000041",
+      "speed": 1000
+    },
+    {
+      "id": 40,
+      "startNodeId": "00000041",
+      "endNodeId": "00000042",
+      "speed": 1000
+    },
+    {
+      "id": -40,
+      "startNodeId": "00000042",
+      "endNodeId": "00000041",
+      "speed": 1000
+    },
+    {
+      "id": 41,
+      "startNodeId": "00000042",
+      "endNodeId": "00000044",
+      "speed": 1000
+    },
+    {
+      "id": -41,
+      "startNodeId": "00000044",
+      "endNodeId": "00000042",
+      "speed": 1000
+    },
+    {
+      "id": 42,
+      "startNodeId": "00000043",
+      "endNodeId": "00000044",
+      "speed": 1000
+    },
+    {
+      "id": -42,
+      "startNodeId": "00000044",
+      "endNodeId": "00000043",
+      "speed": 1000
+    },
+    {
+      "id": 43,
+      "startNodeId": "00000045",
+      "endNodeId": "00000046",
+      "speed": 1000
+    },
+    {
+      "id": -43,
+      "startNodeId": "00000046",
+      "endNodeId": "00000045",
+      "speed": 1000
+    },
+    {
+      "id": 44,
+      "startNodeId": "00000047",
+      "endNodeId": "00000048",
+      "speed": 1000
+    },
+    {
+      "id": -44,
+      "startNodeId": "00000048",
+      "endNodeId": "00000047",
+      "speed": 1000
+    },
+    {
+      "id": 45,
+      "startNodeId": "00000049",
+      "endNodeId": "00000050",
+      "speed": 1000
+    },
+    {
+      "id": -45,
+      "startNodeId": "00000050",
+      "endNodeId": "00000049",
+      "speed": 1000
+    },
+    {
+      "id": 46,
+      "startNodeId": "00000051",
+      "endNodeId": "00000052",
+      "speed": 1000
+    },
+    {
+      "id": -46,
+      "startNodeId": "00000052",
+      "endNodeId": "00000051",
+      "speed": 1000
+    },
+    {
+      "id": 47,
+      "startNodeId": "00000052",
+      "endNodeId": "00000053",
+      "speed": 1000
+    },
+    {
+      "id": -47,
+      "startNodeId": "00000053",
+      "endNodeId": "00000052",
+      "speed": 1000
+    },
+    {
+      "id": 48,
+      "startNodeId": "00000054",
+      "endNodeId": "00000055",
+      "speed": 1000
+    },
+    {
+      "id": -48,
+      "startNodeId": "00000055",
+      "endNodeId": "00000054",
+      "speed": 1000
+    },
+    {
+      "id": 49,
+      "startNodeId": "00000055",
+      "endNodeId": "00000056",
+      "speed": 1000
+    },
+    {
+      "id": -49,
+      "startNodeId": "00000056",
+      "endNodeId": "00000055",
+      "speed": 1000
+    },
+    {
+      "id": 50,
+      "startNodeId": "00000057",
+      "endNodeId": "00000058",
+      "speed": 1000
+    },
+    {
+      "id": -50,
+      "startNodeId": "00000058",
+      "endNodeId": "00000057",
+      "speed": 1000
+    },
+    {
+      "id": 51,
+      "startNodeId": "00000059",
+      "endNodeId": "00000060",
+      "speed": 1000
+    },
+    {
+      "id": -51,
+      "startNodeId": "00000060",
+      "endNodeId": "00000059",
+      "speed": 1000
+    },
+    {
+      "id": 52,
+      "startNodeId": "00000061",
+      "endNodeId": "00000062",
+      "speed": 1000
+    },
+    {
+      "id": -52,
+      "startNodeId": "00000062",
+      "endNodeId": "00000061",
+      "speed": 1000
+    },
+    {
+      "id": 53,
+      "startNodeId": "00000063",
+      "endNodeId": "00000064",
+      "speed": 1000
+    },
+    {
+      "id": -53,
+      "startNodeId": "00000064",
+      "endNodeId": "00000063",
+      "speed": 1000
+    },
+    {
+      "id": 54,
+      "startNodeId": "00000003",
+      "endNodeId": "00000064",
+      "speed": 1000
+    },
+    {
+      "id": -54,
+      "startNodeId": "00000064",
+      "endNodeId": "00000003",
+      "speed": 1000
+    },
+    {
+      "id": 55,
+      "startNodeId": "00000063",
+      "endNodeId": "00000001",
+      "speed": 1000
+    },
+    {
+      "id": -55,
+      "startNodeId": "00000001",
+      "endNodeId": "00000063",
+      "speed": 1000
+    },
+    {
+      "id": 56,
+      "startNodeId": "00000037",
+      "endNodeId": "00000003",
+      "speed": 1000
+    },
+    {
+      "id": -56,
+      "startNodeId": "00000003",
+      "endNodeId": "00000037",
+      "speed": 1000
+    },
+    {
+      "id": 57,
+      "startNodeId": "00000004",
+      "endNodeId": "00000038",
+      "speed": 1000
+    },
+    {
+      "id": -57,
+      "startNodeId": "00000038",
+      "endNodeId": "00000004",
+      "speed": 1000
+    },
+    {
+      "id": 58,
+      "startNodeId": "00000036",
+      "endNodeId": "00000002",
+      "speed": 1000
+    },
+    {
+      "id": -58,
+      "startNodeId": "00000002",
+      "endNodeId": "00000036",
+      "speed": 1000
+    },
+    {
+      "id": 59,
+      "startNodeId": "00000001",
+      "endNodeId": "00000035",
+      "speed": 1000
+    },
+    {
+      "id": -59,
+      "startNodeId": "00000035",
+      "endNodeId": "00000001",
+      "speed": 1000
+    },
+    {
+      "id": 60,
+      "startNodeId": "00000020",
+      "endNodeId": "00000006",
+      "speed": 1000
+    },
+    {
+      "id": -60,
+      "startNodeId": "00000006",
+      "endNodeId": "00000020",
+      "speed": 1000
+    },
+    {
+      "id": 61,
+      "startNodeId": "00000005",
+      "endNodeId": "00000019",
+      "speed": 1000
+    },
+    {
+      "id": -61,
+      "startNodeId": "00000019",
+      "endNodeId": "00000005",
+      "speed": 1000
+    },
+    {
+      "id": 62,
+      "startNodeId": "00000014",
+      "endNodeId": "00000026",
+      "speed": 1000
+    },
+    {
+      "id": -62,
+      "startNodeId": "00000026",
+      "endNodeId": "00000014",
+      "speed": 1000
+    },
+    {
+      "id": 63,
+      "startNodeId": "00000025",
+      "endNodeId": "00000013",
+      "speed": 1000
+    },
+    {
+      "id": -63,
+      "startNodeId": "00000013",
+      "endNodeId": "00000025",
+      "speed": 1000
+    },
+    {
+      "id": 64,
+      "startNodeId": "00000050",
+      "endNodeId": "00000010",
+      "speed": 1000
+    },
+    {
+      "id": -64,
+      "startNodeId": "00000010",
+      "endNodeId": "00000050",
+      "speed": 1000
+    },
+    {
+      "id": 65,
+      "startNodeId": "00000009",
+      "endNodeId": "00000049",
+      "speed": 1000
+    },
+    {
+      "id": -65,
+      "startNodeId": "00000049",
+      "endNodeId": "00000009",
+      "speed": 1000
+    },
+    {
+      "id": 66,
+      "startNodeId": "00000012",
+      "endNodeId": "00000052",
+      "speed": 1000
+    },
+    {
+      "id": -66,
+      "startNodeId": "00000052",
+      "endNodeId": "00000012",
+      "speed": 1000
+    },
+    {
+      "id": 67,
+      "startNodeId": "00000053",
+      "endNodeId": "00000014",
+      "speed": 1000
+    },
+    {
+      "id": -67,
+      "startNodeId": "00000014",
+      "endNodeId": "00000053",
+      "speed": 1000
+    },
+    {
+      "id": 68,
+      "startNodeId": "00000010",
+      "endNodeId": "00000051",
+      "speed": 1000
+    },
+    {
+      "id": -68,
+      "startNodeId": "00000051",
+      "endNodeId": "00000010",
+      "speed": 1000
+    },
+    {
+      "id": 69,
+      "startNodeId": "00000015",
+      "endNodeId": "00000025",
+      "speed": 1000
+    },
+    {
+      "id": -69,
+      "startNodeId": "00000025",
+      "endNodeId": "00000015",
+      "speed": 1000
+    },
+    {
+      "id": 70,
+      "startNodeId": "00000026",
+      "endNodeId": "00000016",
+      "speed": 1000
+    },
+    {
+      "id": -70,
+      "startNodeId": "00000016",
+      "endNodeId": "00000026",
+      "speed": 1000
+    },
+    {
+      "id": 71,
+      "startNodeId": "00000059",
+      "endNodeId": "00000015",
+      "speed": 1000
+    },
+    {
+      "id": -71,
+      "startNodeId": "00000015",
+      "endNodeId": "00000059",
+      "speed": 1000
+    },
+    {
+      "id": 72,
+      "startNodeId": "00000017",
+      "endNodeId": "00000060",
+      "speed": 1000
+    },
+    {
+      "id": -72,
+      "startNodeId": "00000060",
+      "endNodeId": "00000017",
+      "speed": 1000
+    },
+    {
+      "id": 73,
+      "startNodeId": "00000040",
+      "endNodeId": "00000020",
+      "speed": 1000
+    },
+    {
+      "id": -73,
+      "startNodeId": "00000020",
+      "endNodeId": "00000040",
+      "speed": 1000
+    },
+    {
+      "id": 74,
+      "startNodeId": "00000019",
+      "endNodeId": "00000039",
+      "speed": 1000
+    },
+    {
+      "id": -74,
+      "startNodeId": "00000039",
+      "endNodeId": "00000019",
+      "speed": 1000
+    },
+    {
+      "id": 75,
+      "startNodeId": "00000042",
+      "endNodeId": "00000021",
+      "speed": 1000
+    },
+    {
+      "id": -75,
+      "startNodeId": "00000021",
+      "endNodeId": "00000042",
+      "speed": 1000
+    },
+    {
+      "id": 76,
+      "startNodeId": "00000023",
+      "endNodeId": "00000044",
+      "speed": 1000
+    },
+    {
+      "id": -76,
+      "startNodeId": "00000044",
+      "endNodeId": "00000023",
+      "speed": 1000
+    },
+    {
+      "id": 77,
+      "startNodeId": "00000057",
+      "endNodeId": "00000023",
+      "speed": 1000
+    },
+    {
+      "id": -77,
+      "startNodeId": "00000023",
+      "endNodeId": "00000057",
+      "speed": 1000
+    },
+    {
+      "id": 78,
+      "startNodeId": "00000024",
+      "endNodeId": "00000058",
+      "speed": 1000
+    },
+    {
+      "id": -78,
+      "startNodeId": "00000058",
+      "endNodeId": "00000024",
+      "speed": 1000
+    },
+    {
+      "id": 79,
+      "startNodeId": "00000028",
+      "endNodeId": "00000063",
+      "speed": 1000
+    },
+    {
+      "id": -79,
+      "startNodeId": "00000063",
+      "endNodeId": "00000028",
+      "speed": 1000
+    },
+    {
+      "id": 80,
+      "startNodeId": "00000064",
+      "endNodeId": "00000030",
+      "speed": 1000
+    },
+    {
+      "id": -80,
+      "startNodeId": "00000030",
+      "endNodeId": "00000064",
+      "speed": 1000
+    },
+    {
+      "id": 81,
+      "startNodeId": "00000027",
+      "endNodeId": "00000061",
+      "speed": 1000
+    },
+    {
+      "id": -81,
+      "startNodeId": "00000061",
+      "endNodeId": "00000027",
+      "speed": 1000
+    },
+    {
+      "id": 82,
+      "startNodeId": "00000062",
+      "endNodeId": "00000028",
+      "speed": 1000
+    },
+    {
+      "id": -82,
+      "startNodeId": "00000028",
+      "endNodeId": "00000062",
+      "speed": 1000
+    },
+    {
+      "id": 83,
+      "startNodeId": "00000031",
+      "endNodeId": "00000057",
+      "speed": 1000
+    },
+    {
+      "id": -83,
+      "startNodeId": "00000057",
+      "endNodeId": "00000031",
+      "speed": 1000
+    },
+    {
+      "id": 84,
+      "startNodeId": "00000035",
+      "endNodeId": "00000056",
+      "speed": 1000
+    },
+    {
+      "id": -84,
+      "startNodeId": "00000056",
+      "endNodeId": "00000035",
+      "speed": 1000
+    },
+    {
+      "id": 85,
+      "startNodeId": "00000054",
+      "endNodeId": "00000031",
+      "speed": 1000
+    },
+    {
+      "id": -85,
+      "startNodeId": "00000031",
+      "endNodeId": "00000054",
+      "speed": 1000
+    },
+    {
+      "id": 86,
+      "startNodeId": "00000055",
+      "endNodeId": "00000033",
+      "speed": 1000
+    },
+    {
+      "id": -86,
+      "startNodeId": "00000033",
+      "endNodeId": "00000055",
+      "speed": 1000
+    },
+    {
+      "id": 87,
+      "startNodeId": "00000039",
+      "endNodeId": "00000037",
+      "speed": 1000
+    },
+    {
+      "id": -87,
+      "startNodeId": "00000037",
+      "endNodeId": "00000039",
+      "speed": 1000
+    },
+    {
+      "id": 88,
+      "startNodeId": "00000038",
+      "endNodeId": "00000040",
+      "speed": 1000
+    },
+    {
+      "id": -88,
+      "startNodeId": "00000040",
+      "endNodeId": "00000038",
+      "speed": 1000
+    },
+    {
+      "id": 89,
+      "startNodeId": "00000044",
+      "endNodeId": "00000046",
+      "speed": 1000
+    },
+    {
+      "id": -89,
+      "startNodeId": "00000046",
+      "endNodeId": "00000044",
+      "speed": 1000
+    },
+    {
+      "id": 90,
+      "startNodeId": "00000045",
+      "endNodeId": "00000043",
+      "speed": 1000
+    },
+    {
+      "id": -90,
+      "startNodeId": "00000043",
+      "endNodeId": "00000045",
+      "speed": 1000
+    },
+    {
+      "id": 91,
+      "startNodeId": "00000047",
+      "endNodeId": "00000045",
+      "speed": 1000
+    },
+    {
+      "id": -91,
+      "startNodeId": "00000045",
+      "endNodeId": "00000047",
+      "speed": 1000
+    },
+    {
+      "id": 92,
+      "startNodeId": "00000046",
+      "endNodeId": "00000048",
+      "speed": 1000
+    },
+    {
+      "id": -92,
+      "startNodeId": "00000048",
+      "endNodeId": "00000046",
+      "speed": 1000
+    },
+    {
+      "id": 93,
+      "startNodeId": "00000049",
+      "endNodeId": "00000047",
+      "speed": 1000
+    },
+    {
+      "id": -93,
+      "startNodeId": "00000047",
+      "endNodeId": "00000049",
+      "speed": 1000
+    },
+    {
+      "id": 94,
+      "startNodeId": "00000048",
+      "endNodeId": "00000050",
+      "speed": 1000
+    },
+    {
+      "id": -94,
+      "startNodeId": "00000050",
+      "endNodeId": "00000048",
+      "speed": 1000
+    },
+    {
+      "id": 95,
+      "startNodeId": "00000056",
+      "endNodeId": "00000053",
+      "speed": 1000
+    },
+    {
+      "id": -95,
+      "startNodeId": "00000053",
+      "endNodeId": "00000056",
+      "speed": 1000
+    },
+    {
+      "id": 96,
+      "startNodeId": "00000052",
+      "endNodeId": "00000055",
+      "speed": 1000
+    },
+    {
+      "id": -96,
+      "startNodeId": "00000055",
+      "endNodeId": "00000052",
+      "speed": 1000
+    },
+    {
+      "id": 97,
+      "startNodeId": "00000051",
+      "endNodeId": "00000054",
+      "speed": 1000
+    },
+    {
+      "id": -97,
+      "startNodeId": "00000054",
+      "endNodeId": "00000051",
+      "speed": 1000
+    },
+    {
+      "id": 98,
+      "startNodeId": "00000065",
+      "endNodeId": "00000047",
+      "speed": 1000
+    },
+    {
+      "id": -98,
+      "startNodeId": "00000047",
+      "endNodeId": "00000065",
+      "speed": 1000
+    },
+    {
+      "id": 99,
+      "startNodeId": "00000066",
+      "endNodeId": "00000049",
+      "speed": 1000
+    },
+    {
+      "id": -99,
+      "startNodeId": "00000049",
+      "endNodeId": "00000066",
+      "speed": 1000
+    },
+    {
+      "id": 100,
+      "startNodeId": "00000067",
+      "endNodeId": "00000051",
+      "speed": 1000
+    },
+    {
+      "id": -100,
+      "startNodeId": "00000051",
+      "endNodeId": "00000067",
+      "speed": 1000
+    },
+    {
+      "id": 101,
+      "startNodeId": "00000068",
+      "endNodeId": "00000054",
+      "speed": 1000
+    },
+    {
+      "id": -101,
+      "startNodeId": "00000054",
+      "endNodeId": "00000068",
+      "speed": 1000
+    },
+    {
+      "id": 102,
+      "startNodeId": "00000069",
+      "endNodeId": "00000058",
+      "speed": 1000
+    },
+    {
+      "id": -102,
+      "startNodeId": "00000058",
+      "endNodeId": "00000069",
+      "speed": 1000
+    },
+    {
+      "id": 103,
+      "startNodeId": "00000070",
+      "endNodeId": "00000060",
+      "speed": 1000
+    },
+    {
+      "id": -103,
+      "startNodeId": "00000060",
+      "endNodeId": "00000070",
+      "speed": 1000
+    },
+    {
+      "id": 104,
+      "startNodeId": "00000073",
+      "endNodeId": "00000063",
+      "speed": 1000
+    },
+    {
+      "id": -104,
+      "startNodeId": "00000063",
+      "endNodeId": "00000073",
+      "speed": 1000
+    },
+    {
+      "id": 105,
+      "startNodeId": "00000071",
+      "endNodeId": "00000017",
+      "speed": 1000
+    },
+    {
+      "id": -105,
+      "startNodeId": "00000017",
+      "endNodeId": "00000071",
+      "speed": 1000
+    },
+    {
+      "id": 106,
+      "startNodeId": "00000074",
+      "endNodeId": "00000007",
+      "speed": 1000
+    },
+    {
+      "id": -106,
+      "startNodeId": "00000007",
+      "endNodeId": "00000074",
+      "speed": 1000
+    },
+    {
+      "id": 107,
+      "startNodeId": "00000072",
+      "endNodeId": "00000061",
+      "speed": 1000
+    },
+    {
+      "id": -107,
+      "startNodeId": "00000061",
+      "endNodeId": "00000072",
+      "speed": 1000
+    }
+  ],
+  "ports": [
+    {
+      "nodeId": "00000074"
+    },
+    {
+      "nodeId": "00000069"
+    },
+    {
+      "nodeId": "00000068"
+    },
+    {
+      "nodeId": "00000071"
+    },
+    {
+      "nodeId": "00000073"
+    },
+    {
+      "nodeId": "00000070"
+    },
+    {
+      "nodeId": "00000066"
+    },
+    {
+      "nodeId": "00000065"
+    },
+    {
+      "nodeId": "00000072"
+    },
+    {
+      "nodeId": "00000067"
+    }
+  ],
+  "vehicleModels": [
+    {
+      "id": "AMR",
+      "dimension": {
+        "length": 1315,
+        "width": 690,
+        "height": 500
+      }
+    }
+  ]
+}
