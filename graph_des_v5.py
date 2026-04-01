@@ -21,27 +21,17 @@ class ZCUZone:
     """Zone Control Unit at a merge or diverge point."""
 
     def __init__(self, node_id: str, kind: str,
-                 curve_segs: set, straight_segs: set,
-                 entry_nodes: set = None):
-        self.node_id = node_id       # merge center or diverge center
+                 curve_segs: set, straight_segs: set):
+        self.node_id = node_id
         self.kind = kind
         self.curve_segs = curve_segs
         self.straight_segs = straight_segs
-        self.entry_nodes: set = entry_nodes or set()  # nodes where OHTs must stop before entering
-
-        # Event-based occupancy
-        self.occupant: Optional['Vehicle'] = None
-        self.waiters: List['Vehicle'] = []
 
     def is_curve(self, seg_key: Tuple[str, str]) -> bool:
         return seg_key in self.curve_segs
 
     def all_segs(self) -> set:
         return self.curve_segs | self.straight_segs
-
-    def is_free_for(self, v: 'Vehicle') -> bool:
-        """Can vehicle v enter this zone?"""
-        return self.occupant is None or self.occupant is v
 
 
 class MapNode:
@@ -312,15 +302,10 @@ class GraphMap:
             if not curves:
                 continue
 
-            # Entry nodes = start of each incoming segment (where OHTs must stop)
-            merge_entry_nodes = {seg[0] for seg in entries}
-            zone = ZCUZone(nid, 'merge', set(curves), set(straights),
-                           entry_nodes=merge_entry_nodes)
+            zone = ZCUZone(nid, 'merge', set(curves), set(straights))
             self.zcu_zones.append(zone)
             self.merge_nodes.add(nid)
-            # zcu_nodes = entry points (NOT the merge center)
-            for en in merge_entry_nodes:
-                self.zcu_nodes.add(en)
+            self.zcu_nodes.add(nid)
             for k in curves:
                 self.seg_to_zone[k] = zone
                 self.merge_curve_entries.add(k)
@@ -339,9 +324,7 @@ class GraphMap:
             curves = [k for k in exits if self._is_curve_seg(*k)]
             straights = [k for k in exits if not self._is_curve_seg(*k)]
 
-            # Diverge: entry node = the diverge center itself
-            zone = ZCUZone(nid, 'diverge', set(curves), set(straights),
-                           entry_nodes={nid})
+            zone = ZCUZone(nid, 'diverge', set(curves), set(straights))
             self.zcu_zones.append(zone)
             self.diverge_nodes.add(nid)
             self.zcu_nodes.add(nid)
@@ -429,7 +412,6 @@ ACCEL   = 'ACCEL'
 CRUISE  = 'CRUISE'
 DECEL   = 'DECEL'
 STOP    = 'STOP'
-DWELL   = 'DWELL'
 LOADING = 'LOADING'
 
 
@@ -468,11 +450,9 @@ class Vehicle:
         self.x_marker_offset: float = 0.0 # offset within that segment
         self.x_marker_node: Optional[str] = None  # ZCU node ID the marker is pinned to
 
-        # Destination: node ID where vehicle must stop (None = free running)
+        # Destination stop: node ID where vehicle must stop (None = free running)
         self.dest_node: Optional[str] = None
-
-        # ZCU: zones currently acquired by this vehicle
-        self.zcu_acquired: List = []  # List[ZCUZone]
+        self.dest_reached: bool = False
 
         self.x: float = 0.0
         self.y: float = 0.0
@@ -542,33 +522,6 @@ class Vehicle:
         else:
             return self.vel * dt
 
-    def time_to_travel(self, distance: float) -> float:
-        """Time to travel a given distance from current vel/acc state."""
-        if distance <= 0:
-            return 0.0
-        v, a = self.vel, self.acc
-        if v <= 0 and a <= 0:
-            return float('inf')
-        if a > 0:
-            # Accelerating with v_max cap
-            t_cap = (self.v_max - v) / a if v < self.v_max else 0.0
-            d_cap = v * t_cap + 0.5 * a * t_cap ** 2
-            if distance <= d_cap:
-                disc = v * v + 2 * a * distance
-                return (-v + math.sqrt(max(0, disc))) / a
-            else:
-                return t_cap + (distance - d_cap) / self.v_max
-        elif a == 0:
-            return distance / v if v > 0 else float('inf')
-        else:
-            # Decelerating — check if we stop before reaching distance
-            d_stop = v * v / (2 * abs(a))
-            if distance <= d_stop:
-                disc = v * v + 2 * a * distance
-                return (-v + math.sqrt(max(0, disc))) / a
-            else:
-                return float('inf')
-
     def vel_at(self, t: float) -> float:
         dt = t - self.t_ref
         if dt < 0:
@@ -598,29 +551,6 @@ class Vehicle:
                 self.path_idx += 1
                 if self.seg_offset < 0:
                     self.seg_offset = 0.0
-                # Dest node check
-                if (self.dest_node is not None and
-                    self.path_idx < len(self.path) and
-                    self.path[self.path_idx] == self.dest_node):
-                    self.seg_offset = 0.0
-                    self.vel = 0.0
-                    break
-                # ZCU check: acquire or block at ZCU segment boundary
-                if self.path_idx + 1 < len(self.path):
-                    new_seg = (self.path[self.path_idx],
-                               self.path[self.path_idx + 1])
-                    zone = self.gmap.seg_to_zone.get(new_seg)
-                    if zone:
-                        if zone.occupant is not None and zone.occupant is not self:
-                            # Blocked — clamp
-                            self.seg_offset = 0.0
-                            self.vel = 0.0
-                            break
-                        elif zone.occupant is None:
-                            # Auto-acquire on entry (safety net)
-                            zone.occupant = self
-                            if zone not in self.zcu_acquired:
-                                self.zcu_acquired.append(zone)
             else:
                 break
 
@@ -745,10 +675,6 @@ class GraphDESv5:
 
         self._seg_occupants: Dict[Tuple[str, str], List[Vehicle]] = collections.defaultdict(list)
 
-        # ZCU event heap: (release_time, zone) — independent of vehicle tokens
-        self.zcu_heap: List[Tuple[float, int, ZCUZone]] = []  # (t, tie_breaker, zone)
-        self._zcu_tie = 0
-
     def add_vehicle(self, v: Vehicle):
         self.vehicles[v.id] = v
         key = (v.seg_from, v.seg_to)
@@ -826,15 +752,10 @@ class GraphDESv5:
 
     _in_notify = False
 
-    def _maybe_notify(self, t: float, v: Vehicle, old_acc: float, old_vel: float,
-                      old_state: str = None):
+    def _maybe_notify(self, t: float, v: Vehicle, old_acc: float, old_vel: float):
         if self._in_notify:
             return
-        # Notify if: acceleration direction changed, velocity changed significantly,
-        # or vehicle just started moving from STOP/IDLE
-        started = old_state in (STOP, IDLE) and v.state in (ACCEL, CRUISE)
-        if started or \
-           (old_acc <= 0 and v.acc > 0) or (old_acc >= 0 and v.acc < 0) or \
+        if (old_acc <= 0 and v.acc > 0) or (old_acc >= 0 and v.acc < 0) or \
            abs(v.vel - old_vel) > 100:
             self._in_notify = True
             self._notify_followers(t)
@@ -850,18 +771,26 @@ class GraphDESv5:
         """
         old_acc = v.acc
         old_vel = v.vel
-        old_state = v.state
         old_key = (v.seg_from, v.seg_to)
         v.set_state(t)
         new_key = (v.seg_from, v.seg_to)
 
-        # Update segment occupancy and leader if segment changed
+        # Update segment occupancy if changed
         if old_key != new_key:
             if v in self._seg_occupants[old_key]:
                 self._seg_occupants[old_key].remove(v)
             if v not in self._seg_occupants[new_key]:
                 self._seg_occupants[new_key].append(v)
-            self._reassign_leader_for(v)
+            if old_key[0] is not None:
+                old_zone = self.gmap.seg_to_zone.get(old_key)
+                if old_zone:
+                    still_occupied = any(
+                        self._seg_occupants.get(sk)
+                        for sk in old_zone.all_segs()
+                        if sk != new_key
+                    )
+                    if not still_occupied:
+                        self._notify_followers(t)
 
         # Extend path if needed
         if v.needs_path_extension():
@@ -874,28 +803,25 @@ class GraphDESv5:
             v.vel = 0.0
             v.acc = 0.0
             v.state = STOP
-            v.x_marker_pidx = -1
             self._post(t + 1.0, 'RESUME', v)
             return
 
-        # ── DWELL: vehicle is parked at dest, no planning until depart() ──
-        if v.state == DWELL:
-            return
+        # Destination: check if we've reached or passed the dest node
+        if v.dest_node is not None and not v.dest_reached:
+            # Check if dest node is the start of current segment (we just passed it)
+            if v.seg_from == v.dest_node:
+                v.dest_reached = True
+            # Also check previous node in path
+            elif v.path_idx > 0 and v.path[v.path_idx] == v.dest_node:
+                v.dest_reached = True
 
-        # ── Destination arrival check ────────────────────────────────────
-        if v.dest_node is not None:
-            arrived = (v.seg_from == v.dest_node or
-                       (v.path_idx > 0 and v.path[v.path_idx] == v.dest_node))
-            if arrived and v.vel < 1.0:
-                # Enter DWELL: full stop, clear marker, NO events scheduled
-                v.vel = 0.0
-                v.acc = 0.0
-                v.state = DWELL
-                v.x_marker_pidx = -1
-                v.stop_dist = None
-                # Do NOT post any RESUME — vehicle stays parked until depart()
-                self._notify_followers(t)
-                return
+        if v.dest_node is not None and v.dest_reached:
+            v.vel = 0.0
+            v.acc = 0.0
+            v.state = STOP
+            self._post(t + 0.5, 'RESUME', v)
+            self._maybe_notify(t, v, old_acc, old_vel)
+            return
 
         seg_speed = v.current_seg_speed()
         target_v = min(v.v_max, seg_speed)
@@ -907,7 +833,7 @@ class GraphDESv5:
         leader = v.leader
 
         # ── v5: Always compute ZCU-bounded free distance ─────────────────
-        zcu_limit, marker_dist = self._dist_to_next_zcu_node(v, t)
+        zcu_limit, marker_dist = self._dist_to_next_zcu_node(v)
 
         if leader is not None:
             gap_d, leader_vel = self.gap(v, t)
@@ -927,46 +853,33 @@ class GraphDESv5:
 
         v.stop_dist = free_dist if free_dist < 100000 else None
 
-        # ── Immediate stop: no room to move ──────────────────────────────
+        # Unlimited free distance AND no curve ahead: cruise, recheck periodically
+        if free_dist > 100000 and dist_to_slow > 100000:
+            self._go(t, v, target_v)
+            # Schedule RESUME: also consider braking distance to any upcoming
+            # speed change so we start decelerating in time.
+            brake_look = v.v_max * v.v_max / (2 * v.d_max)  # max braking dist
+            replan_dist = marker_dist
+            # Check if a slow segment is within 2x braking distance
+            # (so next replan will start the approach)
+            if dist_to_slow < brake_look * 2:
+                replan_dist = min(replan_dist, dist_to_slow)
+            if replan_dist < 100000:
+                effective_v = max(v.vel, target_v, 1.0)
+                t_to = replan_dist / effective_v
+                self._post(t + max(0.05, min(1.0, t_to * 0.5)), 'RESUME', v)
+            else:
+                self._post(t + 1.0, 'RESUME', v)
+            self._maybe_notify(t, v, old_acc, old_vel)
+            return
+
         if free_dist <= 0:
-            old_was_moving = old_vel > 0.1
             v.acc = 0.0
             v.vel = 0.0
             v.state = STOP
             v.stop_dist = 0.0
-            v.x_marker_pidx = -1
-            # Notify followers if we just stopped (they need to know)
-            if old_was_moving:
-                self._notify_followers(t)
-            return
-
-        # ── Update X marker ──────────────────────────────────────────────
-        # Marker = min(free_dist, marker_dist to nearest ZCU).
-        # Even if free_dist is large (leader far away), marker never goes
-        # beyond the nearest ZCU node.
-        if free_dist < 100000:
-            marker_limit = min(free_dist, marker_dist) if marker_dist < 100000 else free_dist
-            if marker_limit < zcu_limit:
-                self._pin_marker_at_dist(v, marker_limit)
-
-        # Unlimited free distance AND no curve ahead: cruise, recheck periodically
-        if free_dist > 100000 and dist_to_slow > 100000:
-            self._go(t, v, target_v)
-            # Starting from stop: short first RESUME for fast chain propagation
-            if old_state in (STOP, IDLE):
-                self._post(t + 0.1, 'RESUME', v)
-            else:
-                brake_look = v.v_max * v.v_max / (2 * v.d_max)
-                replan_dist = marker_dist
-                if dist_to_slow < brake_look * 2:
-                    replan_dist = min(replan_dist, dist_to_slow)
-                if replan_dist < 100000:
-                    effective_v = max(v.vel, target_v, 1.0)
-                    t_to = replan_dist / effective_v
-                    self._post(t + max(0.05, min(1.0, t_to * 0.5)), 'RESUME', v)
-                else:
-                    self._post(t + 1.0, 'RESUME', v)
-            self._maybe_notify(t, v, old_acc, old_vel, old_state)
+            self._post(t + 0.3, 'RESUME', v)
+            self._maybe_notify(t, v, old_acc, old_vel)
             return
 
         # ── v_safe (leader/ZCU: brake to 0) ──────────────────────────────
@@ -992,20 +905,16 @@ class GraphDESv5:
 
             if free_dist > brake_dist:
                 self._go(t, v, v_target)
-                if old_state in (STOP, IDLE):
-                    # Fast first replan for chain propagation
-                    self._post(t + 0.1, 'RESUME', v)
+                future_brake = v_target * v_target / (2 * v.d_max)
+                coast_dist = max(0, free_dist - future_brake)
+                effective_v = v_target if v_target > 0 else 1
+                if v.acc > 0:
+                    t_accel = max(0, (v_target - v.vel) / v.a_max)
+                    d_accel = v.vel * t_accel + 0.5 * v.a_max * t_accel ** 2
+                    t_next = t_accel + max(0, coast_dist - d_accel) / effective_v
                 else:
-                    future_brake = v_target * v_target / (2 * v.d_max)
-                    coast_dist = max(0, free_dist - future_brake)
-                    effective_v = v_target if v_target > 0 else 1
-                    if v.acc > 0:
-                        t_accel = max(0, (v_target - v.vel) / v.a_max)
-                        d_accel = v.vel * t_accel + 0.5 * v.a_max * t_accel ** 2
-                        t_next = t_accel + max(0, coast_dist - d_accel) / effective_v
-                    else:
-                        t_next = coast_dist / effective_v
-                    self._post(t + max(0.05, t_next), 'RESUME', v)
+                    t_next = coast_dist / effective_v
+                self._post(t + max(0.05, t_next), 'RESUME', v)
             else:
                 if v.vel > 0.1 and free_dist > 0.1:
                     decel = min(v.vel * v.vel / (2 * free_dist), v.d_max)
@@ -1018,9 +927,7 @@ class GraphDESv5:
                     v.vel = 0.0
                     v.state = STOP
                     v.stop_dist = 0.0
-                    v.x_marker_pidx = -1
-                    v.x_marker_node = None
-                    self._notify_followers(t)
+                    self._post(t + 0.2, 'RESUME', v)
         else:
             # No leader/ZCU constraint, but approaching a slow segment (curve).
             # v_target already includes look-ahead braking via _lookahead_speed.
@@ -1039,7 +946,49 @@ class GraphDESv5:
                 else:
                     self._post(t + 1.0, 'RESUME', v)
 
-        self._maybe_notify(t, v, old_acc, old_vel, old_state)
+        self._maybe_notify(t, v, old_acc, old_vel)
+
+    def _is_zcu_blocked(self, zone: ZCUZone, seg_key: Tuple[str, str],
+                        v: Vehicle) -> bool:
+        """Is this ZCU segment blocked for vehicle v?"""
+        is_curve = zone.is_curve(seg_key)
+
+        if seg_key[0].startswith('_curve_mid_'):
+            is_curve = False
+
+        if is_curve:
+            occ = [o for o in self._seg_occupants.get(seg_key, []) if o is not v]
+            if occ:
+                return True
+
+        seg_obj = self.gmap.segments.get(seg_key)
+        if seg_obj:
+            cg = getattr(seg_obj, '_curve_group', None)
+            if cg:
+                is_first_half = not seg_key[0].startswith('_curve_mid_')
+                if is_first_half:
+                    for sk in self.gmap.curve_groups.get(cg, []):
+                        if sk == seg_key:
+                            continue
+                        occ = [o for o in self._seg_occupants.get(sk, []) if o is not v]
+                        if occ:
+                            return True
+
+        for other_key in zone.all_segs():
+            if other_key == seg_key:
+                continue
+            occupants = self._seg_occupants.get(other_key, [])
+            occ = [o for o in occupants if o is not v]
+            if not occ:
+                continue
+            other_is_curve = zone.is_curve(other_key)
+            if other_key[0].startswith('_curve_mid_'):
+                other_is_curve = False
+            if is_curve:
+                return True
+            elif other_is_curve:
+                return True
+        return False
 
     def _find_next_zcu_node(self, v: Vehicle) -> Tuple[float, int, str]:
         """v5: Walk path forward to find the next ZCU node.
@@ -1074,19 +1023,20 @@ class GraphDESv5:
 
         return float('inf'), -1, None
 
-    def _dist_to_next_zcu_node(self, v: Vehicle, t: float) -> Tuple[float, float]:
-        """v5: Compute free distance with event-based ZCU logic.
+    def _dist_to_next_zcu_node(self, v: Vehicle) -> Tuple[float, float]:
+        """v5: Compute free distance with ZCU-hop logic.
 
         Returns (free_dist, marker_dist):
         - free_dist: motion constraint (inf if no blocked ZCU)
         - marker_dist: distance to the marker's ZCU node (for RESUME scheduling)
 
-        zcu_nodes are:
-        - Merge: entry nodes (start of merge segments) — e.g. 1017, _curve_mid_5
-        - Diverge: diverge center — e.g. 1015
-
-        ACQUIRE when within braking distance and zone is free.
-        RELEASE scheduled at: entry_dist + zcu_seg_length + vehicle_length.
+        Logic:
+        1. Marker always starts at the nearest ZCU node ahead.
+        2. When within braking distance of that ZCU:
+           - blocked → free_dist = distance to this ZCU (stop here)
+           - open → hop marker to the NEXT ZCU, free_dist extends too
+        3. When still far from the nearest ZCU:
+           - Marker stays at that ZCU, free_dist = inf (don't slow down)
         """
         brake_dist = v.braking_distance()
 
@@ -1106,38 +1056,18 @@ class GraphDESv5:
                     first_zcu_dist = dist
 
                 if dist > brake_dist:
+                    # Far: pin marker at nearest ZCU, no speed limit
                     self._pin_marker_at_node(v, first_zcu_pi, first_zcu_node)
                     return float('inf'), first_zcu_dist
 
-                # Within braking distance: try to ACQUIRE
-                zones = self._get_zones_at_node(v, pi, next_node)
-                blocked = any(not z.is_free_for(v) for z in zones)
+                # Within braking distance: check if blocked
+                blocked = self._is_zcu_node_blocked(v, pi, next_node)
 
                 if blocked:
-                    for z in zones:
-                        if not z.is_free_for(v) and v not in z.waiters:
-                            z.waiters.append(v)
                     self._pin_marker_at_node(v, pi, next_node)
                     return dist, dist
 
-                # Free → ACQUIRE and schedule RELEASE
-                for z in zones:
-                    if z.occupant is None:
-                        z.occupant = v
-                        if z not in v.zcu_acquired:
-                            v.zcu_acquired.append(z)
-                            # Compute clear_dist:
-                            # For merge: dist to entry + merge seg + vehicle_length
-                            #   (tail must pass the merge center node)
-                            # For diverge: dist to diverge + exit seg + vehicle_length
-                            #   (tail must pass the diverge center node)
-                            clear_dist = dist + self._zcu_clear_extra(v, z, pi) + v.length
-                            t_clear = v.time_to_travel(clear_dist)
-                            self._zcu_tie += 1
-                            heapq.heappush(self.zcu_heap,
-                                           (t + t_clear, self._zcu_tie, z))
-
-                # Hop marker forward
+                # Open & within braking distance: hop marker forward
                 first_zcu_pi = pi
                 first_zcu_node = next_node
                 first_zcu_dist = dist
@@ -1163,66 +1093,19 @@ class GraphDESv5:
         v.x_marker_node = None
         return float('inf'), float('inf')
 
-    def _get_zones_at_node(self, v: Vehicle, pi: int,
-                           node_id: str) -> List[ZCUZone]:
-        """Get ZCU zones that vehicle must acquire at this node.
-
-        node_id is a zcu_node which is:
-        - Merge entry: start of a merge segment (e.g. 1017)
-          → the outgoing segment (1017→1018) is in the merge zone
-        - Diverge center: the diverge node (e.g. 1015)
-          → the outgoing segments (1015→1016, 1015→_curve_mid_6) are in diverge zone
-        """
-        zones = []
-        # Check outgoing segment from this node (covers both merge entry and diverge)
+    def _is_zcu_node_blocked(self, v: Vehicle, pi: int, node_id: str) -> bool:
+        """Check if a ZCU node is blocked for vehicle v.
+        Checks both the incoming and outgoing segments at that node."""
+        seg_key_in = (v.path[pi], node_id)
+        zone = self.gmap.seg_to_zone.get(seg_key_in)
+        if zone and self._is_zcu_blocked(zone, seg_key_in, v):
+            return True
         if pi + 2 < len(v.path):
             seg_key_out = (node_id, v.path[pi + 2])
             zone = self.gmap.seg_to_zone.get(seg_key_out)
-            if zone and zone not in zones:
-                zones.append(zone)
-        return zones
-
-    def _zcu_clear_extra(self, v: Vehicle, zone: ZCUZone, pi: int) -> float:
-        """Extra distance past the ZCU entry node that vehicle must travel
-        for its tail to fully clear the zone.
-
-        Merge (entry=1017, center=1018):
-          extra = length of segment 1017→1018 (the merge segment)
-        Diverge (entry=1015, center=1015):
-          extra = length of segment 1015→next (the exit segment)
-          (but entry IS the diverge center, so the outgoing seg is the ZCU seg)
-        """
-        if pi + 2 >= len(v.path):
-            return 0.0
-        entry_node = v.path[pi + 1]
-        next_after = v.path[pi + 2]
-        seg = self.gmap.segments.get((entry_node, next_after))
-        return seg.length if seg else 0.0
-
-    def _pin_marker_at_dist(self, v: Vehicle, dist: float):
-        """Pin the X marker at a specific distance ahead of current position.
-        Used when leader gap or dest is tighter than ZCU boundary."""
-        remaining = dist + (v.current_seg_length() - (v.current_seg_length() - v.seg_offset))
-        # Walk from current position
-        off = v.seg_offset + dist
-        pi = v.path_idx
-        while pi < len(v.path) - 1:
-            if pi < len(v._seg_lengths):
-                sl = v._seg_lengths[pi]
-            else:
-                seg = v.gmap.segment_between(v.path[pi], v.path[pi + 1])
-                sl = seg.length if seg else 0.0
-            if off <= sl:
-                v.x_marker_pidx = pi
-                v.x_marker_offset = off
-                v.x_marker_node = None  # not a ZCU node
-                return
-            off -= sl
-            pi += 1
-        # Past end of path
-        v.x_marker_pidx = max(0, len(v.path) - 2)
-        v.x_marker_offset = 0.0
-        v.x_marker_node = None
+            if zone and self._is_zcu_blocked(zone, seg_key_out, v):
+                return True
+        return False
 
     def _pin_marker_at_node(self, v: Vehicle, pi: int, node_id: str):
         """Pin the X marker exactly at a ZCU node position.
@@ -1239,8 +1122,8 @@ class GraphDESv5:
 
     def _dist_to_dest(self, v: Vehicle) -> float:
         """Distance from current position to the vehicle's dest_node.
-        Returns inf if no destination or in DWELL."""
-        if v.dest_node is None or v.state == DWELL:
+        Returns inf if no destination or already reached."""
+        if v.dest_node is None or v.dest_reached:
             return float('inf')
 
         dist = v.current_seg_length() - v.seg_offset
@@ -1249,6 +1132,9 @@ class GraphDESv5:
         while pi + 1 < len(v.path):
             next_node = v.path[pi + 1]
             if next_node == v.dest_node:
+                # Mark reached when very close
+                if dist < 1.0:
+                    v.dest_reached = True
                 return max(0.0, dist)
 
             pi += 1
@@ -1346,42 +1232,8 @@ class GraphDESv5:
                 v.set_state(ev.t)
                 v.vel = 0.0
                 v.acc = 0.0
-                v.x_marker_pidx = -1
-
-                # Check if arrived at dest → DWELL (no further events)
-                if v.dest_node is not None and (
-                    v.seg_from == v.dest_node or
-                    (v.path_idx > 0 and v.path[v.path_idx] == v.dest_node)):
-                    v.state = DWELL
-                    v.stop_dist = None
-                    self._notify_followers(ev.t)
-                else:
-                    v.state = STOP
-                    # Notify followers that we've stopped — they need to replan
-                    self._notify_followers(ev.t)
-
-            elif ev.kind == 'DEPART':
-                # Resume from DWELL state — reassign leader and wake followers
-                v.dest_node = None
-                v.state = IDLE
-                self._reassign_leader_for(v)
-                self._plan(ev.t, v)
-                self._notify_followers(ev.t)
-
-        # ── ZCU RELEASE events (separate heap, token-independent) ─────
-        while self.zcu_heap and self.zcu_heap[0][0] <= t_now:
-            release_t, _, zone = heapq.heappop(self.zcu_heap)
-            if zone.occupant is not None:
-                v = zone.occupant
-                zone.occupant = None
-                if zone in v.zcu_acquired:
-                    v.zcu_acquired.remove(zone)
-                # Wake first waiter — ZCU dependency, not leader-based
-                if zone.waiters:
-                    waiter = zone.waiters.pop(0)
-                    self._invalidate(waiter)
-                    self._plan(release_t, waiter)
-                self.event_count += 1
+                v.state = STOP
+                self._post(ev.t + 0.2, 'RESUME', v)
 
         for v in self.vehicles.values():
             v.update_render(t_now)
@@ -1390,27 +1242,12 @@ class GraphDESv5:
 
     def _notify_followers(self, t: float):
         for v in self.vehicles.values():
-            if v.state in (LOADING, DWELL, IDLE):
+            if v.leader is None or v.state == LOADING:
                 continue
-            if v.state == STOP:
-                # STOP vehicle: reassign leader (it may have moved away)
-                self._reassign_leader_for(v)
-                if v.leader is None:
-                    # No leader ahead — free to go
-                    self._invalidate(v)
-                    self._plan(t, v)
-                else:
-                    gap_d, _ = self.gap(v, t)
-                    if gap_d - v.h_min > 1.0:
-                        self._invalidate(v)
-                        self._plan(t, v)
-                    else:
-                        v.x_marker_pidx = -1
-                        v.x_marker_node = None
-            else:
-                # Moving vehicle: replan with updated leader info
-                self._invalidate(v)
-                self._plan(t, v)
+            if v.state in (STOP, IDLE):
+                continue
+            self._invalidate(v)
+            self._plan(t, v)
 
     # ── Leader assignment ─────────────────────────────────────────────────
 
@@ -1460,71 +1297,8 @@ class GraphDESv5:
 
             v.leader = best_leader
 
-    def _reassign_leader_for(self, v: Vehicle):
-        """Reassign leader for a single vehicle based on actual current positions.
-        Scans all vehicles to find the closest one AHEAD on v's path."""
-        # Build a snapshot of all vehicles by their actual (seg_from, seg_to)
-        seg_vehs: Dict[Tuple[str, str], List[Tuple[float, Vehicle]]] = collections.defaultdict(list)
-        for other in self.vehicles.values():
-            if other.id == v.id:
-                continue
-            key = (other.seg_from, other.seg_to)
-            seg_vehs[key].append((other.seg_offset, other))
-
-        best_leader = None
-        best_dist = float('inf')
-
-        # Same segment
-        key = (v.seg_from, v.seg_to)
-        for off, other in seg_vehs.get(key, []):
-            if off > v.seg_offset:
-                d = off - v.seg_offset
-                if d < best_dist:
-                    best_dist = d
-                    best_leader = other
-
-        # Forward segments
-        if best_leader is None:
-            dist_accum = v.current_seg_length() - v.seg_offset
-            for i in range(v.path_idx + 1, min(v.path_idx + 30, len(v.path) - 1)):
-                fn = v.path[i]
-                tn = v.path[i + 1] if i + 1 < len(v.path) else None
-                if tn is None:
-                    break
-                fwd_key = (fn, tn)
-                if fwd_key in seg_vehs:
-                    candidates = sorted(seg_vehs[fwd_key], key=lambda x: x[0])
-                    off, other = candidates[0]
-                    d = dist_accum + off
-                    if d < best_dist:
-                        best_dist = d
-                        best_leader = other
-                    break
-                seg = self.gmap.segment_between(fn, tn)
-                dist_accum += seg.length if seg else 0
-                if dist_accum > 100000:
-                    break
-
-        v.leader = best_leader
-
-    def depart(self, vid: int, t: float):
-        """Signal a DWELL vehicle to resume driving.
-        Call this externally when loading/unloading is done."""
-        v = self.vehicles.get(vid)
-        if v is None or v.state != DWELL:
-            return
-        self._invalidate(v)
-        self._post(t, 'DEPART', v)
-
     def start_all(self):
         self.assign_leaders()
-        # Pre-acquire ZCU zones for vehicles starting on ZCU segments
-        for v in self.vehicles.values():
-            cur_key = (v.seg_from, v.seg_to)
-            zone = self.gmap.seg_to_zone.get(cur_key)
-            if zone and zone.occupant is None:
-                zone.occupant = v
-                v.zcu_acquired.append(zone)
         for v in self.vehicles.values():
             self._post(0.0, 'START', v)
 
