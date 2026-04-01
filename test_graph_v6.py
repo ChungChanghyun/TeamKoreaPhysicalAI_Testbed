@@ -448,7 +448,7 @@ def main():
             if v.leader:
                 lines.append(f"Leader:#{v.leader.id} {v.leader.state} "
                              f"v={v.leader.vel_at(sim_time):.0f}")
-                lines.append(f"  Followers:{len(v.leader.followers)}")
+                lines.append(f"  L.seg:{v.leader.seg_from}->{v.leader.seg_to}")
             else:
                 lines.append("Leader: None")
             if v.stop_dist is not None:

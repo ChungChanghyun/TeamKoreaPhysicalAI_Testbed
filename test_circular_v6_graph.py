@@ -377,7 +377,7 @@ def main():
             lines.append(f"PathIdx:{v.path_idx}/{len(v.path)} off={v.seg_offset:.0f}")
             if v.leader:
                 lines.append(f"Leader:#{v.leader.id} v={v.leader.vel_at(sim_time):.0f} "
-                             f"followers:{len(v.leader.followers)}")
+                             f"L.seg:{v.leader.seg_from}->{v.leader.seg_to}")
             else:
                 lines.append("Leader: None")
             if v.dest_node:
