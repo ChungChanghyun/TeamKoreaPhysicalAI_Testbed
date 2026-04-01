@@ -529,12 +529,6 @@ class GraphDESv6:
         return result
 
     def _on_boundary(self, t: float, v: Vehicle):
-        old_key = (v.seg_from, v.seg_to)
-        v.set_state(t)
-        new_key = (v.seg_from, v.seg_to)
-        if old_key != new_key:
-            self._update_occupancy(v, old_key, new_key, t)
-
         bnd_node = v.x_marker_node
         zones = self._relevant_zones(v, bnd_node) if bnd_node else []
 
@@ -548,11 +542,19 @@ class GraphDESv6:
                     denied_lock_id = lock_id
                     break
             if all_granted:
+                # Lock granted → continue current motion, extend plan
+                # Do NOT call set_state() — preserve current vel/acc
                 v.passed_zcu.add(bnd_node)
-                self._replan(t, v)
+                self._replan(t, v, skip_set_state=True)
                 return
 
-            # Lock denied → brake to stop at boundary
+            # Lock denied → must set_state to prepare for braking
+            old_key = (v.seg_from, v.seg_to)
+            v.set_state(t)
+            new_key = (v.seg_from, v.seg_to)
+            if old_key != new_key:
+                self._update_occupancy(v, old_key, new_key, t)
+
             bnd_dist, _, _ = self._find_first_boundary(v)
             if bnd_dist == float('inf'):
                 bnd_dist = 0.0
@@ -570,14 +572,21 @@ class GraphDESv6:
                 self._zone_wait(v, denied_lock_id)
             return
 
-        # Non-ZCU boundary or no relevant zones → replan
+        # Non-ZCU boundary or no relevant zones → replan normally
         self._replan(t, v)
 
     # ── Core: _replan() ───────────────────────────────────────────────────
 
-    def _replan(self, t: float, v: Vehicle):
+    def _replan(self, t: float, v: Vehicle, skip_set_state: bool = False):
         old_key = (v.seg_from, v.seg_to)
-        v.set_state(t)
+        if skip_set_state:
+            # Only advance position without resetting acc — used when
+            # continuing through a granted ZCU boundary at speed.
+            # advance_position correctly computes vel using current acc,
+            # then _go() below will set the appropriate acc for the new plan.
+            v.advance_position(t)
+        else:
+            v.set_state(t)
         new_key = (v.seg_from, v.seg_to)
         if old_key != new_key:
             self._update_occupancy(v, old_key, new_key, t)
@@ -665,14 +674,11 @@ class GraphDESv6:
             self._schedule_next_event(t, v, target_v, plan_boundary, dist_to_slow)
             return
 
-        # Constrained
-        v_safe = math.sqrt(max(0, 2 * v.d_max * plan_boundary)) \
-                 if plan_boundary < 100000 else v.v_max
-        v_target = min(target_v, v_safe)
-
+        # Constrained by plan_boundary and/or slow segments
         brake_dist = v.braking_distance()
 
-        if plan_boundary < 100000 and plan_boundary <= brake_dist:
+        # If within braking distance of the plan boundary, commit to stopping
+        if plan_boundary < 100000 and plan_boundary <= brake_dist + 1.0:
             if v.vel > 0.1 and plan_boundary > 0.1:
                 decel = min(v.vel * v.vel / (2 * plan_boundary), v.d_max)
                 v.acc = -decel
@@ -697,8 +703,13 @@ class GraphDESv6:
                 else:
                     self._post(t + 0.3, EV_REPLAN, v)
         else:
-            self._go(t, v, v_target)
-            self._schedule_next_event(t, v, v_target, plan_boundary, dist_to_slow)
+            # Not yet within braking distance — go toward target_v and let
+            # the BOUNDARY event fire at the right braking point.
+            # Do NOT use v_safe as an intermediate target — it causes
+            # oscillating decel/cruise cycles.
+            self._go(t, v, target_v)
+            self._schedule_next_event(t, v, target_v, plan_boundary,
+                                      dist_to_slow)
 
     # ── Event scheduling ──────────────────────────────────────────────────
 
@@ -707,53 +718,74 @@ class GraphDESv6:
         best_t = float('inf')
         best_kind = EV_REPLAN
 
-        # 1. Segment end
+        accel_phase = v.acc > 0 and v.vel < target_v - 0.1
+        decel_phase = v.acc < 0
+        cruise_phase = not accel_phase and not decel_phase and v.vel > 0.1
+
+        # 1. Segment end — always check
         t_seg = _time_to_travel(v.vel, v.acc, v.dist_to_seg_end(), v.v_max)
         if t + t_seg < best_t:
             best_t = t + t_seg
             best_kind = EV_SEG_END
 
-        # 2. Phase done
-        accel_phase = v.acc > 0 and v.vel < target_v - 0.1
+        # 2. Phase done (accel → cruise transition)
         if accel_phase:
             t_phase = (target_v - v.vel) / v.acc
             if t + t_phase < best_t:
                 best_t = t + t_phase
                 best_kind = EV_PHASE_DONE
 
-        # 3. Plan boundary approach — works during BOTH accel and cruise
+        # 3. Decel done (decel → cruise transition at lower target speed)
+        if decel_phase and target_v > 0.5:
+            t_decel = (v.vel - target_v) / abs(v.acc)
+            if t_decel > 0.001 and t + t_decel < best_t:
+                best_t = t + t_decel
+                best_kind = EV_PHASE_DONE
+
+        # 4. Plan boundary approach
         if plan_boundary < 100000:
             if accel_phase:
                 # Triangular/trapezoidal profile: exact time to start braking
                 t_boundary = _time_to_boundary_during_accel(
                     v.vel, v.acc, v.d_max, plan_boundary, v.v_max)
-            else:
-                # Cruise: linear approach
+            elif cruise_phase:
+                # Cruise: linear approach to braking point
                 brake_d = v.braking_distance()
                 approach_dist = max(0, plan_boundary - brake_d)
-                t_boundary = (approach_dist / v.vel) if v.vel > 0 else 0.01
-
-            if t_boundary < 0.001:
-                t_boundary = 0.01
-            if t + t_boundary < best_t:
-                best_t = t + t_boundary
-                best_kind = EV_BOUNDARY
-
-        # 4. Slow segment approach (curve braking) — cruise only
-        if not accel_phase and dist_to_slow < 100000:
-            brake_d = v.braking_distance()
-            approach_dist = max(0, dist_to_slow - brake_d - 500)
-            if approach_dist > 0 and v.vel > 0:
-                t_slow = approach_dist / v.vel
+                t_boundary = approach_dist / v.vel if approach_dist > 0 else 0.0
+            elif decel_phase:
+                # Already decelerating — don't schedule BOUNDARY, the decel
+                # will either stop (STOPPED) or reach target (PHASE_DONE)
+                t_boundary = float('inf')
             else:
-                t_slow = 0.01
-            if t + t_slow < best_t:
-                best_t = t + t_slow
-                best_kind = EV_REPLAN
+                t_boundary = 0.0
+
+            if t_boundary < float('inf'):
+                if t_boundary < 0.001:
+                    t_boundary = 0.01
+                if t + t_boundary < best_t:
+                    best_t = t + t_boundary
+                    best_kind = EV_BOUNDARY
+
+        # 5. Slow segment approach (curve braking) — cruise only
+        #    Only schedule a REPLAN if there's meaningful approach distance.
+        #    If already within brake+margin of the slow segment, SEG_END
+        #    or BOUNDARY events will handle the transition.
+        if cruise_phase and dist_to_slow < 100000:
+            brake_d = v.braking_distance()
+            approach_dist = dist_to_slow - brake_d - 500
+            if approach_dist > 100:  # meaningful distance to cover
+                t_slow = approach_dist / v.vel
+                if t + t_slow < best_t:
+                    best_t = t + t_slow
+                    best_kind = EV_REPLAN
 
         if best_t <= t + 0.005:
             best_t = t + 0.01
-            best_kind = EV_REPLAN
+            # Preserve BOUNDARY event kind — clamping to 0.01 is fine
+            # but turning it into REPLAN causes infinite 0.01s loops
+            if best_kind not in (EV_BOUNDARY, EV_SEG_END, EV_PHASE_DONE):
+                best_kind = EV_REPLAN
         if best_t == float('inf'):
             best_t = t + 2.0
             best_kind = EV_REPLAN
@@ -1026,13 +1058,16 @@ class GraphDESv6:
         return best_v, best_dist
 
     def _go(self, t: float, v: Vehicle, target_v: float):
-        if v.vel < target_v - 1:
+        # Use a tolerance band to prevent oscillation when lookahead
+        # speed changes slightly between replans
+        tol = 50.0
+        if v.vel < target_v - tol:
             v.acc = v.a_max
             v.state = ACCEL
-        elif v.vel > target_v + 1:
+        elif v.vel > target_v + tol:
             v.acc = -v.d_max
             v.state = DECEL
         else:
-            v.vel = target_v
+            # Within tolerance — cruise at current speed (don't snap)
             v.acc = 0.0
             v.state = CRUISE
