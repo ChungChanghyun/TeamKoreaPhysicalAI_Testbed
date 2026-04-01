@@ -233,7 +233,11 @@ def main():
                     mx, my = event.pos
                     hovered_zcu_node = None
                     best_d = 20
-                    for nid in gmap.zcu_nodes:
+                    # Hover both ZCU nodes and boundary nodes
+                    all_zcu = gmap.zcu_nodes | des._boundary_nodes
+                    for nid in all_zcu:
+                        if nid not in node_xy:
+                            continue
                         nx, ny = node_xy[nid]
                         sx, sy = w2s(nx, ny)
                         d = math.hypot(sx - mx, sy - my)
@@ -315,18 +319,40 @@ def main():
         # ── ZCU markers ──────────────────────────────────────────────────
         if show_zcu:
             mr = max(3, int(scale * 120))
+            # Merge nodes (red)
             for nid in gmap.merge_nodes:
                 nx, ny = node_xy[nid]
                 if nx < vl or nx > vr or ny < vt_y or ny > vb_y:
                     continue
                 pygame.draw.circle(screen, ZCU_MERGE_C, w2s(nx, ny), mr)
+            # Diverge nodes (orange)
             for nid in gmap.diverge_nodes:
                 nx, ny = node_xy[nid]
                 if nx < vl or nx > vr or ny < vt_y or ny > vb_y:
                     continue
                 pygame.draw.circle(screen, ZCU_DIVERGE_C, w2s(nx, ny), mr)
+            # Boundary nodes (small yellow diamond) — only those not already merge/diverge
+            br = max(2, int(scale * 80))
+            for nid in des._boundary_nodes:
+                if nid in gmap.merge_nodes or nid in gmap.diverge_nodes:
+                    continue
+                if nid not in node_xy:
+                    continue
+                nx, ny = node_xy[nid]
+                if nx < vl or nx > vr or ny < vt_y or ny > vb_y:
+                    continue
+                bsx, bsy = w2s(nx, ny)
+                # Show locked boundary as filled, free as outline
+                is_locked = any(des._zone_lock.get(lid) is not None
+                                for _, lid in des._boundary_to_zones.get(nid, []))
+                bc = (255, 255, 60) if is_locked else (120, 120, 60)
+                dm = [(bsx, bsy-br), (bsx+br, bsy), (bsx, bsy+br), (bsx-br, bsy)]
+                if is_locked:
+                    pygame.draw.polygon(screen, bc, dm)
+                else:
+                    pygame.draw.polygon(screen, bc, dm, 1)
 
-            # Hovered ZCU detail
+            # Hovered ZCU detail + lock status
             if hovered_zcu_node:
                 zcu_lw = max(3, min(6, int(scale * 200)))
                 hn = node_xy[hovered_zcu_node]
@@ -334,15 +360,20 @@ def main():
 
                 r = max(6, int(scale * 300))
                 is_merge = hovered_zcu_node in gmap.merge_nodes
-                diamond_c = ZCU_MERGE_C if is_merge else ZCU_DIVERGE_C
+                is_diverge = hovered_zcu_node in gmap.diverge_nodes
+                is_boundary = hovered_zcu_node in des._boundary_nodes
+
+                if is_merge:
+                    diamond_c = ZCU_MERGE_C
+                elif is_diverge:
+                    diamond_c = ZCU_DIVERGE_C
+                else:
+                    diamond_c = (200, 200, 60)  # boundary node
                 diamond = [(hsx, hsy-r), (hsx+r, hsy), (hsx, hsy+r), (hsx-r, hsy)]
                 pygame.draw.polygon(screen, diamond_c, diamond)
                 pygame.draw.polygon(screen, (255,255,255), diamond, 2)
 
-                label = "MERGE" if is_merge else "DIVERGE"
-                lbl = font_s.render(f"{label} {hovered_zcu_node}", True, (255,255,255))
-                screen.blit(lbl, (hsx + r + 4, hsy - 8))
-
+                # Draw entry/exit segments
                 if is_merge:
                     for pred in gmap.adj_rev.get(hovered_zcu_node, []):
                         seg_key = (pred, hovered_zcu_node)
@@ -355,7 +386,7 @@ def main():
                                 pygame.draw.lines(screen, c, False, pts_s, zcu_lw)
                         if pred in node_xy:
                             pygame.draw.circle(screen, (255,200,60), w2s(*node_xy[pred]), mr+2, 2)
-                else:
+                if is_diverge:
                     for succ in gmap.adj.get(hovered_zcu_node, []):
                         seg_key = (hovered_zcu_node, succ)
                         seg = gmap.segments.get(seg_key)
@@ -367,6 +398,70 @@ def main():
                                 pygame.draw.lines(screen, c, False, pts_s, zcu_lw)
                         if succ in node_xy:
                             pygame.draw.circle(screen, (255,200,60), w2s(*node_xy[succ]), mr+2, 2)
+
+                # ── Lock status info panel ────────────────────────────
+                info_lines = []
+                node_label = hovered_zcu_node
+                types = []
+                if is_merge: types.append("MERGE")
+                if is_diverge: types.append("DIVERGE")
+                if is_boundary: types.append("BOUNDARY")
+                info_lines.append(f"{'+'.join(types) if types else 'NODE'} {node_label}")
+
+                # Find all zones related to this node
+                # 1. As a zone center (merge/diverge)
+                for zone in gmap.zcu_zones:
+                    if zone.node_id == hovered_zcu_node:
+                        lock_id = f"{zone.node_id}_{zone.kind}"
+                        holder = des._zone_lock.get(lock_id)
+                        waiters = des._zone_waiters.get(lock_id, [])
+                        holder_str = f"V#{holder.id}" if holder else "FREE"
+                        wait_str = ",".join(f"V#{w.id}" for w in waiters) if waiters else "-"
+                        info_lines.append(f"  {zone.kind} lock={holder_str} wait=[{wait_str}]")
+
+                # 2. As a boundary node
+                for zone, lock_id in des._boundary_to_zones.get(hovered_zcu_node, []):
+                    holder = des._zone_lock.get(lock_id)
+                    waiters = des._zone_waiters.get(lock_id, [])
+                    holder_str = f"V#{holder.id}" if holder else "FREE"
+                    wait_str = ",".join(f"V#{w.id}" for w in waiters) if waiters else "-"
+                    info_lines.append(f"  bnd->{zone.node_id}_{zone.kind} lock={holder_str} wait=[{wait_str}]")
+
+                # 3. As an exit node
+                for zone, lock_id in des._exit_to_zones.get(hovered_zcu_node, []):
+                    holder = des._zone_lock.get(lock_id)
+                    if holder:
+                        info_lines.append(f"  exit<-{lock_id} holder=V#{holder.id}")
+
+                # Vehicles waiting at this node's zones
+                waiting_here = [v for v in vehicles
+                                if v.waiting_at_zcu and
+                                hovered_zcu_node in (v.waiting_at_zcu, )]
+                # Also check if waiting_at_zcu matches any lock_id containing this node
+                for v in vehicles:
+                    if v.waiting_at_zcu and hovered_zcu_node in v.waiting_at_zcu \
+                       and v not in waiting_here:
+                        waiting_here.append(v)
+
+                if waiting_here:
+                    info_lines.append(f"  OHTs waiting: {[f'V#{v.id}' for v in waiting_here]}")
+
+                # Draw info panel near the diamond
+                if info_lines:
+                    pw = max(len(line) * 7 + 10 for line in info_lines)
+                    ph = 14 * len(info_lines) + 8
+                    px = hsx + r + 8
+                    py = hsy - ph // 2
+                    panel = pygame.Surface((pw, ph), pygame.SRCALPHA)
+                    panel.fill((20, 20, 35, 220))
+                    screen.blit(panel, (px, py))
+                    for i, line in enumerate(info_lines):
+                        c = (255, 255, 255) if i == 0 else (200, 200, 200)
+                        if "FREE" in line:
+                            c = (80, 255, 80)
+                        elif "V#" in line and "lock=" in line:
+                            c = (255, 200, 60)
+                        screen.blit(font_s.render(line, True, c), (px + 4, py + 4 + i * 14))
 
         # Draw vehicles
         vhl, vhw = 750 / 2, 500 / 2
