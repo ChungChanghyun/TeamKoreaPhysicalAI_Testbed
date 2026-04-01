@@ -4,14 +4,14 @@ import pygame
 
 from graph_des_v5 import (
     GraphMap, GraphDESv5, Vehicle,
-    IDLE, ACCEL, CRUISE, DECEL, STOP, LOADING,
+    IDLE, ACCEL, CRUISE, DECEL, STOP, DWELL, LOADING,
 )
 
 N_VEH = 30
 RADIUS = 20000
 BG=(18,18,24); TRACK_C=(50,100,170); NODE_C=(60,60,80); TEXT=(200,200,200); DIM=(120,120,150)
 STATE_C = {IDLE:(100,100,100), ACCEL:(80,255,80), CRUISE:(60,200,60),
-           DECEL:(255,200,60), STOP:(255,60,60), LOADING:(200,60,200)}
+           DECEL:(255,200,60), STOP:(255,60,60), DWELL:(100,60,255), LOADING:(200,60,200)}
 
 
 def main():
@@ -130,17 +130,13 @@ def main():
             sim_time += dt_sim
             des.step(sim_time)
 
-            # Vehicle 0: release after 120s of sim time
+            # Vehicle 0: depart after 120s of sim time
             v0 = vehicles[0]
-            if v0.dest_reached and v0.dest_node is not None and sim_time > 120.0:
-                print(f"t={sim_time:.1f}s: Vehicle 0 released from dest '{v0.dest_node}'")
-                v0.dest_node = None
-                v0.dest_reached = False
+            if v0.state == DWELL and sim_time > 120.0:
+                print(f"t={sim_time:.1f}s: Vehicle 0 departing from DWELL")
+                des.depart(v0.id, sim_time)
 
-            # Periodic leader reassignment
-            if sim_time - last_reassign >= 2.0:
-                des.reassign_leaders_periodic(sim_time)
-                last_reassign = sim_time
+            # Leader reassignment is handled inside _plan via segment transitions
 
             for v in vehicles:
                 g = v.gap_to_leader
@@ -196,9 +192,10 @@ def main():
             if scale > 0.015:
                 screen.blit(font_s.render(str(v.id), True, (200, 200, 200)), (sx - 4, sy + 8))
 
-        # X markers
+        # X markers (ZCU-pinned or distance-based stop point)
+        # Don't show marker for stopped vehicles (nothing to plan ahead)
         for v in vehicles:
-            if v.x_marker_node is not None and v.x_marker_pidx >= 0:
+            if v.x_marker_pidx >= 0 and v.state not in (STOP, IDLE, DWELL):
                 pidx = v.x_marker_pidx
                 stop_off = v.x_marker_offset
                 if pidx < len(v.path) - 1:
@@ -221,6 +218,8 @@ def main():
         if selected and selected.leader:
             s1, s2 = w2s(selected.x, selected.y), w2s(selected.leader.x, selected.leader.y)
             pygame.draw.line(screen, (255, 255, 100), s1, s2, 2)
+            lx, ly = s2
+            pygame.draw.circle(screen, (255, 255, 100), (lx, ly), max(4, int(scale * 200)), 2)
 
         # Info panel
         sc = collections.Counter(v.state for v in vehicles)
@@ -236,10 +235,18 @@ def main():
             lines.append(f"#{v.id} {v.state} v={v.vel_at(sim_time):.0f} a={v.acc:.0f}")
             lines.append(f"Gap:{v.gap_to_leader:.0f} PathIdx:{v.path_idx}/{len(v.path)}")
             lines.append(f"Seg:{v.seg_from}->{v.seg_to}")
-            if v.leader: lines.append(f"Leader:#{v.leader.id}({v.leader.state})")
+            if v.leader:
+                lines.append(f"Leader:#{v.leader.id} {v.leader.state} v={v.leader.vel_at(sim_time):.0f}")
+            else:
+                lines.append("Leader: None")
             if v.stop_dist is not None: lines.append(f"StopDist:{v.stop_dist:.0f}")
-            if v.x_marker_node: lines.append(f"XMarker@{v.x_marker_node}")
-            if v.dest_node: lines.append(f"Dest:{v.dest_node} {'REACHED' if v.dest_reached else ''}")
+            if v.x_marker_pidx >= 0:
+                if v.x_marker_node:
+                    lines.append(f"XMarker@{v.x_marker_node} (ZCU)")
+                else:
+                    lines.append(f"XMarker dist-based")
+            if v.dest_node: lines.append(f"Dest:{v.dest_node}")
+            if v.state == DWELL: lines.append("** DWELL **")
 
         pw = 380; ph = 18 * len(lines) + 16
         p = pygame.Surface((pw, ph), pygame.SRCALPHA); p.fill((30, 30, 45, 200))

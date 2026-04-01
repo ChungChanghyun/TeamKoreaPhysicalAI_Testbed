@@ -387,9 +387,9 @@ def main():
             if scale > 0.015:
                 screen.blit(font_s.render(str(v.id), True, (200, 200, 200)), (sx - 4, sy + 8))
 
-        # Stop position markers (X on track) — v5: pinned to ZCU node
+        # Stop position markers (X on track) — v5: ZCU or distance-based
         for v in vehicles:
-            if v.x_marker_node is not None and v.x_marker_pidx >= 0:
+            if v.x_marker_pidx >= 0 and v.state not in (STOP, IDLE):
                 pidx = v.x_marker_pidx
                 stop_off = v.x_marker_offset
 
@@ -414,18 +414,14 @@ def main():
                                 lbl = font_s.render(v.x_marker_node, True, v.color)
                                 screen.blit(lbl, (ssx + r + 2, ssy - 6))
 
-        # Leader arrows
-        for v in vehicles:
-            if v.state in (STOP, LOADING) and v.leader:
-                s1 = w2s(v.x, v.y)
-                s2 = w2s(v.leader.x, v.leader.y)
-                d = math.hypot(s1[0] - s2[0], s1[1] - s2[1])
-                if d < 500:
-                    pygame.draw.line(screen, (255, 80, 80), s1, s2, 1)
+        # Leader arrow for selected vehicle (always shown)
         if selected and selected.leader:
             s1 = w2s(selected.x, selected.y)
             s2 = w2s(selected.leader.x, selected.leader.y)
             pygame.draw.line(screen, (255, 255, 100), s1, s2, 2)
+            # Highlight leader vehicle
+            lx, ly = w2s(selected.leader.x, selected.leader.y)
+            pygame.draw.circle(screen, (255, 255, 100), (lx, ly), max(4, int(scale * 200)), 2)
 
         # ── Info panel ────────────────────────────────────────────────────
         sc = collections.Counter(v.state for v in vehicles)
@@ -444,11 +440,20 @@ def main():
             lines.append(f"Gap:{v.gap_to_leader:.0f} PathIdx:{v.path_idx}/{len(v.path)}")
             lines.append(f"Seg:{v.seg_from}->{v.seg_to} off={v.seg_offset:.0f}")
             if v.leader:
-                lines.append(f"Leader:#{v.leader.id}({v.leader.state})")
+                lines.append(f"Leader:#{v.leader.id} {v.leader.state} "
+                             f"v={v.leader.vel_at(sim_time):.0f}")
+                lines.append(f"  L.Seg:{v.leader.seg_from}->{v.leader.seg_to}")
+            else:
+                lines.append("Leader: None")
             if v.stop_dist is not None:
                 lines.append(f"StopDist:{v.stop_dist:.0f}")
-            if v.x_marker_node:
-                lines.append(f"XMarker@{v.x_marker_node} (ZCU)")
+            if v.x_marker_pidx >= 0:
+                if v.x_marker_node:
+                    lines.append(f"XMarker@{v.x_marker_node} (ZCU)")
+                else:
+                    lines.append(f"XMarker dist-based")
+            if v.dest_node:
+                lines.append(f"Dest:{v.dest_node}")
 
         pw = 400
         ph = 18 * len(lines) + 16
