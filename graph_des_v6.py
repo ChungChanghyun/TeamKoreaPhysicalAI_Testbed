@@ -546,7 +546,8 @@ class GraphDESv6:
         # ZCU boundary
         bnd_dist, bnd_pi, bnd_node = self._find_first_boundary(v)
 
-        # Path leader (committed trajectory guarantee)
+        # Path leader — refresh at each replan
+        self._update_leader(v)
         leader = v.leader
         leader_free = float('inf')
         if leader is not None:
@@ -692,7 +693,50 @@ class GraphDESv6:
 
     # ── Leader ────────────────────────────────────────────────────────────
 
+    def _update_leader(self, v: Vehicle):
+        """Find the nearest vehicle ahead on v's path (lightweight per-vehicle search)."""
+        best_leader = None
+        best_dist = float('inf')
+
+        # Check current segment
+        key = (v.seg_from, v.seg_to)
+        for other in self._seg_occupants.get(key, []):
+            if other.id != v.id and other.seg_offset > v.seg_offset:
+                d = other.seg_offset - v.seg_offset
+                if d < best_dist:
+                    best_dist = d
+                    best_leader = other
+
+        # Walk forward along path
+        if best_leader is None:
+            dist_accum = v.current_seg_length() - v.seg_offset
+            for i in range(v.path_idx + 1,
+                           min(v.path_idx + 30, len(v.path) - 1)):
+                fn = v.path[i]
+                tn = v.path[i + 1] if i + 1 < len(v.path) else None
+                if tn is None:
+                    break
+                fwd_key = (fn, tn)
+                occupants = self._seg_occupants.get(fwd_key, [])
+                if occupants:
+                    # Find closest on this segment
+                    for other in occupants:
+                        if other.id != v.id:
+                            d = dist_accum + other.seg_offset
+                            if d < best_dist:
+                                best_dist = d
+                                best_leader = other
+                    if best_leader is not None:
+                        break
+                seg = self.gmap.segment_between(fn, tn)
+                dist_accum += seg.length if seg else 0
+                if dist_accum > 100000:
+                    break
+
+        v.leader = best_leader
+
     def assign_leaders(self):
+        """Initial leader assignment for all vehicles at startup."""
         seg_vehs: Dict[Tuple[str, str], List[Tuple[float, Vehicle]]] = \
             collections.defaultdict(list)
         for v in self.vehicles.values():
