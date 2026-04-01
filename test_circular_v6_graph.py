@@ -148,9 +148,6 @@ def main():
     gap_hist = [0] * 20
     dest_mode = False
 
-    leader_reassign_interval = 1.0
-    next_leader_reassign = leader_reassign_interval
-
     def w2s(wx, wy):
         return (int((wx - cam_x) * scale + SW / 2),
                 int(-(wy - cam_y) * scale + SH / 2))
@@ -252,10 +249,6 @@ def main():
             des.run_until(sim_time)
             des.query_positions(sim_time)
 
-            if sim_time >= next_leader_reassign:
-                des.reassign_leaders_periodic(sim_time)
-                next_leader_reassign = sim_time + leader_reassign_interval
-
             # Path extension
             for v in vehicles:
                 if v.needs_path_extension():
@@ -345,9 +338,9 @@ def main():
             pygame.draw.circle(screen, (255, 255, 100), (lx, ly),
                                max(4, int(scale * 250)), 2)
 
-        # X markers
+        # X markers + connection line to OHT
         for v in vehicles:
-            if v.x_marker_pidx >= 0 and v.state not in (STOP, IDLE):
+            if v.x_marker_pidx >= 0:
                 pidx = v.x_marker_pidx
                 if pidx < len(v.path) - 1:
                     seg = v.gmap.segment_between(v.path[pidx], v.path[pidx + 1])
@@ -355,6 +348,10 @@ def main():
                         mx2, my2, _ = _interp_path(seg.path_points,
                                                     max(0, v.x_marker_offset))
                         msx, msy = w2s(mx2, my2)
+                        vsx, vsy = w2s(v.x, v.y)
+                        # Connection line from OHT to X marker
+                        pygame.draw.line(screen, (*v.color[:3],), (vsx, vsy), (msx, msy), 1)
+                        # X marker
                         r = max(3, int(scale * 120))
                         pygame.draw.line(screen, v.color,
                                          (msx - r, msy - r), (msx + r, msy + r), 2)

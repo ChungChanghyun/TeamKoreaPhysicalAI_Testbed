@@ -156,9 +156,6 @@ def main():
     min_gap = float('inf')
     gap_hist = [0] * 20
 
-    leader_reassign_interval = 2.0
-    next_leader_reassign = leader_reassign_interval
-
     def w2s(wx, wy):
         return (int((wx - cam_x) * scale + SW / 2),
                 int(-(wy - cam_y) * scale + SH / 2))
@@ -268,11 +265,6 @@ def main():
             # Pure DES: process events, then query positions for rendering
             des.run_until(sim_time)
             des.query_positions(sim_time)
-
-            # Periodic leader reassignment
-            if sim_time >= next_leader_reassign:
-                des.reassign_leaders_periodic(sim_time)
-                next_leader_reassign = sim_time + leader_reassign_interval
 
             # Track stats
             for v in vehicles:
@@ -405,7 +397,7 @@ def main():
 
         # X markers
         for v in vehicles:
-            if v.x_marker_pidx >= 0 and v.state not in (STOP, IDLE):
+            if v.x_marker_pidx >= 0:
                 pidx = v.x_marker_pidx
                 stop_off = v.x_marker_offset
 
