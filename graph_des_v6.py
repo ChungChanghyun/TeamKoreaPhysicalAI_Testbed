@@ -425,7 +425,7 @@ class GraphDESv6:
 
         # Check if stopped at a ZCU boundary
         bnd_node = v.x_marker_node
-        zones = self._boundary_to_zones.get(bnd_node, []) if bnd_node else []
+        zones = self._relevant_zones(v, bnd_node) if bnd_node else []
         if zones:
             # Try to acquire all needed locks at this boundary
             all_granted = True
@@ -445,6 +445,26 @@ class GraphDESv6:
         v.waiting_at_zcu = None
         self._replan(t, v)
 
+    def _relevant_zones(self, v: Vehicle, bnd_node: str) -> List[Tuple[ZCUZone, str]]:
+        """Filter zones at a boundary node to only those the vehicle's path actually uses.
+
+        For merge at node M with boundary A: only relevant if v's path goes A → M.
+        For diverge at node D: only relevant if v's path goes through D.
+        """
+        result = []
+        for zone, lock_id in self._boundary_to_zones.get(bnd_node, []):
+            if zone.kind == 'merge':
+                # Check: path goes bnd_node → zone.node_id (merge point)
+                # i.e. segment (bnd_node, zone.node_id) is in the path ahead
+                for i in range(v.path_idx, min(v.path_idx + 5, len(v.path) - 1)):
+                    if v.path[i] == bnd_node and v.path[i + 1] == zone.node_id:
+                        result.append((zone, lock_id))
+                        break
+            elif zone.kind == 'diverge':
+                # Diverge boundary = the node itself, always relevant if on path
+                result.append((zone, lock_id))
+        return result
+
     def _on_boundary(self, t: float, v: Vehicle):
         old_key = (v.seg_from, v.seg_to)
         v.set_state(t)
@@ -453,37 +473,41 @@ class GraphDESv6:
             self._update_occupancy(v, old_key, new_key, t)
 
         bnd_node = v.x_marker_node
-        zones = self._boundary_to_zones.get(bnd_node, []) if bnd_node else []
+        zones = self._relevant_zones(v, bnd_node) if bnd_node else []
 
         if zones:
-            # Try to acquire all locks at this boundary
+            # Try to acquire all relevant locks at this boundary
             all_granted = True
+            denied_lock_id = None
             for zone, lock_id in zones:
                 if not self._zone_request(v, lock_id):
                     all_granted = False
-                    # Brake to stop at boundary
-                    bnd_dist, _, _ = self._find_first_boundary(v)
-                    if bnd_dist == float('inf'):
-                        bnd_dist = 0.0
-                    if v.vel > 0.1 and bnd_dist > 0.1:
-                        decel = min(v.vel * v.vel / (2 * bnd_dist), v.d_max)
-                        v.acc = -decel
-                        v.state = DECEL
-                        self._pin_marker_at_dist(v, bnd_dist)
-                        self._post(t + v.vel / decel, EV_STOPPED, v)
-                    else:
-                        v.vel = 0.0
-                        v.acc = 0.0
-                        v.state = STOP
-                        self._pin_marker_at_dist(v, 0)
-                        self._zone_wait(v, lock_id)
-                    return
+                    denied_lock_id = lock_id
+                    break
             if all_granted:
                 v.passed_zcu.add(bnd_node)
                 self._replan(t, v)
                 return
 
-        # Non-ZCU boundary → replan with updated constraints
+            # Lock denied → brake to stop at boundary
+            bnd_dist, _, _ = self._find_first_boundary(v)
+            if bnd_dist == float('inf'):
+                bnd_dist = 0.0
+            if v.vel > 0.1 and bnd_dist > 0.1:
+                decel = min(v.vel * v.vel / (2 * bnd_dist), v.d_max)
+                v.acc = -decel
+                v.state = DECEL
+                self._pin_marker_at_dist(v, bnd_dist)
+                self._post(t + v.vel / decel, EV_STOPPED, v)
+            else:
+                v.vel = 0.0
+                v.acc = 0.0
+                v.state = STOP
+                self._pin_marker_at_dist(v, 0)
+                self._zone_wait(v, denied_lock_id)
+            return
+
+        # Non-ZCU boundary or no relevant zones → replan
         self._replan(t, v)
 
     # ── Core: _replan() ───────────────────────────────────────────────────
@@ -554,7 +578,7 @@ class GraphDESv6:
             v.vel = 0.0; v.acc = 0.0; v.state = STOP; v.stop_dist = 0.0
             self._pin_marker_at_dist(v, 0)
             # Try ZCU lock
-            zones = self._boundary_to_zones.get(bnd_node, []) if bnd_node else []
+            zones = self._relevant_zones(v, bnd_node) if bnd_node else []
             if zones:
                 granted = True
                 for zone, lock_id in zones:
@@ -593,7 +617,7 @@ class GraphDESv6:
             else:
                 v.vel = 0.0; v.acc = 0.0; v.state = STOP; v.stop_dist = 0.0
                 self._pin_marker_at_dist(v, 0)
-                zones = self._boundary_to_zones.get(bnd_node, []) if bnd_node else []
+                zones = self._relevant_zones(v, bnd_node) if bnd_node else []
                 if zones:
                     granted = True
                     for zone, lock_id in zones:
