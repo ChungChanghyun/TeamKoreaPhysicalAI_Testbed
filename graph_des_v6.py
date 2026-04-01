@@ -694,44 +694,49 @@ class GraphDESv6:
     # ── Leader ────────────────────────────────────────────────────────────
 
     def _update_leader(self, v: Vehicle):
-        """Find the nearest vehicle ahead on v's path (lightweight per-vehicle search)."""
+        """Find the nearest vehicle ahead on v's path.
+
+        Builds a set of (seg_from, seg_to) along v's forward path,
+        then checks all vehicles to find any on those segments.
+        Uses event-time positions (seg_from, seg_to, seg_offset).
+        """
+        # Build forward segment set with accumulated distance
+        fwd_segs: Dict[Tuple[str, str], float] = {}  # seg_key → dist to seg start
+        dist_accum = 0.0
+
+        # Current segment: distance offset = negative (we're partway through)
+        key = (v.seg_from, v.seg_to)
+        fwd_segs[key] = -v.seg_offset
+
+        dist_accum = v.current_seg_length() - v.seg_offset
+        for i in range(v.path_idx + 1,
+                       min(v.path_idx + 30, len(v.path) - 1)):
+            fn = v.path[i]
+            tn = v.path[i + 1] if i + 1 < len(v.path) else None
+            if tn is None:
+                break
+            fwd_segs[(fn, tn)] = dist_accum
+            seg = self.gmap.segment_between(fn, tn)
+            dist_accum += seg.length if seg else 0
+            if dist_accum > 15000:
+                break
+
+        # Search all vehicles
         best_leader = None
         best_dist = float('inf')
-
-        # Check current segment
-        key = (v.seg_from, v.seg_to)
-        for other in self._seg_occupants.get(key, []):
-            if other.id != v.id and other.seg_offset > v.seg_offset:
-                d = other.seg_offset - v.seg_offset
-                if d < best_dist:
+        for other in self.vehicles.values():
+            if other.id == v.id:
+                continue
+            other_key = (other.seg_from, other.seg_to)
+            if other_key in fwd_segs:
+                d = fwd_segs[other_key] + other.seg_offset
+                if other_key == key:
+                    # Same segment: only if ahead
+                    if other.seg_offset <= v.seg_offset:
+                        continue
+                if 0 < d < best_dist:
                     best_dist = d
                     best_leader = other
-
-        # Walk forward along path
-        if best_leader is None:
-            dist_accum = v.current_seg_length() - v.seg_offset
-            for i in range(v.path_idx + 1,
-                           min(v.path_idx + 30, len(v.path) - 1)):
-                fn = v.path[i]
-                tn = v.path[i + 1] if i + 1 < len(v.path) else None
-                if tn is None:
-                    break
-                fwd_key = (fn, tn)
-                occupants = self._seg_occupants.get(fwd_key, [])
-                if occupants:
-                    # Find closest on this segment
-                    for other in occupants:
-                        if other.id != v.id:
-                            d = dist_accum + other.seg_offset
-                            if d < best_dist:
-                                best_dist = d
-                                best_leader = other
-                    if best_leader is not None:
-                        break
-                seg = self.gmap.segment_between(fn, tn)
-                dist_accum += seg.length if seg else 0
-                if dist_accum > 100000:
-                    break
 
         v.leader = best_leader
 
