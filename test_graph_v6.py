@@ -67,7 +67,7 @@ VEHICLE_COLORS = [
     (255, 255, 150),
 ]
 
-N_VEHICLES = 1
+N_VEHICLES = 200
 
 
 def main():
@@ -446,6 +446,26 @@ def main():
                 if waiting_here:
                     info_lines.append(f"  OHTs waiting: {[f'V#{v.id}' for v in waiting_here]}")
 
+                # Draw arrows from ZCU node to lock holders
+                drawn_holders = set()
+                all_zone_entries = list(des._boundary_to_zones.get(hovered_zcu_node, []))
+                for zone in gmap.zcu_zones:
+                    if zone.node_id == hovered_zcu_node:
+                        lid = f"{zone.node_id}_{zone.kind}"
+                        all_zone_entries.append((zone, lid))
+                for zone, lock_id in all_zone_entries:
+                    holder = des._zone_lock.get(lock_id)
+                    if holder and holder.id not in drawn_holders:
+                        drawn_holders.add(holder.id)
+                        hx2, hy2 = w2s(holder.x, holder.y)
+                        # Arrow from ZCU to holder
+                        pygame.draw.line(screen, (255, 100, 255), (hsx, hsy), (hx2, hy2), 2)
+                        pygame.draw.circle(screen, (255, 100, 255), (hx2, hy2),
+                                           max(5, int(scale * 250)), 2)
+                        # Label
+                        lbl = font_s.render(f"V#{holder.id}", True, (255, 100, 255))
+                        screen.blit(lbl, (hx2 + 8, hy2 - 14))
+
                 # Draw info panel near the diamond
                 if info_lines:
                     pw = max(len(line) * 7 + 10 for line in info_lines)
@@ -463,6 +483,13 @@ def main():
                             c = (255, 200, 60)
                         screen.blit(font_s.render(line, True, c), (px + 4, py + 4 + i * 14))
 
+        # ── Stuck holder highlight (before vehicles so it's behind) ─────
+        STUCK_C = (255, 0, 255)  # magenta for stuck lock holders
+        stuck_holders = set()
+        for lid, holder in des._zone_lock.items():
+            if holder and holder.state == STOP:
+                stuck_holders.add(holder.id)
+
         # Draw vehicles
         vhl, vhw = 750 / 2, 500 / 2
         for v in vehicles:
@@ -477,6 +504,10 @@ def main():
 
             clr = STATE_C.get(v.state, v.color)
             is_sel = selected and v.id == selected.id
+
+            # Stuck holder: magenta outline
+            if v.id in stuck_holders:
+                pygame.draw.polygon(screen, STUCK_C, corners, 3)
             pygame.draw.polygon(screen, clr, corners)
             if is_sel:
                 pygame.draw.polygon(screen, (255, 255, 100), corners, 2)
@@ -513,6 +544,19 @@ def main():
                             if scale > 0.02 and v.x_marker_node:
                                 lbl = font_s.render(v.x_marker_node, True, v.color)
                                 screen.blit(lbl, (ssx + r + 2, ssy - 6))
+
+        # ── Selected OHT: path visualization ─────────────────────────
+        if selected:
+            v = selected
+            path_lw = max(1, int(scale * 60))
+            # Draw forward path (next 30 segments) in vehicle color
+            for i in range(v.path_idx, min(v.path_idx + 30, len(v.path) - 1)):
+                seg = v.gmap.segment_between(v.path[i], v.path[i + 1])
+                if seg and seg.path_points:
+                    pts_s = [w2s(p[0], p[1]) for p in seg.path_points]
+                    if len(pts_s) >= 2:
+                        c = (*v.color[:3],) if hasattr(v, 'color') else (255, 200, 100)
+                        pygame.draw.lines(screen, c, False, pts_s, path_lw)
 
         # Leader arrow for selected
         if selected and selected.leader:
@@ -552,6 +596,14 @@ def main():
                 lines.append(f"XMarker@{v.x_marker_node} (ZCU)")
             if v.waiting_at_zcu:
                 lines.append(f"Waiting@ZCU:{v.waiting_at_zcu}")
+            # Held locks
+            held = [lid for lid, h in des._zone_lock.items() if h is v]
+            if held:
+                lines.append(f"Locks({len(held)}):{','.join(held[:4])}")
+                if len(held) > 4:
+                    lines.append(f"  +{len(held)-4} more")
+            if v.passed_zcu:
+                lines.append(f"Passed:{list(v.passed_zcu)[:4]}")
             if v.dest_node:
                 lines.append(f"Dest:{v.dest_node} {'REACHED' if v.dest_reached else ''}")
 
