@@ -683,7 +683,12 @@ class GraphDESv6:
                 decel = min(v.vel * v.vel / (2 * plan_boundary), v.d_max)
                 v.acc = -decel
                 v.state = DECEL
-                self._post(t + v.vel / decel, EV_STOPPED, v)
+                t_stop = v.vel / decel
+                t_seg = _time_to_travel(v.vel, v.acc, v.dist_to_seg_end(), v.v_max)
+                if t_seg < t_stop and t_seg < float('inf'):
+                    self._post(t + t_seg, EV_SEG_END, v)
+                else:
+                    self._post(t + t_stop, EV_STOPPED, v)
             else:
                 v.vel = 0.0; v.acc = 0.0; v.state = STOP; v.stop_dist = 0.0
                 self._pin_marker_at_dist(v, 0)
