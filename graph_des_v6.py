@@ -670,23 +670,25 @@ class GraphDESv6:
         if plan_boundary <= 0:
             v.vel = 0.0; v.acc = 0.0; v.state = STOP; v.stop_dist = 0.0
             self._pin_marker_at_dist(v, 0)
-            # Try ZCU lock
-            zones = self._relevant_zones(v, bnd_node) if bnd_node else []
-            if zones:
-                granted = True
-                for zone, lock_id in zones:
-                    if not self._zone_request(v, lock_id):
-                        granted = False
-                        self._zone_wait(v, lock_id)
-                        break
-                if granted:
-                    v.passed_zcu.add(bnd_node)
-                    self._post(t + 0.01, EV_REPLAN, v)
-            elif leader is not None:
-                # Blocked by leader — will replan at own next event
-                self._post(t + 0.5, EV_REPLAN, v)
-            else:
-                self._post(t + 0.5, EV_REPLAN, v)
+            # Determine what caused the block
+            zcu_is_constraint = (bnd_node and bnd_dist < 100000 and
+                                 bnd_dist <= leader_free and bnd_dist <= dest_dist)
+            if zcu_is_constraint:
+                zones = self._relevant_zones(v, bnd_node)
+                if zones:
+                    granted = True
+                    for zone, lock_id in zones:
+                        if not self._zone_request(v, lock_id):
+                            granted = False
+                            self._zone_wait(v, lock_id)
+                            break
+                    if granted:
+                        v.passed_zcu.add(bnd_node)
+                        self._post(t + 0.01, EV_REPLAN, v)
+                    # else: waiting for ZCU_GRANT (no event needed)
+                    return
+            # Blocked by leader or dest → periodic retry
+            self._post(t + 0.5, EV_REPLAN, v)
             return
 
         if plan_boundary > 100000 and dist_to_slow > 100000:
@@ -712,21 +714,23 @@ class GraphDESv6:
             else:
                 v.vel = 0.0; v.acc = 0.0; v.state = STOP; v.stop_dist = 0.0
                 self._pin_marker_at_dist(v, 0)
-                zones = self._relevant_zones(v, bnd_node) if bnd_node else []
-                if zones:
-                    granted = True
-                    for zone, lock_id in zones:
-                        if not self._zone_request(v, lock_id):
-                            granted = False
-                            self._zone_wait(v, lock_id)
-                            break
-                    if granted:
-                        v.passed_zcu.add(bnd_node)
-                        self._post(t + 0.01, EV_REPLAN, v)
-                elif leader is not None:
-                    self._post(t + 0.5, EV_REPLAN, v)
-                else:
-                    self._post(t + 0.3, EV_REPLAN, v)
+                zcu_is_constraint = (bnd_node and bnd_dist < 100000 and
+                                     bnd_dist <= leader_free and bnd_dist <= dest_dist)
+                if zcu_is_constraint:
+                    zones = self._relevant_zones(v, bnd_node)
+                    if zones:
+                        granted = True
+                        for zone, lock_id in zones:
+                            if not self._zone_request(v, lock_id):
+                                granted = False
+                                self._zone_wait(v, lock_id)
+                                break
+                        if granted:
+                            v.passed_zcu.add(bnd_node)
+                            self._post(t + 0.01, EV_REPLAN, v)
+                        return
+                # Blocked by leader or dest → periodic retry
+                self._post(t + 0.5, EV_REPLAN, v)
         else:
             # Not yet within braking distance — go toward target_v and let
             # the BOUNDARY event fire at the right braking point.
