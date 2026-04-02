@@ -474,6 +474,7 @@ class GraphDESv6:
     # ── Event handlers ────────────────────────────────────────────────────
 
     def _on_seg_end(self, t: float, v: Vehicle):
+        """Segment boundary crossed — occupancy/exit only, NO replan."""
         old_key = (v.seg_from, v.seg_to)
         crossed = v.advance_position(t)
         new_key = (v.seg_from, v.seg_to)
@@ -483,42 +484,15 @@ class GraphDESv6:
         if v.needs_path_extension():
             ext = random_safe_path(self.gmap, v.path[-1], length=100)
             v.extend_path(ext)
-
-        # Safety check: if we just arrived at a boundary node that
-        # wasn't caught by a BOUNDARY event (short segment), handle
-        # it as if BOUNDARY fired — try lock before continuing.
-        arrived = v.seg_from
-        if arrived in self._boundary_nodes and arrived not in v.passed_zcu:
-            zones = self._relevant_zones(v, arrived)
-            if zones:
-                all_granted = True
-                denied_lock_id = None
-                for zone, lock_id in zones:
-                    if not self._zone_request(v, lock_id):
-                        all_granted = False
-                        denied_lock_id = lock_id
-                        break
-                if all_granted:
-                    v.passed_zcu.add(arrived)
-                    self._replan(t, v)
-                    return
-                else:
-                    # Must stop — can't proceed without lock
-                    v.vel = 0.0
-                    v.acc = 0.0
-                    v.state = STOP
-                    self._pin_marker_at_dist(v, 0)
-                    self._zone_wait(v, denied_lock_id)
-                    return
-
-        self._replan(t, v)
+        # No replan — the remaining events from the plan are already in the heap.
 
     def _on_phase_done(self, t: float, v: Vehicle):
+        """Kinematic phase complete — update state only, NO replan."""
         crossed = v.advance_position(t)
         v.acc = 0.0
         v.state = CRUISE
         self._process_crossed_nodes(t, v, crossed)
-        self._replan(t, v)
+        # No replan — BOUNDARY or next phase events are already in the heap.
 
     def _on_stopped(self, t: float, v: Vehicle):
         crossed = v.set_state(t)
@@ -749,7 +723,7 @@ class GraphDESv6:
 
         if plan_boundary > 100000 and dist_to_slow > 100000:
             self._go(t, v, target_v)
-            self._schedule_next_event(t, v, target_v, plan_boundary, dist_to_slow)
+            self._schedule_plan_events(t, v, target_v, plan_boundary)
             return
 
         # Constrained by plan_boundary and/or slow segments
@@ -777,89 +751,117 @@ class GraphDESv6:
             # Do NOT use v_safe as an intermediate target — it causes
             # oscillating decel/cruise cycles.
             self._go(t, v, target_v)
-            self._schedule_next_event(t, v, target_v, plan_boundary,
-                                      dist_to_slow)
+            self._schedule_plan_events(t, v, target_v, plan_boundary)
 
     # ── Event scheduling ──────────────────────────────────────────────────
 
-    def _schedule_next_event(self, t: float, v: Vehicle, target_v: float,
-                             plan_boundary: float, dist_to_slow: float):
-        best_t = float('inf')
-        best_kind = EV_REPLAN
+    def _schedule_plan_events(self, t: float, v: Vehicle, target_v: float,
+                              plan_boundary: float):
+        """Generate ALL events from current position to plan boundary.
 
-        accel_phase = v.acc > 0 and v.vel < target_v - 0.1
-        decel_phase = v.acc < 0
-        cruise_phase = not accel_phase and not decel_phase and v.vel > 0.1
+        Simulates the velocity profile forward and posts every event:
+        SEG_END at each segment boundary, PHASE_DONE at speed transitions,
+        and BOUNDARY at the braking point before plan_boundary.
+        All events are pushed to the heap at once — no replan between them.
+        """
+        sim_vel = v.vel
+        sim_acc = v.acc
+        sim_t = t
+        sim_dist = 0.0
+        sim_pidx = v.path_idx
+        sim_off = v.seg_offset
+        sim_target_v = target_v
+        posted_any = False
 
-        # 1. Segment end — always check
-        t_seg = _time_to_travel(v.vel, v.acc, v.dist_to_seg_end(), v.v_max)
-        if t + t_seg < best_t:
-            best_t = t + t_seg
-            best_kind = EV_SEG_END
+        for _ in range(100):  # safety limit
+            if sim_pidx >= len(v.path) - 1:
+                break
 
-        # 2. Phase done (accel → cruise transition)
-        if accel_phase:
-            t_phase = (target_v - v.vel) / v.acc
-            if t + t_phase < best_t:
-                best_t = t + t_phase
-                best_kind = EV_PHASE_DONE
+            seg_len = v._seg_lengths[sim_pidx] if sim_pidx < len(v._seg_lengths) else 0.0
+            remaining_in_seg = max(0.01, seg_len - sim_off)
+            dist_to_bnd = plan_boundary - sim_dist
 
-        # 3. Decel done (decel → cruise transition at lower target speed)
-        if decel_phase and target_v > 0.5:
-            t_decel = (v.vel - target_v) / abs(v.acc)
-            if t_decel > 0.001 and t + t_decel < best_t:
-                best_t = t + t_decel
-                best_kind = EV_PHASE_DONE
+            if dist_to_bnd <= 0:
+                break
 
-        # 4. Plan boundary approach
-        if plan_boundary < 100000:
-            if accel_phase:
-                # Triangular/trapezoidal profile: exact time to start braking
-                t_boundary = _time_to_boundary_during_accel(
-                    v.vel, v.acc, v.d_max, plan_boundary, v.v_max)
-            elif cruise_phase:
-                # Cruise: linear approach to braking point
-                brake_d = v.braking_distance()
-                approach_dist = max(0, plan_boundary - brake_d)
-                t_boundary = approach_dist / v.vel if approach_dist > 0 else 0.0
-            elif decel_phase:
-                # Already decelerating — don't schedule BOUNDARY, the decel
-                # will either stop (STOPPED) or reach target (PHASE_DONE)
-                t_boundary = float('inf')
-            else:
-                t_boundary = 0.0
+            candidates = []  # (dt, kind)
 
-            if t_boundary < float('inf'):
-                if t_boundary < 0.001:
-                    t_boundary = 0.01
-                if t + t_boundary < best_t:
-                    best_t = t + t_boundary
-                    best_kind = EV_BOUNDARY
+            # SEG_END
+            dt_seg = _time_to_travel(sim_vel, sim_acc, remaining_in_seg, v.v_max)
+            if dt_seg < float('inf') and remaining_in_seg <= dist_to_bnd:
+                candidates.append((dt_seg, EV_SEG_END))
 
-        # 5. Slow segment approach (curve braking) — cruise only
-        #    Only schedule a REPLAN if there's meaningful approach distance.
-        #    If already within brake+margin of the slow segment, SEG_END
-        #    or BOUNDARY events will handle the transition.
-        if cruise_phase and dist_to_slow < 100000:
-            brake_d = v.braking_distance()
-            approach_dist = dist_to_slow - brake_d - 500
-            if approach_dist > 100:  # meaningful distance to cover
-                t_slow = approach_dist / v.vel
-                if t + t_slow < best_t:
-                    best_t = t + t_slow
-                    best_kind = EV_REPLAN
+            # PHASE_DONE (accel → cruise)
+            if sim_acc > 0 and sim_vel < sim_target_v - 0.5:
+                dt_phase = (sim_target_v - sim_vel) / sim_acc
+                if dt_phase > 0.001:
+                    candidates.append((dt_phase, EV_PHASE_DONE))
 
-        if best_t <= t + 0.005:
-            best_t = t + 0.01
-            # Preserve BOUNDARY event kind — clamping to 0.01 is fine
-            # but turning it into REPLAN causes infinite 0.01s loops
-            if best_kind not in (EV_BOUNDARY, EV_SEG_END, EV_PHASE_DONE):
-                best_kind = EV_REPLAN
-        if best_t == float('inf'):
-            best_t = t + 2.0
-            best_kind = EV_REPLAN
+            # BOUNDARY (braking point)
+            if dist_to_bnd > 0 and plan_boundary < 100000:
+                if sim_acc > 0 and sim_vel < sim_target_v - 0.5:
+                    dt_bnd = _time_to_boundary_during_accel(
+                        sim_vel, sim_acc, v.d_max, dist_to_bnd, v.v_max)
+                elif sim_vel > 0.1 and sim_acc >= 0:
+                    brake_d = sim_vel * sim_vel / (2 * v.d_max)
+                    approach = max(0, dist_to_bnd - brake_d)
+                    dt_bnd = approach / sim_vel if sim_vel > 0 else float('inf')
+                else:
+                    dt_bnd = float('inf')
+                if dt_bnd < float('inf') and dt_bnd >= 0:
+                    candidates.append((max(0.001, dt_bnd), EV_BOUNDARY))
 
-        self._post(best_t, best_kind, v)
+            if not candidates:
+                break
+
+            candidates.sort()
+            dt_best, kind_best = candidates[0]
+
+            self._post(sim_t + dt_best, kind_best, v)
+            posted_any = True
+
+            # BOUNDARY is the last event in this plan
+            if kind_best == EV_BOUNDARY:
+                break
+
+            # Advance simulation
+            if kind_best == EV_SEG_END:
+                # Velocity at segment end
+                if sim_acc > 0:
+                    t_cap = (v.v_max - sim_vel) / sim_acc if sim_vel < v.v_max else 0
+                    if dt_best <= t_cap:
+                        sim_vel = sim_vel + sim_acc * dt_best
+                    else:
+                        sim_vel = v.v_max
+                elif sim_acc < 0:
+                    sim_vel = max(0, sim_vel + sim_acc * dt_best)
+
+                sim_t += dt_best
+                sim_dist += remaining_in_seg
+                sim_pidx += 1
+                sim_off = 0.0
+
+                if sim_pidx >= len(v.path) - 1:
+                    break
+
+                # Check curve speed for new segment
+                new_seg_speed = v._seg_speeds[sim_pidx] if sim_pidx < len(v._seg_speeds) else v.v_max
+                if new_seg_speed < sim_target_v:
+                    sim_target_v = new_seg_speed
+                    # Need to decelerate
+                    if sim_vel > sim_target_v + 0.5:
+                        sim_acc = -v.d_max
+
+            elif kind_best == EV_PHASE_DONE:
+                dist_traveled = sim_vel * dt_best + 0.5 * sim_acc * dt_best ** 2
+                sim_vel = sim_target_v
+                sim_acc = 0.0
+                sim_t += dt_best
+                sim_dist += dist_traveled
+                sim_off += dist_traveled
+
+        if not posted_any:
+            self._post(t + 2.0, EV_REPLAN, v)
 
     # ── Leader ────────────────────────────────────────────────────────────
 
