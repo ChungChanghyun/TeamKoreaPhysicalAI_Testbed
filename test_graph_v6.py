@@ -67,7 +67,7 @@ VEHICLE_COLORS = [
     (255, 255, 150),
 ]
 
-N_VEHICLES = 200
+N_VEHICLES = 1
 
 
 def main():
