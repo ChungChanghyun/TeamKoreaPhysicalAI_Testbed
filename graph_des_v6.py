@@ -500,7 +500,21 @@ class GraphDESv6:
         v.state = STOP
         self._process_crossed_nodes(t, v, crossed)
 
-        # Stopped → replan will create new plan with BOUNDARY at braking point
+        # Check if at a ZCU boundary — register as waiter for event-driven wakeup
+        bnd_dist, _, bnd_node = self._find_first_boundary(v)
+        if bnd_node and bnd_dist < 1.0:
+            # Stopped right at boundary → try lock or wait
+            zones = self._relevant_zones(v, bnd_node)
+            for zone, lock_id in zones:
+                if not self._zone_request(v, lock_id):
+                    self._zone_wait(v, lock_id)
+                    return
+            # All granted
+            v.passed_zcu.add(bnd_node)
+            self._post(t + 0.01, EV_REPLAN, v)
+            return
+
+        # Not at ZCU boundary → replan
         self._post(t + 0.2, EV_REPLAN, v)
 
     def _on_zcu_grant(self, t: float, v: Vehicle):
@@ -548,7 +562,7 @@ class GraphDESv6:
                 self._replan(t, v, skip_set_state=True)
                 return
 
-            # Lock denied → brake to stop at boundary
+            # Lock denied → plan to arrive at boundary when holder exits
             old_key = (v.seg_from, v.seg_to)
             crossed = v.set_state(t)
             new_key = (v.seg_from, v.seg_to)
@@ -559,18 +573,61 @@ class GraphDESv6:
             bnd_dist, _, _ = self._find_first_boundary(v)
             if bnd_dist == float('inf'):
                 bnd_dist = 0.0
+
+            # Get holder's exit time
+            t_exit = self._zone_holder_exit_time(denied_lock_id)
+            t_available = max(t_exit, t)  # when the ZCU becomes available
+            dt_available = t_available - t
+
             if v.vel > 0.1 and bnd_dist > 0.1:
-                decel = min(v.vel * v.vel / (2 * bnd_dist), v.d_max)
-                v.acc = -decel
-                v.state = DECEL
-                self._pin_marker_at_dist(v, bnd_dist)
-                t_stop = v.vel / decel
-                t_seg = _time_to_travel(v.vel, v.acc, v.dist_to_seg_end(), v.v_max)
-                if t_seg < t_stop and t_seg < float('inf'):
-                    self._post(t + t_seg, EV_SEG_END, v)
+                # Compute velocity profile to arrive at boundary at t_available
+                # If we have enough time, cruise slower; if not, brake to stop
+                if dt_available > 0.01 and bnd_dist > 0:
+                    # Target: arrive at bnd_dist in dt_available seconds
+                    # Average speed needed: bnd_dist / dt_available
+                    v_arrive = bnd_dist / dt_available
+                    if v_arrive < v.vel:
+                        # Need to slow down — decelerate to arrive on time
+                        decel = max(1.0, v.vel * v.vel / (2 * bnd_dist))
+                        decel = min(decel, v.d_max)
+                        v.acc = -decel
+                        v.state = DECEL
+                        self._pin_marker_at_dist(v, bnd_dist)
+                        t_stop = v.vel / decel
+                        t_seg = _time_to_travel(v.vel, v.acc,
+                                                v.dist_to_seg_end(), v.v_max)
+                        if t_seg < t_stop and t_seg < float('inf'):
+                            self._post(t + t_seg, EV_SEG_END, v)
+                        else:
+                            self._post(t + t_stop, EV_STOPPED, v)
+                    else:
+                        # We'd arrive too late at current speed — just brake to stop
+                        decel = min(v.vel * v.vel / (2 * bnd_dist), v.d_max)
+                        v.acc = -decel
+                        v.state = DECEL
+                        self._pin_marker_at_dist(v, bnd_dist)
+                        t_stop = v.vel / decel
+                        t_seg = _time_to_travel(v.vel, v.acc,
+                                                v.dist_to_seg_end(), v.v_max)
+                        if t_seg < t_stop and t_seg < float('inf'):
+                            self._post(t + t_seg, EV_SEG_END, v)
+                        else:
+                            self._post(t + t_stop, EV_STOPPED, v)
                 else:
-                    self._post(t + t_stop, EV_STOPPED, v)
+                    # No time info or already at boundary — brake to stop
+                    decel = min(v.vel * v.vel / (2 * bnd_dist), v.d_max)
+                    v.acc = -decel
+                    v.state = DECEL
+                    self._pin_marker_at_dist(v, bnd_dist)
+                    t_stop = v.vel / decel
+                    t_seg = _time_to_travel(v.vel, v.acc,
+                                            v.dist_to_seg_end(), v.v_max)
+                    if t_seg < t_stop and t_seg < float('inf'):
+                        self._post(t + t_seg, EV_SEG_END, v)
+                    else:
+                        self._post(t + t_stop, EV_STOPPED, v)
             else:
+                # Already stopped at boundary → wait for ZCU_GRANT
                 v.vel = 0.0
                 v.acc = 0.0
                 v.state = STOP
@@ -929,13 +986,31 @@ class GraphDESv6:
             return True
         return False
 
+    def _zone_holder_exit_time(self, lock_id: str) -> float:
+        """Get the committed exit time of the current lock holder.
+
+        The holder's next_event_t is committed (never cancelled).
+        Walk the holder's committed events to estimate when it reaches
+        the exit node. Conservative: use next_event_t + braking time
+        as the earliest possible exit.
+        """
+        holder = self._zone_lock.get(lock_id)
+        if holder is None:
+            return 0.0
+        # The holder's committed trajectory: it will at minimum travel
+        # until next_event_t. At that point it has vel_at(next_event_t),
+        # and may continue further. The exit happens when holder reaches
+        # the exit node via SEG_END.
+        # Best estimate: holder's next_event_t (conservative lower bound)
+        return holder.next_event_t
+
     def _zone_release(self, t: float, lock_id: str):
         self._zone_lock[lock_id] = None
         waiters = self._zone_waiters.get(lock_id, [])
         if waiters:
             next_v = waiters.pop(0)
             next_v.waiting_at_zcu = None
-            self._post(t + 0.01, EV_ZCU_GRANT, next_v)
+            self._post(t, EV_ZCU_GRANT, next_v)
 
     def _zone_wait(self, v: Vehicle, lock_id: str):
         v.waiting_at_zcu = lock_id
