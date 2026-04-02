@@ -541,52 +541,12 @@ class GraphDESv6:
         return result
 
     def _on_boundary(self, t: float, v: Vehicle):
-        bnd_node = v.x_marker_node
-        zones = self._relevant_zones(v, bnd_node) if bnd_node else []
+        """Reached braking point before plan boundary.
 
-        if zones:
-            # Try to acquire all relevant locks at this boundary
-            all_granted = True
-            denied_lock_id = None
-            for zone, lock_id in zones:
-                if not self._zone_request(v, lock_id):
-                    all_granted = False
-                    denied_lock_id = lock_id
-                    break
-            if all_granted:
-                # Lock granted → continue current motion, extend plan
-                # Do NOT call set_state() — preserve current vel/acc
-                v.passed_zcu.add(bnd_node)
-                self._replan(t, v, skip_set_state=True)
-                return
-
-            # Lock denied → must set_state to prepare for braking
-            old_key = (v.seg_from, v.seg_to)
-            crossed = v.set_state(t)
-            new_key = (v.seg_from, v.seg_to)
-            if old_key != new_key:
-                self._update_occupancy(v, old_key, new_key, t)
-            self._process_crossed_nodes(t, v, crossed)
-
-            bnd_dist, _, _ = self._find_first_boundary(v)
-            if bnd_dist == float('inf'):
-                bnd_dist = 0.0
-            if v.vel > 0.1 and bnd_dist > 0.1:
-                decel = min(v.vel * v.vel / (2 * bnd_dist), v.d_max)
-                v.acc = -decel
-                v.state = DECEL
-                self._pin_marker_at_dist(v, bnd_dist)
-                self._post(t + v.vel / decel, EV_STOPPED, v)
-            else:
-                v.vel = 0.0
-                v.acc = 0.0
-                v.state = STOP
-                self._pin_marker_at_dist(v, 0)
-                self._zone_wait(v, denied_lock_id)
-            return
-
-        # Non-ZCU boundary or no relevant zones → replan normally
-        self._replan(t, v)
+        Delegate to _replan which now handles ZCU lock chain internally.
+        Use skip_set_state=True to preserve current velocity/acceleration.
+        """
+        self._replan(t, v, skip_set_state=True)
 
     # ── Core: _replan() ───────────────────────────────────────────────────
 
@@ -625,8 +585,25 @@ class GraphDESv6:
         lookahead_v, dist_to_slow = self._lookahead_speed(v)
         target_v = min(target_v, lookahead_v)
 
-        # ZCU boundary
+        # ZCU boundary — find first, try lock, if granted find next (limit)
         bnd_dist, bnd_pi, bnd_node = self._find_first_boundary(v)
+        if bnd_dist < 100000 and bnd_node:
+            zones = self._relevant_zones(v, bnd_node)
+            if not zones:
+                # No relevant zones → skip
+                v.passed_zcu.add(bnd_node)
+                bnd_dist, bnd_pi, bnd_node = self._find_first_boundary(v)
+            else:
+                all_granted = True
+                for zone, lock_id in zones:
+                    if not self._zone_request(v, lock_id):
+                        all_granted = False
+                        break
+                if all_granted:
+                    # Granted → plan extends to NEXT boundary (one step only)
+                    v.passed_zcu.add(bnd_node)
+                    bnd_dist, bnd_pi, bnd_node = self._find_first_boundary(v)
+                # else: denied → bnd_dist stays as plan limit
 
         # Path leader — refresh at each replan
         self._update_leader(v)
@@ -660,23 +637,16 @@ class GraphDESv6:
         if plan_boundary <= 0:
             v.vel = 0.0; v.acc = 0.0; v.state = STOP; v.stop_dist = 0.0
             self._pin_marker_at_dist(v, 0)
-            # Determine what caused the block
+            # ZCU constraint: the chain loop above already tried and was denied
             zcu_is_constraint = (bnd_node and bnd_dist < 100000 and
                                  bnd_dist <= leader_free and bnd_dist <= dest_dist)
             if zcu_is_constraint:
+                # Find which lock was denied and wait for it
                 zones = self._relevant_zones(v, bnd_node)
-                if zones:
-                    granted = True
-                    for zone, lock_id in zones:
-                        if not self._zone_request(v, lock_id):
-                            granted = False
-                            self._zone_wait(v, lock_id)
-                            break
-                    if granted:
-                        v.passed_zcu.add(bnd_node)
-                        self._post(t + 0.01, EV_REPLAN, v)
-                    # else: waiting for ZCU_GRANT (no event needed)
-                    return
+                for zone, lock_id in zones:
+                    if self._zone_lock.get(lock_id) is not v:
+                        self._zone_wait(v, lock_id)
+                        return
             # Blocked by leader or dest → periodic retry
             self._post(t + 0.5, EV_REPLAN, v)
             return
@@ -708,18 +678,10 @@ class GraphDESv6:
                                      bnd_dist <= leader_free and bnd_dist <= dest_dist)
                 if zcu_is_constraint:
                     zones = self._relevant_zones(v, bnd_node)
-                    if zones:
-                        granted = True
-                        for zone, lock_id in zones:
-                            if not self._zone_request(v, lock_id):
-                                granted = False
-                                self._zone_wait(v, lock_id)
-                                break
-                        if granted:
-                            v.passed_zcu.add(bnd_node)
-                            self._post(t + 0.01, EV_REPLAN, v)
-                        return
-                # Blocked by leader or dest → periodic retry
+                    for zone, lock_id in zones:
+                        if self._zone_lock.get(lock_id) is not v:
+                            self._zone_wait(v, lock_id)
+                            return
                 self._post(t + 0.5, EV_REPLAN, v)
         else:
             # Not yet within braking distance — go toward target_v and let
