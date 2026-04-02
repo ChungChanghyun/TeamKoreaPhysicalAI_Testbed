@@ -395,20 +395,10 @@ class GraphDESv6:
                     succ_node = seg_key[1]
                     self._exit_to_zones[succ_node].append((zone, lock_id))
 
-        # For merge locks held via a boundary node where the OHT goes
-        # a different direction: the OHT never reaches the merge node,
-        # so we also register ALL successors of each boundary node as
-        # exit points for ALL zones at that boundary.
-        # This way, arriving at ANY next node after the boundary releases
-        # all locks acquired at that boundary.
-        for bnd_node, zone_list in self._boundary_to_zones.items():
-            successors = self.gmap.adj.get(bnd_node, [])
-            for succ in successors:
-                for zone, lock_id in zone_list:
-                    # Avoid duplicates
-                    existing = self._exit_to_zones.get(succ, [])
-                    if (zone, lock_id) not in existing:
-                        self._exit_to_zones[succ].append((zone, lock_id))
+        # NOTE: merge exit = merge node only. diverge exit = successor nodes only.
+        # No blanket "all successors of boundary" — _relevant_zones already
+        # filters out merge locks for directions the OHT doesn't take,
+        # so there's no need to release at wrong exits.
 
         print(f"ZCU locks: {len(self._zone_lock)} zones, "
               f"{len(self._boundary_nodes)} boundary nodes, "
