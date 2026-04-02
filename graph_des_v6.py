@@ -251,11 +251,13 @@ class Vehicle:
         v = from_vel if from_vel >= 0 else self.vel
         return v * v / (2 * self.d_max) if v > 0 else 0.0
 
-    def advance_position(self, t: float):
+    def advance_position(self, t: float) -> List[str]:
+        """Advance to time t. Returns list of nodes crossed (arrived at)."""
         dist = self._dist_traveled(t - self.t_ref)
         self.vel = self.vel_at(t)
         self.t_ref = t
         self.seg_offset += dist
+        crossed = []
         while self.path_idx < len(self.path) - 1:
             seg_len = self.current_seg_length()
             if seg_len <= 0:
@@ -267,12 +269,15 @@ class Vehicle:
                 self.path_idx += 1
                 if self.seg_offset < 0:
                     self.seg_offset = 0.0
+                crossed.append(self.seg_from)
             else:
                 break
+        return crossed
 
-    def set_state(self, t: float):
-        self.advance_position(t)
+    def set_state(self, t: float) -> List[str]:
+        crossed = self.advance_position(t)
         self.acc = 0.0
+        return crossed
 
     def update_render(self, t: float):
         dist = self._dist_traveled(t - self.t_ref)
@@ -464,24 +469,26 @@ class GraphDESv6:
         if handler:
             handler(ev.t, v)
 
+    # ── Crossed-node processing ─────────────────────────────────────────
+
+    def _process_crossed_nodes(self, t: float, v: Vehicle, crossed: List[str]):
+        """Handle ZCU exit releases and passed_zcu cleanup for all crossed nodes."""
+        for node in crossed:
+            # Clear passed_zcu
+            v.passed_zcu.discard(node)
+            # ZCU exit release
+            for zone, lock_id in self._exit_to_zones.get(node, []):
+                if self._zone_lock.get(lock_id) is v:
+                    self._zone_release(t, lock_id)
+
     # ── Event handlers ────────────────────────────────────────────────────
 
     def _on_seg_end(self, t: float, v: Vehicle):
         old_key = (v.seg_from, v.seg_to)
-        v.advance_position(t)
+        crossed = v.advance_position(t)
         new_key = (v.seg_from, v.seg_to)
         self._update_occupancy(v, old_key, new_key, t)
-
-        arrived_node = v.seg_from
-
-        # Clear passed_zcu for crossed boundary nodes
-        if v.passed_zcu:
-            v.passed_zcu.discard(arrived_node)
-
-        # ZCU exit: release locks where this node is an exit point
-        for zone, lock_id in self._exit_to_zones.get(arrived_node, []):
-            if self._zone_lock.get(lock_id) is v:
-                self._zone_release(t, lock_id)
+        self._process_crossed_nodes(t, v, crossed)
 
         if v.needs_path_extension():
             ext = random_safe_path(self.gmap, v.path[-1], length=100)
@@ -490,16 +497,18 @@ class GraphDESv6:
         self._replan(t, v)
 
     def _on_phase_done(self, t: float, v: Vehicle):
-        v.advance_position(t)
+        crossed = v.advance_position(t)
         v.acc = 0.0
         v.state = CRUISE
+        self._process_crossed_nodes(t, v, crossed)
         self._replan(t, v)
 
     def _on_stopped(self, t: float, v: Vehicle):
-        v.set_state(t)
+        crossed = v.set_state(t)
         v.vel = 0.0
         v.acc = 0.0
         v.state = STOP
+        self._process_crossed_nodes(t, v, crossed)
 
         # Check if stopped at a ZCU boundary
         bnd_node = v.x_marker_node
@@ -563,10 +572,11 @@ class GraphDESv6:
 
             # Lock denied → must set_state to prepare for braking
             old_key = (v.seg_from, v.seg_to)
-            v.set_state(t)
+            crossed = v.set_state(t)
             new_key = (v.seg_from, v.seg_to)
             if old_key != new_key:
                 self._update_occupancy(v, old_key, new_key, t)
+            self._process_crossed_nodes(t, v, crossed)
 
             bnd_dist, _, _ = self._find_first_boundary(v)
             if bnd_dist == float('inf'):
@@ -593,16 +603,13 @@ class GraphDESv6:
     def _replan(self, t: float, v: Vehicle, skip_set_state: bool = False):
         old_key = (v.seg_from, v.seg_to)
         if skip_set_state:
-            # Only advance position without resetting acc — used when
-            # continuing through a granted ZCU boundary at speed.
-            # advance_position correctly computes vel using current acc,
-            # then _go() below will set the appropriate acc for the new plan.
-            v.advance_position(t)
+            crossed = v.advance_position(t)
         else:
-            v.set_state(t)
+            crossed = v.set_state(t)
         new_key = (v.seg_from, v.seg_to)
         if old_key != new_key:
             self._update_occupancy(v, old_key, new_key, t)
+        self._process_crossed_nodes(t, v, crossed)
 
         if v.needs_path_extension():
             ext = random_safe_path(self.gmap, v.path[-1], length=100)
