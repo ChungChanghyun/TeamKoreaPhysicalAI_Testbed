@@ -524,13 +524,22 @@ class GraphDESv6:
         self._replan(t, v)
 
     def _relevant_zones(self, v: Vehicle, bnd_node: str) -> List[Tuple[ZCUZone, str]]:
-        """All zones at a boundary node are relevant.
+        """Determine which zones at a boundary node this OHT must lock.
 
-        When an OHT passes through a boundary node, it physically occupies
-        the node and blocks ALL directions — both diverge and all merge
-        entries. So every zone registered at this boundary must be locked.
+        - Diverge: always lock (physical node is shared, direction-independent)
+        - Merge: only lock if OHT's path goes bnd_node → merge_node
+                 (no need to lock a merge the OHT isn't heading toward)
         """
-        return self._boundary_to_zones.get(bnd_node, [])
+        result = []
+        for zone, lock_id in self._boundary_to_zones.get(bnd_node, []):
+            if zone.kind == 'diverge':
+                result.append((zone, lock_id))
+            elif zone.kind == 'merge':
+                for i in range(v.path_idx, min(v.path_idx + 40, len(v.path) - 1)):
+                    if v.path[i] == bnd_node and v.path[i + 1] == zone.node_id:
+                        result.append((zone, lock_id))
+                        break
+        return result
 
     def _on_boundary(self, t: float, v: Vehicle):
         bnd_node = v.x_marker_node
