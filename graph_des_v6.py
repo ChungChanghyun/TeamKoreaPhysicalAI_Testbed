@@ -484,6 +484,33 @@ class GraphDESv6:
             ext = random_safe_path(self.gmap, v.path[-1], length=100)
             v.extend_path(ext)
 
+        # Safety check: if we just arrived at a boundary node that
+        # wasn't caught by a BOUNDARY event (short segment), handle
+        # it as if BOUNDARY fired — try lock before continuing.
+        arrived = v.seg_from
+        if arrived in self._boundary_nodes and arrived not in v.passed_zcu:
+            zones = self._relevant_zones(v, arrived)
+            if zones:
+                all_granted = True
+                denied_lock_id = None
+                for zone, lock_id in zones:
+                    if not self._zone_request(v, lock_id):
+                        all_granted = False
+                        denied_lock_id = lock_id
+                        break
+                if all_granted:
+                    v.passed_zcu.add(arrived)
+                    self._replan(t, v)
+                    return
+                else:
+                    # Must stop — can't proceed without lock
+                    v.vel = 0.0
+                    v.acc = 0.0
+                    v.state = STOP
+                    self._pin_marker_at_dist(v, 0)
+                    self._zone_wait(v, denied_lock_id)
+                    return
+
         self._replan(t, v)
 
     def _on_phase_done(self, t: float, v: Vehicle):
