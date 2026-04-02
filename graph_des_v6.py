@@ -721,37 +721,10 @@ class GraphDESv6:
             self._post(t + 0.5, EV_REPLAN, v)
             return
 
-        if plan_boundary > 100000 and dist_to_slow > 100000:
-            self._go(t, v, target_v)
-            self._schedule_plan_events(t, v, target_v, plan_boundary)
-            return
-
-        # Constrained by plan_boundary and/or slow segments
-        brake_dist = v.braking_distance()
-
-        # If within braking distance of the plan boundary, commit to stopping
-        if plan_boundary < 100000 and plan_boundary <= brake_dist + 1.0:
-            if v.vel > 0.1 and plan_boundary > 0.1:
-                decel = min(v.vel * v.vel / (2 * plan_boundary), v.d_max)
-                v.acc = -decel
-                v.state = DECEL
-                t_stop = v.vel / decel
-                t_seg = _time_to_travel(v.vel, v.acc, v.dist_to_seg_end(), v.v_max)
-                if t_seg < t_stop and t_seg < float('inf'):
-                    self._post(t + t_seg, EV_SEG_END, v)
-                else:
-                    self._post(t + t_stop, EV_STOPPED, v)
-            else:
-                v.vel = 0.0; v.acc = 0.0; v.state = STOP; v.stop_dist = 0.0
-                self._pin_marker_at_dist(v, 0)
-                self._post(t + 0.5, EV_REPLAN, v)
-        else:
-            # Not yet within braking distance — go toward target_v and let
-            # the BOUNDARY event fire at the right braking point.
-            # Do NOT use v_safe as an intermediate target — it causes
-            # oscillating decel/cruise cycles.
-            self._go(t, v, target_v)
-            self._schedule_plan_events(t, v, target_v, plan_boundary)
+        # Set initial motion and let _schedule_plan_events handle the full profile
+        # including leader-following, curve speed, and ZCU boundary braking.
+        self._go(t, v, target_v)
+        self._schedule_plan_events(t, v, target_v, plan_boundary)
 
     # ── Event scheduling ──────────────────────────────────────────────────
 
@@ -762,8 +735,19 @@ class GraphDESv6:
         Simulates the velocity profile forward and posts every event:
         SEG_END at each segment boundary, PHASE_DONE at speed transitions,
         and BOUNDARY at the braking point before plan_boundary.
-        All events are pushed to the heap at once — no replan between them.
+
+        Leader safe following: at every simulation step, the follower's
+        velocity is limited by v_safe = sqrt(v_leader² + 2·d_max·(gap - h_min))
+        which guarantees that even if leader brakes at max decel, the follower
+        can also brake and maintain h_min gap.
         """
+        leader = v.leader
+        # Leader tracking: initial gap at plan time
+        leader_gap_at_t = float('inf')
+        leader_vel_at_t = 0.0
+        if leader is not None:
+            leader_gap_at_t, leader_vel_at_t = self.gap(v, t)
+
         sim_vel = v.vel
         sim_acc = v.acc
         sim_t = t
@@ -784,6 +768,44 @@ class GraphDESv6:
             if dist_to_bnd <= 0:
                 break
 
+            # Leader safe velocity constraint
+            if leader is not None and leader_gap_at_t < 100000:
+                # Leader position at sim_t (committed trajectory)
+                # Only valid up to leader.next_event_t
+                if sim_t <= leader.next_event_t:
+                    leader_dist_from_start = leader._dist_traveled(sim_t - leader.t_ref)
+                    leader_dist_at_plan_start = leader._dist_traveled(t - leader.t_ref)
+                    leader_advance = leader_dist_from_start - leader_dist_at_plan_start
+                    leader_vel_now = leader.vel_at(sim_t)
+                else:
+                    # Beyond leader's committed event — use conservative estimate
+                    leader_advance = self._leader_extra_dist(leader, t)
+                    leader_vel_now = 0.0  # assume leader might stop
+
+                # Current gap = initial_gap + leader_advance - follower_advance
+                current_gap = leader_gap_at_t + leader_advance - sim_dist
+                available = current_gap - v.h_min
+
+                if available <= 0:
+                    # Already too close — must stop
+                    v_safe = 0.0
+                else:
+                    # Safe velocity: can brake to leader speed while maintaining h_min
+                    v_safe = math.sqrt(max(0,
+                        leader_vel_now * leader_vel_now + 2 * v.d_max * available))
+
+                # Limit target velocity
+                effective_target = min(sim_target_v, v_safe)
+
+                # If current velocity exceeds safe velocity, must decelerate
+                if sim_vel > effective_target + 1.0 and sim_acc >= 0:
+                    sim_acc = -v.d_max
+                    sim_target_v = effective_target
+                elif sim_acc > 0 and effective_target < sim_target_v:
+                    sim_target_v = effective_target
+            else:
+                effective_target = sim_target_v
+
             candidates = []  # (dt, kind)
 
             # SEG_END
@@ -791,15 +813,19 @@ class GraphDESv6:
             if dt_seg < float('inf') and remaining_in_seg <= dist_to_bnd:
                 candidates.append((dt_seg, EV_SEG_END))
 
-            # PHASE_DONE (accel → cruise)
-            if sim_acc > 0 and sim_vel < sim_target_v - 0.5:
-                dt_phase = (sim_target_v - sim_vel) / sim_acc
+            # PHASE_DONE (accel → target or decel → target)
+            if sim_acc > 0 and sim_vel < effective_target - 0.5:
+                dt_phase = (effective_target - sim_vel) / sim_acc
+                if dt_phase > 0.001:
+                    candidates.append((dt_phase, EV_PHASE_DONE))
+            elif sim_acc < 0 and effective_target > 0.5 and sim_vel > effective_target + 0.5:
+                dt_phase = (sim_vel - effective_target) / abs(sim_acc)
                 if dt_phase > 0.001:
                     candidates.append((dt_phase, EV_PHASE_DONE))
 
-            # BOUNDARY (braking point)
+            # BOUNDARY (braking point for ZCU)
             if dist_to_bnd > 0 and plan_boundary < 100000:
-                if sim_acc > 0 and sim_vel < sim_target_v - 0.5:
+                if sim_acc > 0 and sim_vel < effective_target - 0.5:
                     dt_bnd = _time_to_boundary_during_accel(
                         sim_vel, sim_acc, v.d_max, dist_to_bnd, v.v_max)
                 elif sim_vel > 0.1 and sim_acc >= 0:
@@ -811,6 +837,13 @@ class GraphDESv6:
                 if dt_bnd < float('inf') and dt_bnd >= 0:
                     candidates.append((max(0.001, dt_bnd), EV_BOUNDARY))
 
+            # STOPPED (leader constraint forces stop)
+            if leader is not None and sim_vel <= 0.1 and sim_acc <= 0:
+                # Velocity has reached zero due to leader constraint
+                if not posted_any or candidates:
+                    pass  # will be handled by PHASE_DONE or below
+                break
+
             if not candidates:
                 break
 
@@ -820,13 +853,11 @@ class GraphDESv6:
             self._post(sim_t + dt_best, kind_best, v)
             posted_any = True
 
-            # BOUNDARY is the last event in this plan
             if kind_best == EV_BOUNDARY:
                 break
 
             # Advance simulation
             if kind_best == EV_SEG_END:
-                # Velocity at segment end
                 if sim_acc > 0:
                     t_cap = (v.v_max - sim_vel) / sim_acc if sim_vel < v.v_max else 0
                     if dt_best <= t_cap:
@@ -844,24 +875,22 @@ class GraphDESv6:
                 if sim_pidx >= len(v.path) - 1:
                     break
 
-                # Check curve speed for new segment
                 new_seg_speed = v._seg_speeds[sim_pidx] if sim_pidx < len(v._seg_speeds) else v.v_max
                 if new_seg_speed < sim_target_v:
                     sim_target_v = new_seg_speed
-                    # Need to decelerate
                     if sim_vel > sim_target_v + 0.5:
                         sim_acc = -v.d_max
 
             elif kind_best == EV_PHASE_DONE:
                 dist_traveled = sim_vel * dt_best + 0.5 * sim_acc * dt_best ** 2
-                sim_vel = sim_target_v
+                sim_vel = effective_target
                 sim_acc = 0.0
                 sim_t += dt_best
                 sim_dist += dist_traveled
                 sim_off += dist_traveled
 
         if not posted_any:
-            self._post(t + 2.0, EV_REPLAN, v)
+            self._post(t + 0.5, EV_REPLAN, v)
 
     # ── Leader ────────────────────────────────────────────────────────────
 
