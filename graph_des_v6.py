@@ -519,7 +519,7 @@ class GraphDESv6:
             if zone.kind == 'merge':
                 # Check: path goes bnd_node → zone.node_id (merge point)
                 # i.e. segment (bnd_node, zone.node_id) is in the path ahead
-                for i in range(v.path_idx, min(v.path_idx + 5, len(v.path) - 1)):
+                for i in range(v.path_idx, min(v.path_idx + 40, len(v.path) - 1)):
                     if v.path[i] == bnd_node and v.path[i + 1] == zone.node_id:
                         result.append((zone, lock_id))
                         break
