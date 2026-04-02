@@ -373,22 +373,37 @@ class GraphDESv6:
             self._zone_lock[lock_id] = None
 
             if zone.kind == 'merge':
-                # Boundary = predecessor nodes. Exit = merge node itself.
+                # Boundary = predecessor nodes (entry points before merge)
                 for seg_key in zone.all_segs():
                     pred_node = seg_key[0]
                     self._boundary_to_zones[pred_node].append((zone, lock_id))
                     self._boundary_nodes.add(pred_node)
-                # Exit: arriving at merge node = SEG_END where seg_from becomes merge node
+                # Exit = merge node itself
                 self._exit_to_zones[zone.node_id].append((zone, lock_id))
 
             elif zone.kind == 'diverge':
-                # Boundary = diverge node itself. Exit = successor nodes.
+                # Boundary = diverge node itself
                 self._boundary_to_zones[zone.node_id].append((zone, lock_id))
                 self._boundary_nodes.add(zone.node_id)
-                # Exit: arriving at any successor node
+                # Exit = any successor node
                 for seg_key in zone.all_segs():
                     succ_node = seg_key[1]
                     self._exit_to_zones[succ_node].append((zone, lock_id))
+
+        # For merge locks held via a boundary node where the OHT goes
+        # a different direction: the OHT never reaches the merge node,
+        # so we also register ALL successors of each boundary node as
+        # exit points for ALL zones at that boundary.
+        # This way, arriving at ANY next node after the boundary releases
+        # all locks acquired at that boundary.
+        for bnd_node, zone_list in self._boundary_to_zones.items():
+            successors = self.gmap.adj.get(bnd_node, [])
+            for succ in successors:
+                for zone, lock_id in zone_list:
+                    # Avoid duplicates
+                    existing = self._exit_to_zones.get(succ, [])
+                    if (zone, lock_id) not in existing:
+                        self._exit_to_zones[succ].append((zone, lock_id))
 
         print(f"ZCU locks: {len(self._zone_lock)} zones, "
               f"{len(self._boundary_nodes)} boundary nodes, "
@@ -509,24 +524,13 @@ class GraphDESv6:
         self._replan(t, v)
 
     def _relevant_zones(self, v: Vehicle, bnd_node: str) -> List[Tuple[ZCUZone, str]]:
-        """Filter zones at a boundary node to only those the vehicle's path actually uses.
+        """All zones at a boundary node are relevant.
 
-        For merge at node M with boundary A: only relevant if v's path goes A → M.
-        For diverge at node D: only relevant if v's path goes through D.
+        When an OHT passes through a boundary node, it physically occupies
+        the node and blocks ALL directions — both diverge and all merge
+        entries. So every zone registered at this boundary must be locked.
         """
-        result = []
-        for zone, lock_id in self._boundary_to_zones.get(bnd_node, []):
-            if zone.kind == 'merge':
-                # Check: path goes bnd_node → zone.node_id (merge point)
-                # i.e. segment (bnd_node, zone.node_id) is in the path ahead
-                for i in range(v.path_idx, min(v.path_idx + 40, len(v.path) - 1)):
-                    if v.path[i] == bnd_node and v.path[i + 1] == zone.node_id:
-                        result.append((zone, lock_id))
-                        break
-            elif zone.kind == 'diverge':
-                # Diverge boundary = the node itself, always relevant if on path
-                result.append((zone, lock_id))
-        return result
+        return self._boundary_to_zones.get(bnd_node, [])
 
     def _on_boundary(self, t: float, v: Vehicle):
         bnd_node = v.x_marker_node
