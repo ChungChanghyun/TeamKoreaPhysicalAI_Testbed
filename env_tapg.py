@@ -730,12 +730,26 @@ class TAPGEnvironment:
 
             for k, (sid, t) in enumerate(new_raw_path):
                 nk = self._nk(sid, aid, t)
+                # ── DEBUG: Phase1 노드가 이미 그래프에 있는지 확인 ──
+                if nk in self.G:
+                    old_edges_in = list(self.G.predecessors(nk))
+                    old_edges_out = list(self.G.successors(nk))
+                    if old_edges_in or old_edges_out:
+                        print(f'  [TAPG WARN] Phase1: node {nk} already exists '
+                              f'with in={len(old_edges_in)} out={len(old_edges_out)}')
+                        for p in old_edges_in[:3]:
+                            print(f'    pred: A{p[1]-100 if isinstance(p[1],int) else p[1]} {p[0]} t={p[2]:.2f}')
+                        for s in old_edges_out[:3]:
+                            print(f'    succ: A{s[1]-100 if isinstance(s[1],int) else s[1]} {s[0]} t={s[2]:.2f}')
                 duration = (float('inf') if k == len(new_raw_path) - 1
                             else new_raw_path[k + 1][1] - t)
                 self.G.add_node(nk, agv_id=aid, start_time=t, duration=duration)
                 if k > 0:
                     prev_sid, prev_t = new_raw_path[k - 1]
-                    self.G.add_edge(self._nk(prev_sid, aid, prev_t), nk)
+                    prev_nk = self._nk(prev_sid, aid, prev_t)
+                    if prev_nk == nk:
+                        print(f'  [TAPG SELF-LOOP] Phase1 sequential: {nk}')
+                    self.G.add_edge(prev_nk, nk)
 
             new_paths[aid] = new_raw_path
 
@@ -763,6 +777,8 @@ class TAPGEnvironment:
                         if s2 in affect1 or s1 in affect2:
                             nk1 = self._nk(s1, ai, t1)
                             nk2 = self._nk(s2, aj, t2)
+                            if nk1 == nk2:
+                                print(f'  [TAPG SELF-LOOP] Phase2-A: {nk1}')
                             if nk1 in self.G and nk2 in self.G:
                                 self.G.add_edge(nk1, nk2)
                             break
@@ -782,6 +798,8 @@ class TAPGEnvironment:
                         if s2 in affect1 or s1 in affect2:
                             nk1 = self._nk(s1, aj, t1)
                             nk2 = self._nk(s2, ai, t2)
+                            if nk1 == nk2:
+                                print(f'  [TAPG SELF-LOOP] Phase2-B: {nk1}')
                             if nk1 in self.G and nk2 in self.G:
                                 self.G.add_edge(nk1, nk2)
                             break
